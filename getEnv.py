@@ -21,7 +21,7 @@ class cms_env:
     def getCMSSWBASECMSSWVERSION(self):
         return self.CMSSWBASECMSSWVERSION
 		
-    def cmsAll(self):
+    def cmsAll(self): # return text with CMSSW release caracteristics to be used into a web page
         cmsAll="<strong>CMSSW_BASE</strong> : " + self.getCMSSWBASE()
         cmsAll+="<br /><strong>CMSSW_RELEASE_BASE</strong> : " + self.getCMSSWBASECMSSWRELEASEBASE()
         cmsAll+="<br /><strong>CMSSW_VERSION</strong> : " + self.getCMSSWBASECMSSWVERSION()
@@ -39,18 +39,18 @@ class cms_env:
         eosArch_1="eos ls /eos/cms/store/group/phys_egamma/"
         return eosArch_1
 
-    def liste_datasets(self):
+    def liste_datasets(self): # list of used datasets for pre2018 validations
         liste_datasets = ['RelValSingleElectronPt10_UP15', 'RelValSingleElectronPt1000_UP15', 'RelValSingleElectronPt35_UP15', 'RelValQCD_Pt_80_120_13', 'RelValTTbar_13', 'RelValZEE_13']
         return liste_datasets
 
-    def liste_datasets_miniAOD(self):
+    def liste_datasets_miniAOD(self): # same for miniAOD validations
         return self.liste_datasets()
 
-    def liste_datasets_fast(self):
+    def liste_datasets_fast(self): # same for fast validations
         liste_fast = ['RelValTTbar_13', 'RelValZEE_13']
         return liste_fast
 
-    def liste_datasets_pu(self):
+    def liste_datasets_pu(self): # same for PU validations
         return self.liste_fast()
 
     def liste_type(self):
@@ -61,7 +61,7 @@ class cms_env:
         list_tab = ['liste_datasets', 'liste_datasets_miniAOD', 'liste_datasets_fast']
         return list_tab
         
-    def dictionnaire(self):
+    def dictionnaire(self): # dictionnary for datasets
         dictionnaire = {}
         #dictionnaire["liste_datasets"] = ['RelValSingleElectronPt10_UP15', 'RelValSingleElectronPt1000_UP15', 'RelValSingleElectronPt35_UP15', 'RelValQCD_Pt_80_120_13', 'RelValTTbar_13', 'RelValZEE_13']
         #dictionnaire["liste_datasets_miniAOD"] = ['RelValSingleElectronPt10_UP15', 'RelValSingleElectronPt1000_UP15', 'RelValSingleElectronPt35_UP15', 'RelValQCD_Pt_80_120_13', 'RelValTTbar_13', 'RelValZEE_13']
