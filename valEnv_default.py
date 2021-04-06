@@ -22,7 +22,8 @@ class env_default:
         return workDir
 
     def tmpPath(self): # defaultqV.py
-        tmpPath = tmp_path # '/eos/project/c/cmsweb/www/egamma/validation/Electrons/GUI/Projet_Validations-PortableDev/HistosConfigFiles/'
+        #tmpPath = tmp_path # '/eos/project/c/cmsweb/www/egamma/validation/Electrons/GUI/Projet_Validations-PortableDev/HistosConfigFiles/'
+        tmpPath = self.getCMSSWBASE() + '/src/' + tmp_path
         return tmpPath
 
     def imageUp(self): # defaultqV.py
