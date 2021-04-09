@@ -17,13 +17,12 @@ class env_default:
         CMSSWBASE = os.getenv('CMSSW_BASE', "CMSSW_BASE")
         return CMSSWBASE
 
-    def workDir(self): # Gev[2/Seq].py
+    def workDir(self): # GevSeq.py
         workDir =  self.localWorkDir # '/afs/cern.ch/work/a/archiron/private/CMSSW_10_6_1_patch1_ValELE/src' # the path where you are
         return workDir
 
     def tmpPath(self): # defaultqV.py
-        #tmpPath = tmp_path # '/eos/project/c/cmsweb/www/egamma/validation/Electrons/GUI/Projet_Validations-PortableDev/HistosConfigFiles/'
-        tmpPath = self.getCMSSWBASE() + '/src/' + tmp_path
+        tmpPath = self.localWorkDir + tmp_path
         return tmpPath
 
     def imageUp(self): # defaultqV.py
