@@ -238,7 +238,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     self.cnv.Clear()
     self.cnv.SetFillColor(10)
     
-    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1, 1.0) # ,0,0,0
+    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0) # ,0,0,0
     pad1.SetBottomMargin(0.05)
     pad1.Draw()
     pad1.cd()
@@ -278,7 +278,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     histo2.Draw("sames hist")
     
     self.cnv.cd()
-    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1, 0.25) # ,0,0,0
+    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.0, 0.25) # ,0,0,0
     pad2.SetTopMargin(0.025)
     pad2.SetBottomMargin(0.2)
     pad2.SetGridy()
@@ -360,7 +360,7 @@ def createPicture3(histo1, histo2, scaled, err, filename, self, id, s0):
     self.cnv.Clear()
     self.cnv.SetFillColor(10)
     
-    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1, 1.0) # ,0,0,0
+    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0) # ,0,0,0
     pad1.SetBottomMargin(0.05)
     pad1.Draw()
     pad1.cd()
@@ -433,7 +433,7 @@ def createPicture3(histo1, histo2, scaled, err, filename, self, id, s0):
     yC.Draw("sames hist") # 
 
     self.cnv.cd()
-    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1, 0.25) # ,0,0,0
+    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.0, 0.25) # ,0,0,0
     pad2.SetTopMargin(0.025)
     pad2.SetBottomMargin(0.2)
     pad2.SetGridy()
@@ -504,7 +504,7 @@ def createCumulPicture(histo1, histo2, filename, self, id, s0):
     self.cnv.Clear()
     self.cnv.SetFillColor(10)
     
-    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1, 1.0) # ,0,0,0
+    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0) # ,0,0,0
     pad1.SetBottomMargin(0.05)
     pad1.Draw()
     pad1.cd()
@@ -621,7 +621,7 @@ def createCumulPicture2(histo1, histo2, filename, self, id, s0, k):
     self.cnv.Clear()
     self.cnv.SetFillColor(10)
     
-    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.5, 1, 1.0) # 0, 0.25, 1, 1.0
+    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.5, 1.0, 1.0) # 0, 0.25, 1, 1.0
     #pad1.SetBottomMargin(0.05)
     pad1.Draw()
     pad1.cd()
@@ -702,7 +702,7 @@ def createCumulPicture2(histo1, histo2, filename, self, id, s0, k):
     yC.Draw("sames hist") # 
 
     self.cnv.cd()
-    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.0, 1, 0.5) # 0, 0.05, 1, 0.25
+    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.0, 1.0, 0.5) # 0, 0.05, 1, 0.25
     pad2.SetTopMargin(0.05)
     #pad2.SetBottomMargin(0.2)
     pad2.SetGridy()
@@ -760,7 +760,7 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     self.cnv.SetFillColor(10)
 
     #pad1 = ROOT.TPad(str(id), "pad1", 0, 0.5, 1, 1.0)  # 0, 0.25, 1, 1.0
-    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.65, 1, 1.0)  #
+    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.65, 1.0, 1.0)  #
     # pad1.SetBottomMargin(0.05)
     pad1.Draw()
     pad1.cd()
@@ -830,7 +830,7 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
 
     self.cnv.cd()
     #pad2 = ROOT.TPad(str(id), "pad2", 0, 0.0, 1, 0.5)  # 0, 0.05, 1, 0.25
-    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.33, 1, 0.65)  #
+    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.33, 1.0, 0.65)  #
     pad2.SetTopMargin(0.05)
     # pad2.SetBottomMargin(0.2)
     pad2.SetGridy()
@@ -853,7 +853,7 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     self.cnv.Update()
 
     self.cnv.cd()
-    pad3 = ROOT.TPad(str(id), "pad3", 0, 0.0, 1, 0.33)  # 0, 0.05, 1, 0.25
+    pad3 = ROOT.TPad(str(id), "pad3", 0, 0.0, 1.0, 0.33)  # 0, 0.05, 1, 0.25
     pad3.SetTopMargin(0.05)
     # pad3.SetBottomMargin(0.2)
     pad3.SetGridy()
