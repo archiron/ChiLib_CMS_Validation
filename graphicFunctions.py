@@ -2,7 +2,7 @@
 #-*-coding: utf-8 -*-
 
 import os,sys,subprocess
-import urllib2
+#import urllib2
 import re
 import numpy as np
 
@@ -162,17 +162,18 @@ def createPicture(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     if c_recomp:
         color1 = ROOT.kGreen-2
     
+    histo2c = histo2.Clone()
     if (scaled and (new_entries != 0) and (ref_entries != 0)):
         rescale_factor = new_entries / ref_entries
-        histo2.Scale(rescale_factor)
-    if (histo2.GetMaximum() > histo1.GetMaximum()):
-        histo1.SetMaximum(histo2.GetMaximum() * 1.1)
+        histo2c.Scale(rescale_factor)
+    if (histo2c.GetMaximum() > histo1.GetMaximum()):
+        histo1.SetMaximum(histo2c.GetMaximum() * 1.1)
     #if (filename == "h_ele_charge"):
     #   n_ele_charge = histo1.GetEntries()
        
     self.cnv.SetCanvasSize(960, 600)
     self.cnv.Clear()
-    histo2.Draw()
+    histo2c.Draw()
     self.cnv.Update()
     gMax2 = ROOT.gPad.GetUymax()
 
@@ -196,21 +197,21 @@ def createPicture(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     histo1.SetMarkerColor(color1)
     statBox1.SetTextColor(color1)
     gPad.Update()
-    histo2.Draw()
-    histo2.SetLineWidth(3) 
-    histo2.SetStats(1)
-    RenderHisto(histo2, self)
+    histo2c.Draw()
+    histo2c.SetLineWidth(3)
+    histo2c.SetStats(1)
+    RenderHisto(histo2c, self)
     self.cnv.Update()
-    statBox2 = histo2.GetListOfFunctions().FindObject("stats")
-    histo2.SetLineColor(kBlue)
-    histo2.SetMarkerColor(kBlue)
+    statBox2 = histo2c.GetListOfFunctions().FindObject("stats")
+    histo2c.SetLineColor(kBlue)
+    histo2c.SetMarkerColor(kBlue)
     statBox2.SetTextColor(kBlue)
     y1 = statBox1.GetY1NDC()
     y2 = statBox1.GetY2NDC()
     statBox2.SetY1NDC(2*y1-y2)
     statBox2.SetY2NDC(y1)
     histo1.Draw()
-    histo2.Draw("histsames")
+    histo2c.Draw("histsames")
     self.cnv.Draw()
     self.cnv.Update()
     
@@ -226,11 +227,12 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     if c_recomp:
         color1 = ROOT.kGreen-2
        
+    histo2c = histo2.Clone()
     if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
         rescale_factor = new_entries / ref_entries
-        histo2.Scale(rescale_factor)
-    if (histo2.GetMaximum() > histo1.GetMaximum()):
-        histo1.SetMaximum(histo2.GetMaximum() * 1.1)
+        histo2c.Scale(rescale_factor)
+    if (histo2c.GetMaximum() > histo1.GetMaximum()):
+        histo1.SetMaximum(histo2c.GetMaximum() * 1.1)
     #if (filename == "h_ele_charge"):
     #   n_ele_charge = histo1.GetEntries()
        
@@ -257,13 +259,13 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     statBox1 = histo1.GetListOfFunctions().FindObject("stats")
     statBox1.SetTextColor(color1)    
     gPad.Update()
-    histo2.Draw("sames hist") # ""  same  
-    histo2.SetStats(1)
-    RenderHisto(histo2, self)
-    if ("ELE_LOGY" in histo2.GetOption() and histo2.GetMaximum() > 0):
+    histo2c.Draw("sames hist") # ""  same
+    histo2c.SetStats(1)
+    RenderHisto(histo2c, self)
+    if ("ELE_LOGY" in histo2c.GetOption() and histo2c.GetMaximum() > 0):
         pad1.SetLogy(1)
     self.cnv.Update()
-    statBox2 = histo2.GetListOfFunctions().FindObject("stats")
+    statBox2 = histo2c.GetListOfFunctions().FindObject("stats")
     statBox2.SetTextColor(kBlue)
     y1 = statBox1.GetY1NDC()
     y2 = statBox1.GetY2NDC()
@@ -275,10 +277,10 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     else:
         newDrawOptions += "hist"
     histo1.Draw(newDrawOptions)
-    histo2.Draw("sames hist")
+    histo2c.Draw("sames hist")
     
     self.cnv.cd()
-    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.0, 0.25) # ,0,0,0
+    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.00, 0.25) # ,0,0,0
     pad2.SetTopMargin(0.025)
     pad2.SetBottomMargin(0.2)
     pad2.SetGridy()
@@ -288,6 +290,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     histo3 = histo1.Clone("histo3")
     histo3.SetLineColor(kBlack)
     histo3.SetMaximum(2.)
+    histo3.SetMinimum(0.)
     histo3.SetStats(0)
     histo3.Divide(histo2)
     histo3.SetMarkerStyle(21)
@@ -300,9 +303,9 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     histo1.GetYaxis().SetTitleFont(43)
     histo1.GetYaxis().SetTitleOffset(2.00)
     
-    histo2.SetLineColor(kBlue)
-    histo2.SetMarkerColor(kBlue)
-    histo2.SetLineWidth(3) 
+    histo2c.SetLineColor(kBlue)
+    histo2c.SetMarkerColor(kBlue)
+    histo2c.SetLineWidth(3)
     
     histo3.SetTitle("")
     histo3.GetYaxis().SetTitle("ratio h1/h2 ")
@@ -324,22 +327,6 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp):
 
     self.cnv.SaveAs(filename)
     
-    '''
-    i=0
-    print('APRES DIVISION')
-    for entry in histo2:
-        print("%d/%d : %s - %s") % (i, histo2.GetXaxis().GetNbins(), entry, histo2.GetBinError(i)) # - %sGetBinErrorSqUnchecked(i)
-        i+=1
-    i=0
-    for entry in histo1:
-        print("%d/%d : %s - %s") % (i, histo1.GetXaxis().GetNbins(), entry, histo1.GetBinError(i)) #  - %s, histo1.GetBinErrorSqUnchecked(i)
-        i+=1
-    i=0
-    for entry in histo3:
-        print("%d/%d : %s - %s") % (i, histo3.GetXaxis().GetNbins(), entry, histo3.GetBinError(i)) # , histo3.GetBinErrorSqUnchecked(i)
-        i+=1
-    '''
-    
     return
         
 # same as createPicture2 but with yellowCurve
@@ -348,11 +335,12 @@ def createPicture3(histo1, histo2, scaled, err, filename, self, id, s0):
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
        
+    histo2c = histo2.Clone()
     if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
         rescale_factor = new_entries / ref_entries
-        histo2.Scale(rescale_factor)
-    if (histo2.GetMaximum() > histo1.GetMaximum()):
-        histo1.SetMaximum(histo2.GetMaximum() * 1.1)
+        histo2c.Scale(rescale_factor)
+    if (histo2c.GetMaximum() > histo1.GetMaximum()):
+        histo1.SetMaximum(histo2c.GetMaximum() * 1.1)
     #if (filename == "h_ele_charge"):
     #   n_ele_charge = histo1.GetEntries()
        
@@ -379,13 +367,13 @@ def createPicture3(histo1, histo2, scaled, err, filename, self, id, s0):
     statBox1 = histo1.GetListOfFunctions().FindObject("stats")
     statBox1.SetTextColor(kRed)    
     gPad.Update()
-    histo2.Draw("sames hist") # ""  same  
-    histo2.SetStats(1)
-    RenderHisto(histo2, self)
-    if ("ELE_LOGY" in histo2.GetOption() and histo2.GetMaximum() > 0):
+    histo2c.Draw("sames hist") # ""  same
+    histo2c.SetStats(1)
+    RenderHisto(histo2c, self)
+    if ("ELE_LOGY" in histo2c.GetOption() and histo2c.GetMaximum() > 0):
         pad1.SetLogy(1)
     self.cnv.Update()
-    statBox2 = histo2.GetListOfFunctions().FindObject("stats")
+    statBox2 = histo2c.GetListOfFunctions().FindObject("stats")
     statBox2.SetTextColor(kBlue)
     y1 = statBox1.GetY1NDC()
     y2 = statBox1.GetY2NDC()
@@ -397,7 +385,7 @@ def createPicture3(histo1, histo2, scaled, err, filename, self, id, s0):
     else:
         newDrawOptions += "hist"
     histo1.Draw(newDrawOptions)
-    histo2.Draw("sames hist")
+    histo2c.Draw("sames hist")
     
     # yellow curve
     # only whith TH1F
@@ -455,9 +443,9 @@ def createPicture3(histo1, histo2, scaled, err, filename, self, id, s0):
     histo1.GetYaxis().SetTitleFont(43)
     histo1.GetYaxis().SetTitleOffset(2.00)
     
-    histo2.SetLineColor(kBlue)
-    histo2.SetMarkerColor(kBlue)
-    histo2.SetLineWidth(3) 
+    histo2c.SetLineColor(kBlue)
+    histo2c.SetMarkerColor(kBlue)
+    histo2c.SetLineWidth(3)
     
     histo3.SetTitle("")
     histo3.GetYaxis().SetTitle("ratio h1/h2 ")
@@ -504,7 +492,7 @@ def createCumulPicture(histo1, histo2, filename, self, id, s0):
     self.cnv.Clear()
     self.cnv.SetFillColor(10)
     
-    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0) # ,0,0,0
+    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1, 1.0) # ,0,0,0
     pad1.SetBottomMargin(0.05)
     pad1.Draw()
     pad1.cd()
@@ -621,7 +609,7 @@ def createCumulPicture2(histo1, histo2, filename, self, id, s0, k):
     self.cnv.Clear()
     self.cnv.SetFillColor(10)
     
-    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.5, 1.0, 1.0) # 0, 0.25, 1, 1.0
+    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.5, 1, 1.0) # 0, 0.25, 1, 1.0
     #pad1.SetBottomMargin(0.05)
     pad1.Draw()
     pad1.cd()
@@ -739,28 +727,40 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     sumRef = 0.
     cumulNew = []
     cumulRef = []
+    t_new = []
+    t_ref = []
 
     for entry in histo1:
-        sumNew += entry
-        cumulNew.append(sumNew)
+        t_new.append(entry)
+
     for entry in histo2:
-        sumRef += entry
+        t_ref.append(entry)
+
+    t_new = t_new[1:-1]
+    t_ref = t_ref[1:-1]
+
+    for elem in t_new:
+        sumNew += elem
+        cumulNew.append(sumNew)
+    for elem in t_ref:
+        sumRef += elem
         cumulRef.append(sumRef)
-    # print(sumNew, sumRef)
+    #print('cumul rel : %f - sum rel : %f' % (sumNew, new_entries))
+    #print('cumul ref : %f - sum ref : %f' % (sumRef, ref_entries))
     # print('k=%d - len : s0=%d, cumulNew=%d, cumulRef=%d' %(k, len(s0), len(cumulNew), len(cumulRef))) # temp
     cumulNew = np.asarray(cumulNew) / new_entries
     cumulRef = np.asarray(cumulRef) / ref_entries
     #print('len cumul new/ref : %d/%d - len s0 : %d' % (len(cumulNew), len(cumulRef), len(s0)))
     diff1 = np.abs(cumulNew - cumulRef)
-    diff2 = np.abs(s0 - cumulNew[1:-1])
-    #diff2 = np.abs(s0 - cumulRef)
+    diff2 = np.abs(s0 - cumulNew)
+    print('diff 1 : %f - diff 2 : %f' % (np.max(diff1), np.max(diff2)))
 
     self.cnv.SetCanvasSize(960, 900)
     self.cnv.Clear()
     self.cnv.SetFillColor(10)
 
     #pad1 = ROOT.TPad(str(id), "pad1", 0, 0.5, 1, 1.0)  # 0, 0.25, 1, 1.0
-    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.65, 1.0, 1.0)  #
+    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.65, 1, 1.0)  #
     # pad1.SetBottomMargin(0.05)
     pad1.Draw()
     pad1.cd()
