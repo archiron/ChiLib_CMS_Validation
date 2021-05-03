@@ -28,7 +28,7 @@ def getHisto(file, tp):
     return t_path # t5
 
 def RenderHisto(histo, self):
-    
+
     if ("ELE_LOGY" in histo.GetOption() and histo.GetMaximum() > 0):
         self.cnv.SetLogy(1)
     histo_name_flag = 1 ; # use 0 to switch off
@@ -76,13 +76,15 @@ def initRootStyle():
     eleStyle.SetTitleFont(22,"Y")
     eleStyle.SetPadBottomMargin(0.13) # 0.05
     eleStyle.SetPadLeftMargin(0.15)
-    eleStyle.SetPadRightMargin(0.2) 
+    #eleStyle.SetPadRightMargin(0.2)
     eleStyle.SetMarkerStyle(21)
     eleStyle.SetMarkerSize(0.8)
     #eleStyle.SetLegendFont(42)
     #eleStyle.SetLegendTextSize(0.)
     eleStyle.cd()
     ROOT.gROOT.ForceStyle()
+    gStyle.SetOptTitle(1)
+    gStyle.SetPadRightMargin(0.2)
 
 def PictureChoice(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     if(histo1.InheritsFrom("TH1F")):
