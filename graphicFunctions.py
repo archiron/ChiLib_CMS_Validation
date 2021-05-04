@@ -45,6 +45,7 @@ def initRoot():
 
 def initRootStyle():
     eleStyle = ROOT.TStyle("eleStyle","Style for electron validation")
+    ROOT.gROOT.ForceStyle()
     eleStyle.SetCanvasBorderMode(0)
     eleStyle.SetCanvasColor(kWhite)
     eleStyle.SetCanvasDefH(600)
@@ -82,7 +83,6 @@ def initRootStyle():
     #eleStyle.SetLegendFont(42)
     #eleStyle.SetLegendTextSize(0.)
     eleStyle.cd()
-    ROOT.gROOT.ForceStyle()
     gStyle.SetOptTitle(1)
     gStyle.SetPadRightMargin(0.2)
 
