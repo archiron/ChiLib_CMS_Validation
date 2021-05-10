@@ -30,13 +30,11 @@ class DecisionBox:
             b2 = s1[i] - e1[i]
             ab1 = a1 - b1
             ab2 = b2 - a2
-            #print(i)
             if (s0[i] > s1[i]):
                 if (ab1 > 0.):
                     mask.append(0)
                     if (np.abs(ab1) > diff_max):
                         diff_max = np.abs(ab1)
-                        #print('ab1[%d] : %f' % (i, diff_max))
                 elif (ab1 <= 0.):
                     mask.append(1)
             elif (s0[i] < s1[i]):
@@ -44,13 +42,10 @@ class DecisionBox:
                     mask.append(0)
                     if (np.abs(ab2) > diff_max):
                         diff_max = np.abs(ab2)
-                        #print('ab2[%d] : %f' % (i, diff_max))
                 elif (ab2 <= 0.):
                     mask.append(1)
             elif (s0[i] == s1[i]):
-                #diff = 0.
                 mask.append(1)
-            #print('diff max : %f' % diff_max)
         return diff_max, mask
 
     # calculate the difference of s0
@@ -69,15 +64,12 @@ class DecisionBox:
             b2 = s1[i] - e1[i]
             ab1 = a1 - b1
             ab2 = b2 - a2
-            #print(i)
             if ((s0[i] + s1[i]) != 0.):
-                #print('so[%d] + s1[%d] = %f' % (i,i,s0[i] + s1[i]))
                 if (s0[i] > s1[i]):
                     if (ab1 > 0.):
                         mask.append(0)
                         if (np.abs(ab1) > diff_max):
                             diff_max = np.abs(ab1)
-                            #print('ab1[%d] : %f' % (i, diff_max))
                     elif (ab1 <= 0.):
                         mask.append(1)
                 elif (s0[i] < s1[i]):
@@ -85,15 +77,10 @@ class DecisionBox:
                         mask.append(0)
                         if (np.abs(ab2) > diff_max):
                             diff_max = np.abs(ab2)
-                            #print('ab2[%d] : %f' % (i, diff_max))
                     elif (ab2 <= 0.):
                         mask.append(1)
                 elif (s0[i] == s1[i]):
-                    #diff = 0.
                     mask.append(1)
-            #else:
-                #print('so[%d] + s1[%d] = %f' % (i,i,s0[i] + s1[i]))
-        #print('diff max : %f' % diff_max)
         return diff_max, mask
 
     # calculate the difference of s0
@@ -112,13 +99,11 @@ class DecisionBox:
             b2 = s1[i] - e1[i]
             ab1 = a1 - b1
             ab2 = b2 - a2
-            #print(i)
             if (s0[i] > s1[i]):
                 if (ab1 > 0.):
                     mask.append(0)
                     if (np.abs(ab1) > diff_max):
                         diff_max = np.abs(ab1)
-                        #print('ab1[%d] : %f' % (i, diff_max))
                 elif (ab1 <= 0.):
                     mask.append(1)
             elif (s0[i] < s1[i]):
@@ -126,15 +111,10 @@ class DecisionBox:
                     mask.append(0)
                     if (np.abs(ab2) > diff_max):
                         diff_max = np.abs(ab2)
-                        #print('ab2[%d] : %f' % (i, diff_max))
                 elif (ab2 <= 0.):
                     mask.append(1)
             elif (s0[i] == s1[i]):
-                #diff = 0.
                 mask.append(1)
-        #else:
-            #print('so[%d] + s1[%d] = %f' % (i,i,s0[i] + s1[i]))
-        #print('diff max : %f' % diff_max)
         return diff_max, mask
 
     # get a coefficient from an array of integers 0/1
@@ -143,19 +123,13 @@ class DecisionBox:
         return coeff
 
     def getHistoValues(self, histo):
-        #nbbins= histo.GetXaxis().GetNbins()
-        #print('nb bins : %d' % nbbins)
         i=0
         s0 = []
         e0 = []
         for entry in histo:
-            #print("%d/%d : %s - %s") % (i, histo.GetXaxis().GetNbins(), entry, histo.GetBinError(i))
             s0.append(entry)
             e0.append(histo.GetBinError(i))
             i += 1
-        #print('s0[%d] : %f' % (nbbins, s0[nbbins+1]))
-        #s0[nbbins+1] = 0.
-        #e0[nbbins+1] = 0.
         # we eliminate the under/overflow values
         s0 = s0[1:-1]
         e0 = e0[1:-1]
@@ -165,7 +139,6 @@ class DecisionBox:
         s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
         s1 = np.asarray(s1)
         N = len(s0)
-        #print('diffMAXKS : %d' % N)
         v0 = 0.
         v1 = 0.
         sDKS = []
@@ -182,9 +155,8 @@ class DecisionBox:
     def integralpValue(self, abscisses, ordonnees, x):
         v = 0.0
         N = len(abscisses)
-        #print('== ', x)
         if (x <= abscisses[0]) :
-            x = 0. #ttl integral
+            x = 0. # ttl integral
             for i in range(0, N-1):
                 v += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
         elif (x >= abscisses[N-1]):
@@ -201,40 +173,26 @@ class DecisionBox:
                 v += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
         return v
 
-    # major function to be called
-    # ref is GevSeq.py
+    # major function to be called (ref is GevSeq.py)
     def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel):
-        coeff_1 = 1.
-        coeff_2 = 2.
-        coeff_3 = 3.
         s0, e0 = self.getHistoValues(h1)
         s1, e1 = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
         ref_entries = h2.GetEntries()
-        #print(s0[0:8])
-        #print(s1[0:8])
         d_max_1, r_mask_1 = self.getDifference_1(s0, e0, s1, e1)
         d_max_2, r_mask_2 = self.getDifference_2(s0, e0, s1, e1) # same as above without couples (0., 0.)
         d_max_3, r_mask_3 = self.getDifference_3(s0, e0, s1, e1) # same as above without couples first & end (0., 0.) couple.
         coeff_1 = self.getCoeff(r_mask_1)
         coeff_2 = self.getCoeff(r_mask_2)
         coeff_3 = self.getCoeff(r_mask_3)
-        #print('coeff 1 : %6.4f' % coeff_1)
-        #print('coeff 2 : %6.4f' % coeff_2)
-        #print('coeff 3 : %6.4f' % coeff_3)
-        #print(' ')
 
         # Kolmogorov - Smirnov
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        #fileName = '/afs/cern.ch/user/a/archiron/public/ECHANGES/Extraction_3/' + 'histo_' + histoName + '_KScurve1.txt'
-        #fileName = '/afs/cern.ch/user/a/archiron/public/ECHANGES/Extraction_SAME/' + 'histo_' + histoName + '_KScurve1.txt'
-        #fileName = '/eos/project/c/cmsweb/www/egamma/validation/Electrons/Store/KS_Curves/11_2_0_pre11_2021/' + 'histo_' + histoName + '_KScurve1.txt'
         fileName = KS_path_local + '-' + shortRel + '/histo_' + histoName + '_KScurve1.txt'
         fileExist = path.exists(fileName)
         if ( fileExist ):
-            #print('file name : %s' % fileName)
             wKS = open(fileName, 'r')
             l1 = wKS.readline().rstrip('\n\r')
             l2 = wKS.readline().rstrip('\n\r')
@@ -242,7 +200,6 @@ class DecisionBox:
             l4 = wKS.readline().rstrip('\n\r')
             l5 = wKS.readline().rstrip('\n\r') # yellow curve
             l6 = wKS.readline().rstrip('\n\r') # cumulative yellow curve
-            #print(l1)
             I_Max = float(l1.split(',')[0])
             count = []
             division = []
@@ -250,10 +207,8 @@ class DecisionBox:
             yellowCurveCum = []
             for elem in l3.split(' '):
                 count.append(float(elem))
-            #print(count)
             for elem in l4.split(' '):
                 division.append(float(elem))
-            #print(division)
             for elem in l5.split(' '):
                 yellowCurve.append(float(elem))
             for elem in l6.split(' '):
@@ -262,12 +217,9 @@ class DecisionBox:
             wKS.close()
             # Get the Kolmogoroff-Smirnov diff. for reference curve (s0) vs test curve (s1)
             diffKS, ind_pos_max = self.diffMAXKS(s0, s1, new_entries, ref_entries)
-            #print('KS Max diff. : %0.4e at index : %d' % (diffKS, ind_pos_max))
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
-            #print('p-Value : %8.4f, Normalized p-Value : %8.4f ' % (pValue, (pValue/I_Max)))
             yellowCurve = np.asarray(yellowCurve)
-            #yellowCurveCum = np.asarray(yellowCurveCum[1:-1])
             yellowCurveCum = np.asarray(yellowCurveCum)
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
         else:
@@ -284,9 +236,6 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        #fileName = '/afs/cern.ch/user/a/archiron/public/ECHANGES/Extraction_3/' + 'histo_' + histoName + '_KScurve2.txt'
-        #fileName = '/afs/cern.ch/user/a/archiron/public/ECHANGES/Extraction_SAME/' + 'histo_' + histoName + '_KScurve2.txt'
-        #fileName = '/eos/project/c/cmsweb/www/egamma/validation/Electrons/Store/KS_Curves/11_2_0_pre11_2021/' + 'histo_' + histoName + '_KScurve2.txt'
         fileName = KS_path_local + '-' + shortRel + '/histo_' + histoName + '_KScurve2.txt'
         fileExist = path.exists(fileName)
         if ( fileExist ):
@@ -298,9 +247,7 @@ class DecisionBox:
             l5 = wKS.readline().rstrip('\n\r') # yellow curve
             l6 = wKS.readline().rstrip('\n\r') # cumulative yellow curve
             I_Max = float(l1.split(',')[0])
-            #nbins = int(l1.split(',')[1])
-            #div_min = float(l2.split(',')[0])
-            #div_max = float(l2.split(',')[1])
+
             count = []
             division = []
             yellowCurve = []
@@ -335,9 +282,6 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        #fileName = '/afs/cern.ch/user/a/archiron/public/ECHANGES/Extraction_3/' + 'histo_' + histoName + '_KScurve3.txt'
-        #fileName = '/afs/cern.ch/user/a/archiron/public/ECHANGES/Extraction_SAME/' + 'histo_' + histoName + '_KScurve3.txt'
-        #fileName = '/eos/project/c/cmsweb/www/egamma/validation/Electrons/Store/KS_Curves/11_2_0_pre11_2021/' + 'histo_' + histoName + '_KScurve3.txt'
         fileName = KS_path_local + '-' + shortRel + '/histo_' + histoName + '_KScurve3.txt'
         fileExist = path.exists(fileName)
         if ( fileExist ):
@@ -348,11 +292,8 @@ class DecisionBox:
             l4 = wKS.readline().rstrip('\n\r') # division
             l5 = wKS.readline().rstrip('\n\r') # yellow curve : must be "new" curve
             l6 = wKS.readline().rstrip('\n\r') # cumulative yellow curve
-            #print(l6)
             I_Max = float(l1.split(',')[0])
-            #nbins = int(l1.split(',')[1])
-            #div_min = float(l2.split(',')[0])
-            #div_max = float(l2.split(',')[1])
+
             count = []
             division = []
             yellowCurve = []
@@ -461,7 +402,6 @@ class DecisionBox:
 
     def webPage(self, fHisto, Names, KS_V, DB_picture, webURL, shortWebFolder, dataSetFolder, KS_Path0, KS_Path, ycFlag, shortRelease):
         explanationName = "/DBox/explanation.html"
-        #short_histo_name = Names[0]
         gif_name = Names[1]
 
         short_histo_names = Names[2]
@@ -470,19 +410,16 @@ class DecisionBox:
         KS_Picture = []
         KS_fileExist = []
         KS_valid = False
+        png_Picture = False
+        png_fileExist = False
         png_valid = False
+        pngCum_Picture = False
+        pngCum_fileExist = False
         pngCum_valid = False
         for i in range(0,3):
             picture = 'KS-ttlDiff_' + str(i+1) + '_' + short_histo_names + '.png'
             KS_Picture.append(KS_Path + '-' + shortRelease + '/' + picture)
-            #print(picture)
-            #if path.exists((KS_Path0 + '/' + picture)):
-            #    print('%s OK' % (KS_Path0 + '/' + picture))
-            #else:
-            #    print('%s KO' % (KS_Path0 + '/' + picture))
             KS_fileExist.append(path.exists(KS_Path0 + '-' + shortRelease + '/' + picture))
-            #print(KS_Path + '-' + shortRelease + '/' + picture)
-            #print(KS_Path0 + '-' + shortRelease + '/' + picture)
             KS_valid = KS_valid or KS_fileExist[i]
         if ycFlag:
             png_Picture = png_name.split('.')[0] + str(0) + '.png'
