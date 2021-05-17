@@ -31,7 +31,7 @@ def RenderHisto(histo, self):
 
     if ("ELE_LOGY" in histo.GetOption() and histo.GetMaximum() > 0):
         self.cnv.SetLogy(1)
-    histo_name_flag = 1 ; # use 0 to switch off
+    histo_name_flag = 1 # use 0 to switch off
     if ( histo.InheritsFrom("TH2") ):
         gStyle.SetPalette(1)
         gStyle.SetOptStat(110+histo_name_flag)
@@ -86,13 +86,13 @@ def initRootStyle():
     gStyle.SetOptTitle(1)
     gStyle.SetPadRightMargin(0.2)
 
-def PictureChoice(histo1, histo2, scaled, err, filename, self, id, c_recomp):
+def PictureChoice(histo1, histo2, scaled, err, filename, self, id):
     if(histo1.InheritsFrom("TH1F")):
-        createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp)
+        createPicture2(histo1, histo2, scaled, err, filename, self, id)
     elif ( histo1.InheritsFrom("TProfile") ):
-        createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp)
+        createPicture2(histo1, histo2, scaled, err, filename, self, id)
     else:
-        createPicture(histo1, histo2, scaled, err, filename, self, id, c_recomp)
+        createPicture(histo1, histo2, scaled, err, filename, self, id)
         
 def PictureChoice2(args):
     # args = histo_1, histo_2, histo_positions[1], histo_positions[2], gif_name, args[0], args[8]
@@ -155,15 +155,13 @@ def PictureChoice_DB3(histo1, histo2, scaled, err, filename0, self, id, s0):
         i += 1
     return
 
-def createPicture(histo1, histo2, scaled, err, filename, self, id, c_recomp):
+def createPicture(histo1, histo2, scaled, err, filename, self, id):
     new_entries = histo1.GetEntries()
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
     print('createPicture')
-    color1 = ROOT.kRed #* (1 - c_recomp) + ROOT.kGreen-2 * c_recomp
-    if c_recomp:
-        color1 = ROOT.kGreen-2
-    
+    color1 = ROOT.kRed #
+
     histo2c = histo2.Clone()
     if (scaled and (new_entries != 0) and (ref_entries != 0)):
         rescale_factor = new_entries / ref_entries
@@ -221,14 +219,12 @@ def createPicture(histo1, histo2, scaled, err, filename, self, id, c_recomp):
 
     return
     
-def createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp):
+def createPicture2(histo1, histo2, scaled, err, filename, self, id):
     new_entries = histo1.GetEntries() # ttl # of bins (9000 in general)
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
-    color1 = ROOT.kRed #* (1 - c_recomp) + ROOT.kGreen-2 * c_recomp
-    if c_recomp:
-        color1 = ROOT.kGreen-2
-       
+    color1 = ROOT.kRed #
+
     histo2c = histo2.Clone()
     if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
         rescale_factor = new_entries / ref_entries
@@ -323,7 +319,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id, c_recomp):
     histo3.GetXaxis().SetTitleOffset(4.)
     histo3.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
     histo3.GetXaxis().SetLabelSize(15)
-   
+
     self.cnv.Draw()
     self.cnv.Update()
 
