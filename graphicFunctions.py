@@ -789,7 +789,7 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     for elem in cumulRef:
         refC.SetBinContent(i, elem)
         i += 1
-    i = 1
+    i = 0
     for elem in s0:
         yC.SetBinContent(i, elem)
         i += 1
