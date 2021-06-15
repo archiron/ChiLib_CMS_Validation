@@ -290,6 +290,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id):
     histo3.SetMaximum(2.)
     histo3.SetMinimum(0.)
     histo3.SetStats(0)
+    histo3.Sumw2() ########
     histo3.Divide(histo2)
     histo3.SetMarkerStyle(21)
     histo3.Draw("ep")
@@ -430,6 +431,7 @@ def createPicture3(histo1, histo2, scaled, err, filename, self, id, s0):
     histo3.SetLineColor(kBlack)
     histo3.SetMaximum(2.)
     histo3.SetStats(0)
+    histo3.Sumw2() ########
     histo3.Divide(histo2)
     histo3.SetMarkerStyle(21)
     histo3.Draw("ep")
@@ -581,7 +583,7 @@ def createCumulPicture2(histo1, histo2, filename, self, id, s0, k):
     #new_entries = histo1.GetEntries()
     #ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
-    #print('k=%d - len : s0=%d, new_entries=%d, ref_entries=%d' %(k, len(s0), (new_entries), (ref_entries))) # temp
+    #print('len : s0=%d, new_entries=%d, ref_entries=%d' %(len(s0), (new_entries), (ref_entries))) # temp
     
     sumNew = 0.
     sumRef = 0.
@@ -595,7 +597,7 @@ def createCumulPicture2(histo1, histo2, filename, self, id, s0, k):
         sumRef += entry
         cumulRef.append(sumRef)
     #print(sumNew, sumRef)
-    #print('k=%d - len : s0=%d, cumulNew=%d, cumulRef=%d' %(k, len(s0), len(cumulNew), len(cumulRef))) # temp
+    #print('len : s0=%d, cumulNew=%d, cumulRef=%d' %(len(s0), len(cumulNew), len(cumulRef))) # temp
     cumulNew = np.asarray(cumulNew) / sumNew
     cumulRef = np.asarray(cumulRef) / sumRef
     if ( k == 2 ):
@@ -719,7 +721,7 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     new_entries = histo1.GetEntries()
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
-    # print('k=%d - len : s0=%d, new_entries=%d, ref_entries=%d' %(k, len(s0), (new_entries), (ref_entries))) # temp
+    # print('len : s0=%d, new_entries=%d, ref_entries=%d' %(len(s0), (new_entries), (ref_entries))) # temp
 
     sumNew = 0.
     sumRef = 0.
@@ -743,9 +745,15 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     for elem in t_ref:
         sumRef += elem
         cumulRef.append(sumRef)
+    
+    # TEMPORARY test
+    if ( len(cumulNew) != len(cumulRef)):
+        print('pbm with array size [%d, %d]' % (len(cumulNew), len(cumulRef)))
+        return
+    
     #print('cumul rel : %f - sum rel : %f' % (sumNew, new_entries))
     #print('cumul ref : %f - sum ref : %f' % (sumRef, ref_entries))
-    # print('k=%d - len : s0=%d, cumulNew=%d, cumulRef=%d' %(k, len(s0), len(cumulNew), len(cumulRef))) # temp
+    #print('len : s0=%d, cumulNew=%d, cumulRef=%d' %(len(s0), len(cumulNew), len(cumulRef))) # temp
     cumulNew = np.asarray(cumulNew) / new_entries
     cumulRef = np.asarray(cumulRef) / ref_entries
     #print('len cumul new/ref : %d/%d - len s0 : %d' % (len(cumulNew), len(cumulRef), len(s0)))
