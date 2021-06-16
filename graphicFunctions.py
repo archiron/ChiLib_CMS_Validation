@@ -579,7 +579,7 @@ def createCumulPicture(histo1, histo2, filename, self, id, s0):
     
     return
         
-def createCumulPicture2(histo1, histo2, filename, self, id, s0, k):
+def createCumulPicture2(histo1, histo2, filename, self, id, s0):
     #new_entries = histo1.GetEntries()
     #ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
