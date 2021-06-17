@@ -789,18 +789,24 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     refC.SetLineColor(kBlue)
     yC.SetLineColor(kGreen - 2)
 
-    i = 0
+    newC.SetBinContent(0, elem)
+    i = 1
     for elem in cumulNew:
         newC.SetBinContent(i, elem)
         i += 1
-    i = 0
+    newC.SetBinContent(i, elem)
+    refC.SetBinContent(0, elem)
+    i = 1
     for elem in cumulRef:
         refC.SetBinContent(i, elem)
         i += 1
-    i = 0
+    refC.SetBinContent(i, elem)
+    yC.SetBinContent(0, elem)
+    i = 1
     for elem in s0:
         yC.SetBinContent(i, elem)
         i += 1
+    yC.SetBinContent(i, elem)
 
     newC.SetStats(1)
     newC.Draw(newDrawOptions)  # sames hist
@@ -835,9 +841,8 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     yC.Draw("sames hist")  #
 
     self.cnv.cd()
-    #pad2 = ROOT.TPad(str(id), "pad2", 0, 0.0, 1, 0.5)  # 0, 0.05, 1, 0.25
     pad2 = ROOT.TPad(str(id), "pad2", 0, 0.33, 1.0, 0.65)  #
-    #pad2.SetTopMargin(0.05)
+    # pad2.SetTopMargin(0.05)
     # pad2.SetBottomMargin(0.2)
     pad2.SetGridy()
     pad2.Draw()
@@ -845,22 +850,22 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
 
     diffC = ROOT.TH1F("diff. of curves", "diff. between new and ref. curves", nbX, xmin, xmax)
 
-    i = 0
+    diffC.SetBinContent(0, elem)
+    i = 1
+    vMax = 0.
     for elem in diff1:
         diffC.SetBinContent(i, elem)
         i += 1
-
+    diffC.SetBinContent(i, elem)
     diffC.SetMarkerStyle(3)
     diffC.SetMarkerColor(kBlue)
-    # diffC.SetLineColor(kGreen-2)
     diffC.Draw("lp")  #
 
-    #self.cnv.Draw()
     self.cnv.Update()
 
     self.cnv.cd()
     pad3 = ROOT.TPad(str(id), "pad3", 0, 0.0, 1.0, 0.33)  # 0, 0.05, 1, 0.25
-    #pad3.SetTopMargin(0.05)
+    # pad3.SetTopMargin(0.05)
     # pad3.SetBottomMargin(0.2)
     pad3.SetGridy()
     pad3.Draw()
@@ -868,14 +873,15 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
 
     diffD = ROOT.TH1F("diff. of cumul. curves", "new and average cumul. curves diff.", nbX, xmin, xmax)
 
-    i = 0
+    diffD.SetBinContent(0, elem)
+    i = 1
     for elem in diff2:
         diffD.SetBinContent(i, elem)
         i += 1
+    diffD.SetBinContent(i, elem)
 
     diffD.SetMarkerStyle(3)
     diffD.SetMarkerColor(kGreen)
-    # diffD.SetLineColor(kGreen-2)
     diffD.Draw("lp")  #
 
     self.cnv.Draw()
