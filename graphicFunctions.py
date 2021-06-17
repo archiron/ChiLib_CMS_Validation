@@ -837,7 +837,7 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     self.cnv.cd()
     #pad2 = ROOT.TPad(str(id), "pad2", 0, 0.0, 1, 0.5)  # 0, 0.05, 1, 0.25
     pad2 = ROOT.TPad(str(id), "pad2", 0, 0.33, 1.0, 0.65)  #
-    pad2.SetTopMargin(0.05)
+    #pad2.SetTopMargin(0.05)
     # pad2.SetBottomMargin(0.2)
     pad2.SetGridy()
     pad2.Draw()
@@ -860,7 +860,7 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
 
     self.cnv.cd()
     pad3 = ROOT.TPad(str(id), "pad3", 0, 0.0, 1.0, 0.33)  # 0, 0.05, 1, 0.25
-    pad3.SetTopMargin(0.05)
+    #pad3.SetTopMargin(0.05)
     # pad3.SetBottomMargin(0.2)
     pad3.SetGridy()
     pad3.Draw()
