@@ -192,7 +192,8 @@ class DecisionBox:
         I_Max = 1.
         fileName = KS_path_local + '-' + shortRel + '/histo_' + histoName + '_KScurve1.txt'
         fileExist = path.exists(fileName)
-        if ( fileExist ):
+        #if ( fileExist and (os.path.getsize(fileName) != 0)):
+        if ( fileExist):
             wKS = open(fileName, 'r')
             l1 = wKS.readline().rstrip('\n\r')
             l2 = wKS.readline().rstrip('\n\r')
@@ -200,6 +201,7 @@ class DecisionBox:
             l4 = wKS.readline().rstrip('\n\r')
             l5 = wKS.readline().rstrip('\n\r') # yellow curve
             l6 = wKS.readline().rstrip('\n\r') # cumulative yellow curve
+            #print(histoName, ' : ', l1, type(l1),' - ',l1.split(',')[0], type(l1.split(',')[0]))
             I_Max = float(l1.split(',')[0])
             count = []
             division = []
@@ -439,7 +441,7 @@ class DecisionBox:
         fHisto.write("<tr>\n")
         fHisto.write("<th scope=\"col\">Comparison with average curve</th>\n")
         fHisto.write("<th scope=\"col\">KS Values</th>\n")
-        fHisto.write("<th scope=\"col\">cumulatives & diffrences curves</th>\n")
+        fHisto.write("<th scope=\"col\">cumulatives & differences curves</th>\n")
         fHisto.write("</tr>\n")
         fHisto.write("<tr>")
         fHisto.write("<td>")
