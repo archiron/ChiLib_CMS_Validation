@@ -147,11 +147,19 @@ def PictureChoice_DB3(histo1, histo2, scaled, err, filename0, self, id, s0):
     # s0 : yellow cumulative curve tuple
     i = 0
     for elem in s0:
+        '''
         if(histo1.InheritsFrom("TH1F")):
             # create png files
             tmp = filename0.split('.')
             filename = tmp[0] + str(i) + '.png'
             createCumulPicture3(histo1, histo2, filename, self, id, elem)
+        else:
+            print('no inherence')
+        '''
+        # create png files
+        tmp = filename0.split('.')
+        filename = tmp[0] + str(i) + '.png'
+        createCumulPicture3(histo1, histo2, filename, self, id, elem)
         i += 1
     return
 
