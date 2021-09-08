@@ -5,12 +5,30 @@ import os,sys
 import re
 from authentication import *
 
-import urllib2
+if sys.version_info >= (3, 0):
+    sys.stdout.write("Python 3.x\n")
+else:
+    sys.stdout.write("Python 2.x\n")
+
+try:
+  from httplib import HTTPSConnection
+except ImportError:
+  from http.client import HTTPSConnection
+
+try:
+    import urllib2
+    from urllib2  import AbstractHTTPHandler
+    from urllib2 import build_opener, Request
+except ImportError:
+    import urllib
+    from urllib.request  import AbstractHTTPHandler
+    from urllib.request import build_opener
+    from urllib.request import Request
 
 def auth_wget2(url, chunk_size=2097152):
     from os.path import basename, isfile
     from optparse import OptionParser
-    from urllib2 import build_opener, Request
+    #from urllib2 import build_opener, Request
     """Returns the content of specified URL, which requires authentication.
     If the content is bigger than 1MB, then save it to file.
     """
@@ -38,7 +56,7 @@ def auth_wget2(url, chunk_size=2097152):
     file.close()
 
 def cmd_fetch_0(option_is_from_data, option_regexp, option_mthreads, option_dry_run):
-    from urllib2 import build_opener, Request
+    #from urllib2 import build_opener, Request
 
     ## Define options
    # option_is_from_data = "mc"
@@ -103,7 +121,7 @@ def cmd_fetch_0(option_is_from_data, option_regexp, option_mthreads, option_dry_
     return
 
 def cmd_fetch_1(option_is_from_data, option_release, option_regexp, option_dry_run):
-    from urllib2 import build_opener, Request
+    #from urllib2 import build_opener, Request
 
     ## Define options
    # option_is_from_data = "mc"
@@ -179,7 +197,7 @@ def cmd_fetch_2(option_mthreads, filedir_url, selectedFilesList):
     from Queue import Empty
     from os.path import basename, isfile
     from optparse import OptionParser
-    from urllib2 import build_opener, Request
+    #from urllib2 import build_opener, Request
 
     try:
         from Utilities.RelMon.authentication import X509CertOpen
@@ -219,7 +237,7 @@ def list_search_0():
     return temp_0
 
 def list_search_1(my_choice_0):
-    from networkFunctions import cmd_fetch_1
+    from networkFunctionsDev import cmd_fetch_1
 
     # on fera la fonction par un appel a cmd_fetchall(options)
     # ou options regroupera option_is_from_data, option_release, option_regexp, option_mthreads, option_dry_run
@@ -243,7 +261,7 @@ def list_search_1(my_choice_0):
     return temp_1
 
 def cmd_load_files(files_array, folder):
-    from networkFunctions import cmd_fetch_2
+    from networkFunctionsDev import cmd_fetch_2
 
     ## Define options
     option_mthreads = 1 # 2
