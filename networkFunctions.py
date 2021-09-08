@@ -26,7 +26,7 @@ def auth_wget2(url, chunk_size=2097152):
     filename = basename(url)
 
     if isfile("./%s" % filename):
-        print '%s. Exists on disk. Skipping.' % (filename)
+        print('%s. Exists on disk. Skipping.' % (filename))
         return
     #print('file not exist')
     file = open(filename, 'wb')
