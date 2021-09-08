@@ -237,7 +237,7 @@ def list_search_0():
     return temp_0
 
 def list_search_1(my_choice_0):
-    from networkFunctionsDev import cmd_fetch_1
+    from networkFunctions import cmd_fetch_1
 
     # on fera la fonction par un appel a cmd_fetchall(options)
     # ou options regroupera option_is_from_data, option_release, option_regexp, option_mthreads, option_dry_run
@@ -261,7 +261,7 @@ def list_search_1(my_choice_0):
     return temp_1
 
 def cmd_load_files(files_array, folder):
-    from networkFunctionsDev import cmd_fetch_2
+    from networkFunctions import cmd_fetch_2
 
     ## Define options
     option_mthreads = 1 # 2
