@@ -2,7 +2,27 @@
 #-*-coding: utf-8 -*-
 
 import os,sys
-import urllib2
+
+if sys.version_info >= (3, 0):
+    sys.stdout.write("Python 3.x\n")
+else:
+    sys.stdout.write("Python 2.x\n")
+
+try:
+  from httplib import HTTPSConnection
+except ImportError:
+  from http.client import HTTPSConnection
+
+try:
+    import urllib2
+    from urllib2  import AbstractHTTPHandler
+    from urllib2 import build_opener, Request
+except ImportError:
+    import urllib
+    from urllib.request  import AbstractHTTPHandler
+    from urllib.request import build_opener
+    from urllib.request import Request
+
 import numpy as np
 
 import os.path

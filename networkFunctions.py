@@ -193,10 +193,10 @@ def cmd_fetch_2(option_mthreads, filedir_url, selectedFilesList):
     import sys
     import os
 
-    from multiprocessing import Pool, Queue, Process
-    from Queue import Empty
-    from os.path import basename, isfile
-    from optparse import OptionParser
+    from multiprocessing import Pool, Process # , Queue
+    #from Queue import Empty
+    #from os.path import basename, isfile
+    #from optparse import OptionParser
     #from urllib2 import build_opener, Request
 
     try:
