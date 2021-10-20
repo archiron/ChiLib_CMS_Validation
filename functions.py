@@ -536,7 +536,7 @@ def createWebPage(arg):
     # ecriture des histos
     for i in range(0, len(titlesList)):
         extWrite( "\n<tr valign=\"top\">" , wp_Files)
-        extWrite( "\n<td><a href=\"#TOP\"><img width=\"18\" height=\"18\" border=\"0\" align=\"middle\" src=" + env_default().imageUp() + " alt=\"Top\"/></a></td>\n" , wp_Files)
+        extWrite( "\n<td><a href=\"#\"><img width=\"18\" height=\"18\" border=\"0\" align=\"middle\" src=" + env_default().imageUp() + " alt=\"Top\"/></a></td>\n" , wp_Files)
         titles = titlesList[i].split()
         if len(titles) > 1 :
             titleShortName = titles[0] + "_" + titles[1]
@@ -608,7 +608,7 @@ def createWebPage(arg):
 
                 #stop
                 if ( lineFlag ):
-                    extWrite( "\n<td><a href=\"#TOP\"><img width=\"18\" height=\"18\" border=\"0\" align=\"middle\" src=" + env_default().imageUp() + " alt=\"Top\"/></a></td>\n" , wp_Files)
+                    extWrite( "\n<td><a href=\"#\"><img width=\"18\" height=\"18\" border=\"0\" align=\"middle\" src=" + env_default().imageUp() + " alt=\"Top\"/></a></td>\n" , wp_Files)
                 if (  histo_positions[3] == "0" ):
                     extWrite( "<td>" , wp_Files)
                     extWrite( "<a id=\"" + short_histo_name + "\" name=\"" + short_histo_name + "\"" , wp_Files)

@@ -5,6 +5,7 @@ import os,sys,subprocess
 #import urllib2
 import re
 import numpy as np
+import math
 
 from sys import argv
 argv.append( '-b-' )
@@ -277,6 +278,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id):
     y2 = statBox1.GetY2NDC()
     statBox2.SetY1NDC(2*y1-y2)
     statBox2.SetY2NDC(y1)
+
     newDrawOptions = "sames "
     if err == "1":
         newDrawOptions += "E1 P"
@@ -898,3 +900,33 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     self.cnv.SaveAs(filename)
 
     return
+
+def getCurveTailPos(self, histo1, histo2):
+    t_histo1 = []
+    t_histo2 = []
+    for entry in histo1:
+        t_histo1.append(entry)
+    t_histo1 = t_histo1[1:-1]
+    for entry in histo2:
+        t_histo2.append(entry)
+    t_histo2 = t_histo2[1:-1]
+
+    ymin = min(t_histo1)
+    ymax = max(t_histo1)
+    if min(t_histo2) < ymin:
+        ymin = min(t_histo2)
+    if max(t_histo2) > ymax:
+        ymax = max(t_histo2)
+
+    pos = 0.
+    N = len(t_histo1)
+    nPos = int(N / 5)
+    print('nPos : %d / nLen : %d' % (nPos, N))
+    for i in range(N-nPos, N):
+        pos += t_histo1[i]
+    pos /= nPos
+    print('mean position : %f' % pos)
+    print('min - max : %f - %f' % (ymin, ymax))
+    relativePos = (pos - ymin) / (ymax - ymin)
+    print('relative position : %f' % relativePos)
+    return relativePos
