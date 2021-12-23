@@ -28,7 +28,16 @@ import numpy as np
 import os.path
 from os import path
 
-from functions import extWrite
+from functions import Tools #.extWrite
+
+################################################################################
+# GevSeqDev: a tool to generate Release Comparison                              
+#
+#
+#                                                                              
+# Arnaud Chiron-Turlay LLR - arnaud.chiron@llr.in2p3.fr                        
+#                                                                              
+################################################################################
 
 class DecisionBox:
     def __init__(self):
@@ -422,7 +431,8 @@ class DecisionBox:
         fExplain.close()
         return
 
-    def webPage(self, fHisto, Names, KS_V, DB_picture, webURL, shortWebFolder, dataSetFolder, KS_Path0, KS_Path, ycFlag, shortRelease):
+    def DBwebPage(self, fHisto, Names, KS_V, DB_picture, webURL, shortWebFolder, dataSetFolder, KS_Path0, KS_Path, ycFlag, shortRelease):
+        tool = Tools()
         explanationName = "/DBox/explanation.html"
         gif_name = Names[1]
 
@@ -497,7 +507,7 @@ class DecisionBox:
 
         fHisto.write( "<td>")
         if (pngCum_valid and pngCum_fileExist):
-            extWrite( "<div><a href=\"" + pngCum_Picture + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + pngCum_Picture + "\"></a></div>", [fHisto] )
+            tool.extWrite( "<div><a href=\"" + pngCum_Picture + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + pngCum_Picture + "\"></a></div>", [fHisto] )
         fHisto.write( "</td>\n")
         fHisto.write("</tr>")
 
@@ -515,21 +525,21 @@ class DecisionBox:
         fHisto.write( "<th scope=\"row\">p-Value 1 : %6.4f</th>\n" % pv1)
         fHisto.write( "<td>")
         if (KS_valid and KS_fileExist[0]):
-            extWrite( "<div><a href=\"" + KS_Picture[0] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[0] + "\"></a></div>", [fHisto] )
+            tool.extWrite( "<div><a href=\"" + KS_Picture[0] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[0] + "\"></a></div>", [fHisto] )
         fHisto.write( "</td>\n")
         fHisto.write("</tr>\n")#
         fHisto.write("<tr>\n")
         fHisto.write( "<th scope=\"row\">p-Value 2 : %6.4f</th>\n" % pv2)
         fHisto.write( "<td>")
         if (KS_valid and KS_fileExist[1]):
-            extWrite( "<div><a href=\"" + KS_Picture[1] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[1] + "\"></a></div>", [fHisto] )
+            tool.extWrite( "<div><a href=\"" + KS_Picture[1] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[1] + "\"></a></div>", [fHisto] )
         fHisto.write( "</td>\n")
         fHisto.write("</tr>\n")#
         fHisto.write("<tr>\n")
         fHisto.write( "<th scope=\"row\">p-Value 3 : %6.4f</th>\n" % pv3)
         fHisto.write( "<td>")
         if (KS_valid and KS_fileExist[2]):
-            extWrite( "<div><a href=\"" + KS_Picture[2] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[2] + "\"></a></div>", [fHisto] )
+            tool.extWrite( "<div><a href=\"" + KS_Picture[2] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[2] + "\"></a></div>", [fHisto] )
         fHisto.write( "</td>\n")
         fHisto.write("</tr>\n")#
         return

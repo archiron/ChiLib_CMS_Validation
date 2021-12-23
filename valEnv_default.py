@@ -1,6 +1,15 @@
 #! /usr/bin/env python
 #-*-coding: utf-8 -*-
 
+################################################################################
+# GevSeqDev: a tool to generate Release Comparison                              
+#
+#
+#                                                                              
+# Arnaud Chiron-Turlay LLR - arnaud.chiron@llr.in2p3.fr                        
+#                                                                              
+################################################################################
+
 import os,sys
 from default import *
 

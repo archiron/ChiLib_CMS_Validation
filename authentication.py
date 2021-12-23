@@ -9,6 +9,7 @@ from __future__ import print_function
 #
 #                                                                              
 # Danilo Piparo CERN - danilo.piparo@cern.ch                                   
+# update : Arnaud ChironLLR - arnaud.chiron@llr.in2p3.fr                       
 #                                                                              
 ################################################################################
 
@@ -20,7 +21,7 @@ try:
   from httplib import HTTPSConnection
 except ImportError:
   from http.client import HTTPSConnection
-''''''
+
 #from urllib2  import AbstractHTTPHandler
 try:
     import urllib2
@@ -28,7 +29,6 @@ try:
 except ImportError:
     import urllib
     from urllib.request  import AbstractHTTPHandler
-''''''
 
 #-------------------------------------------------------------------------------  
 
