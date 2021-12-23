@@ -1,15 +1,27 @@
 #! /usr/bin/env python
 #-*-coding: utf-8 -*-
 
-import os,sys
-import urllib2
+################################################################################
+# GevSeqDev: a tool to generate Release Comparison                              
+#
+#
+#                                                                              
+# Arnaud Chiron-Turlay LLR - arnaud.chiron@llr.in2p3.fr                        
+#                                                                              
+################################################################################
+
+import os #,sys
+#import urllib2
 
 class cms_env:
     def __init__(self): 
         # os.getenv is equivalent, and can also give a default value instead of `None`
-        self.CMSSWBASE = os.getenv('CMSSW_BASE', "CMSSW_BASE")
-        self.CMSSWBASECMSSWRELEASEBASE = os.getenv('CMSSW_RELEASE_BASE', "CMSSW_RELEASE_BASE")
-        self.CMSSWBASECMSSWVERSION = os.getenv('CMSSW_VERSION', "CMSSW_VERSION")
+        #self.CMSSWBASE = os.getenv('CMSSW_BASE', "CMSSW_BASE")
+        #self.CMSSWBASECMSSWRELEASEBASE = os.getenv('CMSSW_RELEASE_BASE', "CMSSW_RELEASE_BASE")
+        #self.CMSSWBASECMSSWVERSION = os.getenv('CMSSW_VERSION', "CMSSW_VERSION")
+        self.CMSSWBASE = os.getenv("CMSSW_BASE")
+        self.CMSSWBASECMSSWRELEASEBASE = os.getenv("CMSSW_RELEASE_BASE")
+        self.CMSSWBASECMSSWVERSION = os.getenv("CMSSW_VERSION")
 
     def getCMSSWBASE(self):
         CMSSWBASE = os.getenv('CMSSW_BASE', "CMSSW_BASE")

@@ -1,11 +1,19 @@
 #! /usr/bin/env python
 #-*-coding: utf-8 -*-
 
+################################################################################
+# GevSeqDev: a tool to generate Release Comparison                              
+#
+#
+#                                                                              
+# Arnaud Chiron-Turlay LLR - arnaud.chiron@llr.in2p3.fr                        
+#                                                                              
+################################################################################
+
 import os,sys,subprocess
-#import urllib2
 import re
 import numpy as np
-import math
+#import math
 
 from sys import argv
 argv.append( '-b-' )
@@ -16,7 +24,7 @@ ROOT.gErrorIgnoreLevel = ROOT.kFatal
 argv.remove( '-b-' )
 
 from ROOT import * 
-from math import log10
+#from math import log10
 
 def getHisto(file, tp):
     #t1 = file.Get("DQMData")
@@ -233,6 +241,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id):
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
     color1 = ROOT.kRed #
+    print(filename)
 
     histo2c = histo2.Clone()
     if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
@@ -261,7 +270,11 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id):
     histo1.Draw(newDrawOptions) # 
     RenderHisto(histo1, self)
     if ("ELE_LOGY" in histo1.GetOption() and histo1.GetMaximum() > 0):
-        pad1.SetLogy(1)
+        if (re.search('etaEff_all', filename) or re.search('ptEff_all', filename)):
+            print('accord')
+            pad1.SetLogy(0)
+        else:
+            pad1.SetLogy(1)
     gPad.Update()
     statBox1 = histo1.GetListOfFunctions().FindObject("stats")
     statBox1.SetTextColor(color1)    
@@ -270,7 +283,11 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id):
     histo2c.SetStats(1)
     RenderHisto(histo2c, self)
     if ("ELE_LOGY" in histo2c.GetOption() and histo2c.GetMaximum() > 0):
-        pad1.SetLogy(1)
+        if (re.search('etaEff_all', filename) or re.search('ptEff_all', filename)):
+            print('accord')
+            pad1.SetLogy(0)
+        else:
+            pad1.SetLogy(1)
     self.cnv.Update()
     statBox2 = histo2c.GetListOfFunctions().FindObject("stats")
     statBox2.SetTextColor(kBlue)
@@ -338,8 +355,8 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id):
     
     return
         
-# same as createPicture2 but with yellowCurve
 def createPicture3(histo1, histo2, scaled, err, filename, self, id, s0):
+    # same as createPicture2 but with yellowCurve
     new_entries = histo1.GetEntries()
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
