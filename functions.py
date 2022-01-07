@@ -225,3 +225,312 @@ class Tools:
                 tp_ref = tp_rel
         return [t_rel, t_ref, tp_rel, tp_ref]
 
+    def createDefinitionsFile(self, datas):
+        '''
+        gedGsfElectrons ZEE_14
+        RECO
+        12_0_0_pre6
+        DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre6-120X_mcRun3_2021_realistic_v4-v1__DQMIO.root
+        RECO
+        12_0_0_pre4
+        DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre4-120X_mcRun3_2021_realistic_v2-v1__DQMIO.root
+        CMSSW_12_0_0_pre6
+        CMSSW_12_0_0_pre4
+        https://hypernews.cern.ch/HyperNews/CMS/get/relval/16218.html
+        config_target.txt
+        '''
+        wp_defs = open('definitions.txt', 'w') # definitions for PHP page
+        print('\n\t ==== definitions.txt ====\n')
+        for elem in datas:
+            print(elem)
+            wp_defs.write(elem + "\n")
+        print('\n\t ==== definitions.txt ====\n')
+        wp_defs.close()
+        return
+
+    def createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()
+        print('Start creating web pages')
+        print(input_rel_file)
+        print(input_ref_file)
+        f_rel = ROOT.TFile(input_rel_file)
+        h1 = getHisto(f_rel, path_1)
+        h1.ls()
+    
+        f_ref = ROOT.TFile(input_ref_file)
+        h2 = getHisto(f_ref, path_2)
+        h2.ls()
+    
+        CMP_CONFIG = '../HGCTPGValidation/data/HGCALTriggerPrimitivesHistos.txt'
+        CMP_TITLE = ' HGCAL Trigger Primitives Validation '
+        CMP_RED_FILE = input_rel_file
+        CMP_BLUE_FILE = input_ref_file
+        CMP_INDEX_FILE_DIR = webdir + '/index.html'
+    
+        MEM_REP_REF = './MemoryReport_ref.log'
+        MEM_REP_TEST = './MemoryReport_test.log'
+    
+        shutil.copy2('../HGCTPGValidation/data/img/up.gif', webdir+ '/img')
+        shutil.copy2('../HGCTPGValidation/data/img/point.gif', webdir+ '/img')
+        image_up = './img/up.gif'
+        image_point = './img/point.gif'
+        f = open(CMP_CONFIG, 'r')
+        fmemref = open(MEM_REP_REF, 'r')
+        fmemtest = open(MEM_REP_TEST, 'r')
+    
+        wp = open(CMP_INDEX_FILE_DIR, 'w') # web page
+        wp.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n")
+        wp.write("<html>\n")
+        wp.write("<head>\n")
+        wp.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" />\n")
+        wp.write("<title> " + CMP_TITLE + " </title>\n") #option -t dans OvalFile
+        wp.write("</head>\n")
+        wp.write("<a NAME=\"TOP\"></a>")
+        wp.write("<h1><a href=\"../\"><img border=0 width=\"22\" height=\"22\" src=\"img/up.gif\" alt=\"Up\"/></a>&nbsp; " + CMP_TITLE + " </h1>\n" ) # option -t dans OvalFile
+        
+        # here you can add some text such as GlobalTag for release & reference.
+        wp.write("<br>\n")
+    
+        if (f_ref == 0):
+            wp.write("<p>In all plots below, there was no reference histograms to compare with")
+            wp.write(", and the " + CMP_RED_FILE + " histograms are in red.") # new release red in OvalFile
+        else:
+            wp.write("<p>In all plots below")
+            wp.write(", the <b><font color='red'> " + CMP_RED_FILE + " </font></b> histograms are in red") # new release red in OvalFile
+            wp.write(", and the <b><font color='blue'> " + CMP_BLUE_FILE + " </font></b> histograms are in blue.") # ref release blue in OvalFile
+        wp.write(" Some more details") # 
+        wp.write(", <a href=\"" + CMP_CONFIG + "\">specification</a> of histograms") # histos list .txt file
+        wp.write(", <a href=\"gifs/\">images</a> of histograms" + "." )
+        wp.write("</p>\n")
+
+        # filling the title array & dict
+        histoArray_0 = {}
+        titlesList = [] # need with python < 3.7. dict does not keep the correct order of the datasets histograms
+        key = ""
+        tmp = []
+        for line in f:
+            print('line = ', line)
+            if ( len(line) == 1 ): # len == 0, empty line
+                if ( ( len(key) != 0 ) and ( len(tmp) != 0) ): 
+                    histoArray_0[key] = tmp
+                    key = ""
+                    tmp = []
+            else: # len <> 0
+                if ( len(key) == 0 ):
+                    key = line # get title
+                    titlesList.append(line)
+                else:
+                    tmp.append(line) # histo name
+        # end of filling the title array & dict
+        f.close()
+        wp.write( "<table border=\"1\" cellpadding=\"5\" width=\"100%\">" )
+    
+        for i in range(0, len(titlesList)):
+            if ( i % 5  == 0 ):
+                wp.write( "\n<tr valign=\"top\">" )
+            textToWrite = ""
+            wp.write( "\n<td width=\"10\">\n<b> " + titlesList[i] + "</b>" )
+            titles = titlesList[i].split()
+            if len(titles) > 1 :
+                titleShortName = titles[0] + "_" + titles[1]
+            else:
+                titleShortName = titles[0]
+            wp.write( "&nbsp;&nbsp;" + "<a href=\"#" + titleShortName + "\">" ) # write group title
+            wp.write( "<img width=\"18\" height=\"15\" border=\"0\" align=\"center\" src=" + image_point + " alt=\"Top\"/>" + "<br><br>" )
+            textToWrite += "</a>"
+            histoPrevious = ""
+            numLine = 0
+            
+            for elem in histoArray_0[titlesList[i]]:
+                otherTextToWrite = ""
+                histo_names = elem.split("/")
+                histoShortNames = histo_names[0]
+                short_histo_names = histoShortNames.split(" ")
+                histo_name = short_histo_names[0].strip().replace('\n', ' ').replace('\r', '')
+                print('!!!!! histo_name = ',histo_name)
+                short_histo_name = histo_name.replace("h_", "")
+                if "ele_" in short_histo_name:
+                    short_histo_name = short_histo_name.replace("ele_", "")
+                if "scl_" in short_histo_name:
+                    short_histo_name = short_histo_name.replace("scl_", "")
+                if "bcl_" in short_histo_name:
+                    short_histo_name = short_histo_name.replace("bcl_", "")
+                   
+                otherTextToWrite += "<a href=\"#" + short_histo_name + "\"><font color=\'blue\'>" + short_histo_name + "</font></a>" + "&nbsp;\n"
+                    
+                otherTextToWrite += "<br>"
+                otherTextToWrite = otherTextToWrite.replace("<br><br>", "<br>")
+
+                textToWrite += otherTextToWrite
+            textReplace = True
+            while textReplace :
+                textToWrite = textToWrite.replace("<br><br>", "<br>")
+                if ( textToWrite.count('<br><br>') >= 1 ):
+                    textReplace = True
+                else:
+                    textReplace = False
+            if ( textToWrite.count("</a><br><a") >= 1 ):
+                    textToWrite = textToWrite.replace("</a><br><a", "</a><a")
+            wp.write( textToWrite )
+                    
+            wp.write( "</td>" )
+            if ( i % 5 == 4 ):
+                wp.write( "</tr>" )
+      
+        wp.write( "</table>\n" )
+        wp.write( "<br>" )
+        
+        wp.write( "<table border=\"0\" cellpadding=\"5\" width=\"100%\">" )
+        for i in range(0, len(titlesList)):
+            wp.write( "\n<tr valign=\"top\">" )
+            wp.write( "\n<td><a href=\"#TOP\"><img width=\"18\" height=\"18\" border=\"0\" align=\"middle\" src=" + image_up + " alt=\"Top\"/></a></td>\n" )
+            titles = titlesList[i].split()
+            if len(titles) > 1 :
+                titleShortName = titles[0] + "_" + titles[1]
+            else:
+                titleShortName = titles[0]
+            wp.write( "\n<td>\n<b> " )
+            wp.write( "<a id=\"" + titleShortName + "\" name=\"" + titleShortName + "\"></a>" )
+            wp.write( titlesList[i] + "</b></td>" )
+            wp.write( "</tr><tr valign=\"top\">" )
+            for elem in histoArray_0[titlesList[i]]:
+                if ( elem != "endLine" ):
+                    histo_names = elem.split("/")
+                    histoShortNames = histo_names[0]
+                    short_histo_names = histoShortNames.split(" ")
+                    histo_name = short_histo_names[0].strip().replace('\n', ' ').replace('\r', '')
+                    short_histo_name = histo_name.replace("h_", "")
+                    if "ele_" in short_histo_name:
+                        short_histo_name = short_histo_name.replace("ele_", "")
+                    if "scl_" in short_histo_name:
+                        short_histo_name = short_histo_name.replace("scl_", "")
+                    if "bcl_" in short_histo_name:
+                        short_histo_name = short_histo_name.replace("bcl_", "")
+                
+                    histo_2 = h2.Get(histo_name)
+                    histo_1 = h1.Get(histo_name)
+                    gif_name = webdir + '/' + histo_name + ".gif"
+                    gif_name_index = histo_name + ".gif"
+                    createPicture2(histo_1, histo_2, "1", "1", gif_name, cnv, "lin")
+                    # Make histo in log
+                    #if (histo_1.GetMaximum() > 0 and histo_1.GetMinimum() >= 0):
+                    #    gif_name_log = webdir + '/' + histo_name + "_log.gif"
+                    #    gif_name_log_index = histo_name + "_log.gif"
+                    #    createPicture2(histo_1, histo_2, "1", "1", gif_name_log, cnv, "log")
+
+                    wp.write( "\n<td><a href=\"#TOP\"><img width=\"18\" height=\"18\" border=\"0\" align=\"middle\" src=" + image_up + " alt=\"Top\"/></a></td>\n" )
+                    wp.write( "<td>" )
+                    wp.write( "<a id=\"" + short_histo_name + "\" name=\"" + short_histo_name + "\"></a>" )
+                    wp.write( "<a href=\"" + gif_name_index + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + gif_name_index + "\"></a>" )
+                    # For histo in log
+                    #if (histo_1.GetMaximum() > 0 and histo_1.GetMinimum() >= 0):
+                    #    wp.write( "</td><td><a href=\"" + gif_name_log_index + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + gif_name_log_index + "\"></a>" )
+                    wp.write( "</td></tr><tr valign=\"top\">" )
+    
+        wp.write( "<h2>" + "Memory Report" + "</h2>\n" )
+        with open(MEM_REP_REF) as file:
+            for line in file.readlines():
+                wp.write(line)
+ 
+        with open(MEM_REP_TEST) as file:
+            for line in file.readlines():
+                wp.write("<p>Datatest => " + line)
+
+        wp.write( "</tr></table>\n" )
+        wp.close()
+        
+        return
+    
+    def createWebPageLite2(input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()/GevSeq()
+        print('Start creating web pages')
+        print(input_rel_file)
+        print(input_ref_file)
+        f_rel = ROOT.TFile(input_rel_file)
+        h1 = getHisto(f_rel, path_1)
+        h1.ls()
+    
+        f_ref = ROOT.TFile(input_ref_file)
+        h2 = getHisto(f_ref, path_2)
+        h2.ls()
+    
+        CMP_CONFIG = '../HGCTPGValidation/data/HGCALTriggerPrimitivesHistos.txt'
+        CMP_TITLE = ' HGCAL Trigger Primitives Validation '
+        CMP_RED_FILE = input_rel_file
+        CMP_BLUE_FILE = input_ref_file
+    
+        shutil.copy2('../HGCTPGValidation/data/img/up.gif', webdir+ '/img')
+        shutil.copy2('../HGCTPGValidation/data/img/point.gif', webdir+ '/img')
+    
+        # RELEASE/REFERENCE : CMSSW_12_1_0_pre3
+        # ShortRelease/shortReference : 12_1_0_pre3
+        datas = []
+        datas.append(CMP_TITLE) # LINE 7
+        datas.append('RECO')
+        datas.append(shortRelease)
+        datas.append(CMP_RED_FILE) # LINE 8
+        datas.append('RECO')
+        datas.append(shortReference)
+        datas.append(CMP_BLUE_FILE) # LINE 9
+        if (f_ref == 0):
+            datas.append(release)
+            datas.append(release)
+        else:
+            datas.append(release)
+            datas.append(reference)
+        if (Validation_reference != ""):
+            datas.append(Validation_reference) # wiki page which reference the comparison. Can be null ('none').
+        else:
+            datas.append('none')
+        datas.append(CMP_CONFIG)
+        tl.createDefinitionsFile(datas)
+       
+        # filling the title array & dict
+        histoArray_0 = {}
+        titlesList = [] # need with python < 3.7. dict does not keep the correct order of the datasets histograms
+        key = ""
+        tmp = []
+        for line in f:
+            print('line = ', line)
+            if ( len(line) == 1 ): # len == 0, empty line
+                if ( ( len(key) != 0 ) and ( len(tmp) != 0) ): 
+                    histoArray_0[key] = tmp
+                    key = ""
+                    tmp = []
+            else: # len <> 0
+                if ( len(key) == 0 ):
+                    key = line # get title
+                    titlesList.append(line)
+                else:
+                    tmp.append(line) # histo name
+        # end of filling the title array & dict
+        f.close()
+        
+        wp.write( "<table border=\"0\" cellpadding=\"5\" width=\"100%\">" )
+        for i in range(0, len(titlesList)):
+            for elem in histoArray_0[titlesList[i]]:
+                if ( elem != "endLine" ):
+                    short_histo_name, short_histo_names, histo_positions = tl.shortHistoName(elem)
+                    histo_name = short_histo_names[0].strip().replace('\n', ' ').replace('\r', '')
+                    histo_2 = h2.Get(histo_name)
+                    histo_1 = h1.Get(histo_name)
+                    gif_name = webdir + '/' + histo_name + ".gif"
+                    createPicture2(histo_1, histo_2, "1", "1", gif_name, cnv, "lin")
+                    # Make histo in log
+                    #if (histo_1.GetMaximum() > 0 and histo_1.GetMinimum() >= 0):
+                    #    gif_name_log = webdir + '/' + histo_name + "_log.gif"
+                    #    gif_name_log_index = histo_name + "_log.gif"
+                    #    createPicture2(histo_1, histo_2, "1", "1", gif_name_log, cnv, "log")
+
+    
+        ## the following lines will be automaticly integrated in to the genericIndex.php file.
+        #wp.write( "<h2>" + "Memory Report" + "</h2>\n" )
+        #with open(MEM_REP_REF) as file:
+        #    for line in file.readlines():
+        #        wp.write(line)
+ 
+        #with open(MEM_REP_TEST) as file:
+        #    for line in file.readlines():
+        #        wp.write("<p>Datatest => " + line)
+
+        
+        return
+    

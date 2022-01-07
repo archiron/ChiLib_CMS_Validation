@@ -24,7 +24,6 @@ ROOT.gErrorIgnoreLevel = ROOT.kFatal
 argv.remove( '-b-' )
 
 from ROOT import * 
-#from math import log10
 
 def getHisto(file, tp):
     #t1 = file.Get("DQMData")
@@ -334,6 +333,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id):
     histo2c.SetLineWidth(3)
     
     histo3.SetTitle("")
+    # Y axis ratio plot settings
     histo3.GetYaxis().SetTitle("ratio h1/h2 ")
     histo3.GetYaxis().SetNdivisions(505)
     histo3.GetYaxis().SetTitleSize(20)
@@ -475,6 +475,7 @@ def createPicture3(histo1, histo2, scaled, err, filename, self, id, s0):
     histo2c.SetLineWidth(3)
     
     histo3.SetTitle("")
+    # Y axis ratio plot settings
     histo3.GetYaxis().SetTitle("ratio h1/h2 ")
     histo3.GetYaxis().SetNdivisions(505)
     histo3.GetYaxis().SetTitleSize(20)
