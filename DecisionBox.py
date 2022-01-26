@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 #-*-coding: utf-8 -*-
 
-import os,sys
+import sys
 
 if sys.version_info >= (3, 0):
     sys.stdout.write("Python 3.x\n")
@@ -13,19 +13,8 @@ try:
 except ImportError:
   from http.client import HTTPSConnection
 
-try:
-    import urllib2
-    from urllib2  import AbstractHTTPHandler
-    from urllib2 import build_opener, Request
-except ImportError:
-    import urllib
-    from urllib.request  import AbstractHTTPHandler
-    from urllib.request import build_opener
-    from urllib.request import Request
-
 import numpy as np
 
-import os.path
 from os import path
 
 from functions import Tools #.extWrite
@@ -164,6 +153,19 @@ class DecisionBox:
         e0 = e0[1:-1]
         return s0, e0
 
+    # create a Kolmogorov-Smirnov curve (integrated curve) with s0
+    def funcKS(self, s0):
+        s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
+        N = len(s0)
+        SumSeries0 = np.floor(s0.sum())
+        v0 = 0.
+        sDKS = []
+        for i in range(0, N):
+            t0 = s0[i]/SumSeries0
+            v0 += t0
+            sDKS.append(np.abs(v0))
+        return sDKS
+
     def diffMAXKS(self, s0,s1, sum0, sum1):
         s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
         s1 = np.asarray(s1)
@@ -181,6 +183,23 @@ class DecisionBox:
         ind = sDKS.index(v)
         return v, ind
 
+    def diffMAXKS2(self, s0,s1, sum0, sum1):
+        s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
+        s1 = np.asarray(s1)
+        N = len(s0)
+        v0 = 0.
+        v1 = 0.
+        sDKS = []
+        for i in range(0, N):
+            t0 = s0[i]/sum0
+            t1 = s1[i]/sum1
+            v0 += t0
+            v1 += t1
+            sDKS.append(np.abs(v1 - v0))
+        v = max(sDKS)
+        ind = sDKS.index(v)
+        return v, ind, sDKS 
+
     def integralpValue(self, abscisses, ordonnees, x):
         v = 0.0
         N = len(abscisses)
@@ -196,21 +215,20 @@ class DecisionBox:
                 if (np.floor(x/abscisses[i]) == 0):
                     ind = i
                     break
-            #print('ind : %d' % ind)
             v = (abscisses[ind] - x) * ordonnees[ind-1]
             for i in range(ind, N-1):
                 v += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
         return v
 
     # major function to be called (ref is GevSeq.py)
-    def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel):
+    def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel, shortRef):
         s0, e0 = self.getHistoValues(h1)
         s1, e1 = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
         ref_entries = h2.GetEntries()
-        d_max_1, r_mask_1 = self.getDifference_1(s0, e0, s1, e1)
-        d_max_2, r_mask_2 = self.getDifference_2(s0, e0, s1, e1) # same as above without couples (0., 0.)
-        d_max_3, r_mask_3 = self.getDifference_3(s0, e0, s1, e1) # same as above without couples first & end (0., 0.) couple.
+        _, r_mask_1 = self.getDifference_1(s0, e0, s1, e1)
+        _, r_mask_2 = self.getDifference_2(s0, e0, s1, e1) # same as above without couples (0., 0.)
+        _, r_mask_3 = self.getDifference_3(s0, e0, s1, e1) # same as above without couples first & end (0., 0.) couple.
         coeff_1 = self.getCoeff(r_mask_1)
         coeff_2 = self.getCoeff(r_mask_2)
         coeff_3 = self.getCoeff(r_mask_3)
@@ -219,13 +237,12 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '-' + shortRel + '/histo_' + histoName + '_KScurve1.txt'
+        fileName = KS_path_local + '-' + shortRel + '-' + shortRef + '/histo_' + histoName + '_KScurve1.txt'
         fileExist = path.exists(fileName)
-        #if ( fileExist and (os.path.getsize(fileName) != 0)):
         if ( fileExist):
             wKS = open(fileName, 'r')
             l1 = wKS.readline().rstrip('\n\r')
-            l2 = wKS.readline().rstrip('\n\r')
+            _ = wKS.readline().rstrip('\n\r')
             l3 = wKS.readline().rstrip('\n\r')
             l4 = wKS.readline().rstrip('\n\r')
             l5 = wKS.readline().rstrip('\n\r') # yellow curve
@@ -247,9 +264,11 @@ class DecisionBox:
 
             wKS.close()
             # Get the Kolmogoroff-Smirnov diff. for reference curve (s0) vs test curve (s1)
-            diffKS, ind_pos_max = self.diffMAXKS(s0, s1, new_entries, ref_entries)
+            diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
+            print('%s :: u p-Value 1 : %f' % (histoName, pValue))
+            print('%s :: n p-Value 1 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum)
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
@@ -257,7 +276,7 @@ class DecisionBox:
             print('no file name : %s' % fileName)
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max # return normalized pValue
 
-    def decisionBox2(self, histoName, h1, h2, KS_path_local, shortRel):
+    def decisionBox2(self, histoName, h1, h2, KS_path_local, shortRel, shortRef):
         s0, e0 = self.getHistoValues(h1)
         s1, e1 = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
@@ -267,12 +286,12 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '-' + shortRel + '/histo_' + histoName + '_KScurve2.txt'
+        fileName = KS_path_local + '-' + shortRel + '-' + shortRef + '/histo_' + histoName + '_KScurve2.txt'
         fileExist = path.exists(fileName)
         if ( fileExist ):
             wKS = open(fileName, 'r')
             l1 = wKS.readline().rstrip('\n\r')
-            l2 = wKS.readline().rstrip('\n\r')
+            _ = wKS.readline().rstrip('\n\r')
             l3 = wKS.readline().rstrip('\n\r')
             l4 = wKS.readline().rstrip('\n\r')
             l5 = wKS.readline().rstrip('\n\r') # yellow curve
@@ -297,13 +316,15 @@ class DecisionBox:
             diffKS, ind_pos_max = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
+            print('%s :: u p-Value 2 : %f' % (histoName, pValue))
+            print('%s :: n p-Value 2 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum[1:-1])
             return diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
         else:
             return diffKS, pValue/I_Max # return normalized pValue
 
-    def decisionBox3(self, histoName, h1, h2, KS_path_local, shortRel):
+    def decisionBox3(self, histoName, h1, h2, KS_path_local, shortRel, shortRef):
         s0, e0 = self.getHistoValues(h1)
         s1, e1 = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
@@ -313,12 +334,12 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '-' + shortRel + '/histo_' + histoName + '_KScurve3.txt'
+        fileName = KS_path_local + '-' + shortRel + '-' + shortRef + '/histo_' + histoName + '_KScurve3.txt'
         fileExist = path.exists(fileName)
         if ( fileExist ):
             wKS = open(fileName, 'r')
             l1 = wKS.readline().rstrip('\n\r')
-            l2 = wKS.readline().rstrip('\n\r')
+            _ = wKS.readline().rstrip('\n\r')
             l3 = wKS.readline().rstrip('\n\r') # count
             l4 = wKS.readline().rstrip('\n\r') # division
             l5 = wKS.readline().rstrip('\n\r') # yellow curve : must be "new" curve
@@ -340,9 +361,11 @@ class DecisionBox:
 
             wKS.close()
             # Get the Kolmogoroff-Smirnov diff. for reference curve (s0) vs test curve (s1)
-            diffKS, ind_pos_max = self.diffMAXKS(s0, s1, new_entries, ref_entries)
+            diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
+            print('%s :: u p-Value 3 : %f' % (histoName, pValue))
+            print('%s :: n p-Value 3 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum[1:-1])
             return diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
@@ -431,11 +454,12 @@ class DecisionBox:
         fExplain.close()
         return
 
-    def DBwebPage(self, fHisto, Names, KS_V, DB_picture, webURL, shortWebFolder, dataSetFolder, KS_Path0, KS_Path, ycFlag, shortRelease):
+    def DBwebPage(self, fHisto, Names, KS_V, DB_picture, webURL, shortWebFolder, dataSetFolder, KS_Path0, KS_Path, ycFlag, shortRelease, shortReference):
         tool = Tools()
         explanationName = "/DBox/explanation.html"
         gif_name = Names[1]
 
+        #print('DB - Path0 : %s' % (KS_Path0 + '-' + shortRelease + '/'))
         short_histo_names = Names[2]
         png_name = Names[3]
         png_cumul_name = Names[4]
@@ -450,8 +474,8 @@ class DecisionBox:
         pngCum_valid = False
         for i in range(0,3):
             picture = 'KS-ttlDiff_' + str(i+1) + '_' + short_histo_names + '.png'
-            KS_Picture.append(KS_Path + '-' + shortRelease + '/' + picture)
-            KS_fileExist.append(path.exists(KS_Path0 + '-' + shortRelease + '/' + picture))
+            KS_Picture.append(KS_Path + '-' + shortRelease + '-' + shortReference + '/' + picture)
+            KS_fileExist.append(path.exists(KS_Path0 + '-' + shortRelease + '-' + shortReference + '/' + picture))
             KS_valid = KS_valid or KS_fileExist[i]
         if ycFlag:
             png_Picture = png_name.split('.')[0] + str(0) + '.png'
