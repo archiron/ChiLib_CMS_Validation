@@ -222,6 +222,10 @@ class DecisionBox:
 
     # major function to be called (ref is GevSeq.py)
     def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel, shortRef):
+        #print('histoname : %s' % histoName)
+        #print('KS_path_local : %s' % KS_path_local)
+        #print('shortRel : %s' % shortRel)
+        #print('shortRef : %s' % shortRef)
         s0, e0 = self.getHistoValues(h1)
         s1, e1 = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
@@ -267,8 +271,8 @@ class DecisionBox:
             diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
-            print('%s :: u p-Value 1 : %f' % (histoName, pValue))
-            print('%s :: n p-Value 1 : %f' % (histoName, pValue/I_Max))
+            #print('%s :: u p-Value 1 : %f' % (histoName, pValue))
+            #print('%s :: n p-Value 1 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum)
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
@@ -316,8 +320,8 @@ class DecisionBox:
             diffKS, ind_pos_max = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
-            print('%s :: u p-Value 2 : %f' % (histoName, pValue))
-            print('%s :: n p-Value 2 : %f' % (histoName, pValue/I_Max))
+            #print('%s :: u p-Value 2 : %f' % (histoName, pValue))
+            #print('%s :: n p-Value 2 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum[1:-1])
             return diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
@@ -364,8 +368,8 @@ class DecisionBox:
             diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
-            print('%s :: u p-Value 3 : %f' % (histoName, pValue))
-            print('%s :: n p-Value 3 : %f' % (histoName, pValue/I_Max))
+            #print('%s :: u p-Value 3 : %f' % (histoName, pValue))
+            #print('%s :: n p-Value 3 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum[1:-1])
             return diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue

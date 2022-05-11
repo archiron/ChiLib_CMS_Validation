@@ -95,12 +95,29 @@ def initRootStyle():
     gStyle.SetPadRightMargin(0.2)
 
 def PictureChoice(histo1, histo2, scaled, err, filename, self, id):
-    if(histo1.InheritsFrom("TH1F")):
-        createPicture2(histo1, histo2, scaled, err, filename, self, id)
-    elif ( histo1.InheritsFrom("TProfile") ):
-        createPicture2(histo1, histo2, scaled, err, filename, self, id)
+    print('histo1', histo1)
+    print('histo2', histo2)
+    if (histo1):
+        v_h1 = 1
     else:
-        createPicture(histo1, histo2, scaled, err, filename, self, id)
+        v_h1 = 0
+    if (histo2):
+        v_h2 = 1
+    else:
+        v_h2 = 0
+
+    if ( (v_h1 * v_h2) == 0 ):
+        createSinglePicture(histo1, histo2, scaled, err, filename, self, id, v_h1, v_h2)
+    else: 
+        if( histo1.InheritsFrom("TH1F") ):
+            createPicture2(histo1, histo2, scaled, err, filename, self, id)
+            print('inherit from TH1F')
+        elif ( histo1.InheritsFrom("TProfile") ):
+            createPicture2(histo1, histo2, scaled, err, filename, self, id)
+            print('inherit from TProfile')
+        else:
+            createPicture(histo1, histo2, scaled, err, filename, self, id)
+            print('inherit from nothing')
         
 def PictureChoice2(args):
     # args = histo_1, histo_2, histo_positions[1], histo_positions[2], gif_name, args[0], args[8]
@@ -116,7 +133,7 @@ def PictureChoice2(args):
     elif ( h1.InheritsFrom("TProfile") ):
         createPicture2(h1, h2, scaled, err, filename, self, id)
     else:
-        createPicture(h1, h2, scaled, err, filename, self, id)
+        createPicture2(h1, h2, scaled, err, filename, self, id)
         
 def PictureChoice_DB(histo1, histo2, scaled, err, filename0, self, id, s0):
     # s0 : yellow curve tuple
@@ -171,6 +188,147 @@ def PictureChoice_DB3(histo1, histo2, scaled, err, filename0, self, id, s0):
         i += 1
     return
 
+def createSinglePicture(histo1, histo2, scaled, err, filename, self, id, v_h1, v_h2):
+    if (v_h1):
+        print('histo1 OK')
+        textToAdd = 'no reference (NULL), same as new histo'
+        histo2 = histo1
+    else:
+        print('histo1 KO')
+    if (v_h2):
+        print('histo2 OK')
+        textToAdd = 'no new histo (NULL), same as reference'
+        histo1 = histo2
+    else:
+        print('histo2 KO')
+
+    new_entries = histo1.GetEntries() # ttl # of bins (9000 in general)
+    ref_entries = histo2.GetEntries()
+    self.cnv = TCanvas(str(id), "canvas")
+    color1 = ROOT.kRed #
+    print(filename)
+
+    histo2c = histo2.Clone()
+    if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
+        rescale_factor = new_entries / ref_entries
+        histo2c.Scale(rescale_factor)
+    if (histo2c.GetMaximum() > histo1.GetMaximum()):
+        histo1.SetMaximum(histo2c.GetMaximum() * 1.1)
+       
+    self.cnv.SetCanvasSize(960, 900)
+    self.cnv.Clear()
+    self.cnv.SetFillColor(10)
+    
+    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0) # ,0,0,0
+    pad1.SetBottomMargin(0.05)
+    pad1.Draw()
+    pad1.cd()
+    
+    if err == "1":
+        newDrawOptions ="E1 P"
+    else:
+        newDrawOptions = "hist"
+    
+    histo1.SetStats(1)
+    histo1.Draw(newDrawOptions) # 
+    RenderHisto(histo1, self)
+    if ("ELE_LOGY" in histo1.GetOption() and histo1.GetMaximum() > 0):
+        if (re.search('etaEff_all', filename) or re.search('ptEff_all', filename)):
+            print('accord')
+            pad1.SetLogy(0)
+        else:
+            pad1.SetLogy(1)
+    gPad.Update()
+    statBox1 = histo1.GetListOfFunctions().FindObject("stats")
+    statBox1.SetTextColor(color1)    
+    gPad.Update()
+    histo2c.Draw("sames hist") # ""  same
+    histo2c.SetStats(1)
+    RenderHisto(histo2c, self)
+    if ("ELE_LOGY" in histo2c.GetOption() and histo2c.GetMaximum() > 0):
+        if (re.search('etaEff_all', filename) or re.search('ptEff_all', filename)):
+            print('accord')
+            pad1.SetLogy(0)
+        else:
+            pad1.SetLogy(1)
+    self.cnv.Update()
+    statBox2 = histo2c.GetListOfFunctions().FindObject("stats")
+    statBox2.SetTextColor(kBlue)
+    y1 = statBox1.GetY1NDC()
+    y2 = statBox1.GetY2NDC()
+    statBox2.SetY1NDC(2*y1-y2)
+    statBox2.SetY2NDC(y1)
+
+    newDrawOptions = "sames "
+    if err == "1":
+        newDrawOptions += "E1 P"
+    else:
+        newDrawOptions += "hist"
+    histo1.Draw(newDrawOptions)
+    histo2c.Draw("sames hist")
+    
+    t = ROOT.TText() # .45,.95, textToAdd
+    #t.setNDC()
+    t.SetTextAlign(22)
+    t.SetTextColor(kRed+2)
+    t.SetTextFont(43)
+    t.SetTextSize(40)
+    t.SetTextAngle(45)
+    #t.Draw()
+    t.DrawTextNDC(.5,.5, textToAdd)
+
+    self.cnv.cd()
+    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.00, 0.25) # ,0,0,0
+    pad2.SetTopMargin(0.025)
+    pad2.SetBottomMargin(0.2)
+    pad2.SetGridy()
+    pad2.Draw()
+    pad2.cd()
+    
+    histo3 = histo1.Clone("histo3")
+    histo3.SetLineColor(kBlack)
+    histo3.SetMaximum(2.)
+    histo3.SetMinimum(0.)
+    histo3.SetStats(0)
+    histo3.Sumw2() ########
+    histo3.Divide(histo2)
+    histo3.SetMarkerStyle(21)
+    histo3.Draw("ep")
+    
+    histo1.SetMarkerColor(color1)
+    histo1.SetLineWidth(3) 
+    histo1.SetLineColor(color1)
+    histo1.GetYaxis().SetTitleSize(25)
+    histo1.GetYaxis().SetTitleFont(43)
+    histo1.GetYaxis().SetTitleOffset(2.00)
+    
+    histo2c.SetLineColor(kBlue)
+    histo2c.SetMarkerColor(kBlue)
+    histo2c.SetLineWidth(3)
+    
+    histo3.SetTitle("")
+    # Y axis ratio plot settings
+    histo3.GetYaxis().SetTitle("ratio h1/h2 ")
+    histo3.GetYaxis().SetNdivisions(505)
+    histo3.GetYaxis().SetTitleSize(20)
+    histo3.GetYaxis().SetTitleFont(43)
+    histo3.GetYaxis().SetTitleOffset(1.55)
+    histo3.GetYaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
+    histo3.GetYaxis().SetLabelSize(15)
+    # X axis ratio plot settings
+    histo3.GetXaxis().SetTitleSize(20)
+    histo3.GetXaxis().SetTitleFont(43)
+    histo3.GetXaxis().SetTitleOffset(4.)
+    histo3.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
+    histo3.GetXaxis().SetLabelSize(15)
+
+    self.cnv.Draw()
+    self.cnv.Update()
+
+    self.cnv.SaveAs(filename)
+    
+    return
+        
 def createPicture(histo1, histo2, scaled, err, filename, self, id):
     new_entries = histo1.GetEntries()
     ref_entries = histo2.GetEntries()
