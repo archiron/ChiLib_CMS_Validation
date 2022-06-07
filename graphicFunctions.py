@@ -95,8 +95,6 @@ def initRootStyle():
     gStyle.SetPadRightMargin(0.2)
 
 def PictureChoice(histo1, histo2, scaled, err, filename, self, id):
-    print('histo1', histo1)
-    print('histo2', histo2)
     if (histo1):
         v_h1 = 1
     else:
@@ -111,13 +109,13 @@ def PictureChoice(histo1, histo2, scaled, err, filename, self, id):
     else: 
         if( histo1.InheritsFrom("TH1F") ):
             createPicture2(histo1, histo2, scaled, err, filename, self, id)
-            print('inherit from TH1F')
+            #print('inherit from TH1F')
         elif ( histo1.InheritsFrom("TProfile") ):
             createPicture2(histo1, histo2, scaled, err, filename, self, id)
-            print('inherit from TProfile')
+            #print('inherit from TProfile')
         else:
             createPicture(histo1, histo2, scaled, err, filename, self, id)
-            print('inherit from nothing')
+            #print('inherit from nothing')
         
 def PictureChoice2(args):
     # args = histo_1, histo_2, histo_positions[1], histo_positions[2], gif_name, args[0], args[8]

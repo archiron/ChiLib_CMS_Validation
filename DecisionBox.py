@@ -166,6 +166,37 @@ class DecisionBox:
             sDKS.append(np.abs(v0))
         return sDKS
 
+    def funcKS2(self, s0, s1):
+        s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
+        s1 = np.asarray(s1) # if not this, ind is returned as b_00x instead of int value
+        N0 = len(s0)
+        N1 = len(s1)
+        if (N0 != N1):
+            print('not the same lengths')
+            exit()
+        min0 = min(s0)
+        min1 = min(s1)
+        min01 = min(min0, min1)
+        if (min01 > 0.):
+            min01 = 0.
+        else:
+            min01 = np.abs(min01)
+        print('min01 : {}'.format(min01))
+        SumSeries0 = s0.sum() + N0 * min01
+        SumSeries1 = s1.sum() + N1 * min01
+        v0 = 0.
+        v1 = 0.
+        sDKS0 = []
+        sDKS1 = []
+        for i in range(0, N0):
+            t0 = (min01 + s0[i])/SumSeries0
+            t1 = (min01 + s1[i])/SumSeries1
+            v0 += t0
+            v1 += t1
+            sDKS0.append(np.abs(v0))
+            sDKS1.append(np.abs(v1))
+        return sDKS0, sDKS1
+
     def diffMAXKS(self, s0,s1, sum0, sum1):
         s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
         s1 = np.asarray(s1)
@@ -200,6 +231,39 @@ class DecisionBox:
         ind = sDKS.index(v)
         return v, ind, sDKS 
 
+    def diffMAXKS3(self, s0,s1):
+        s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
+        s1 = np.asarray(s1)
+        N0 = len(s0)
+        N1 = len(s1)
+        if (N0 != N1):
+            print('not the same lengths')
+            exit()
+        #else:
+        #    print('val1/val2 len : [{}/{}]'.format(N0, N1))
+        min0 = min(s0)
+        min1 = min(s1)
+        min01 = min(min0, min1)
+        if (min01 > 0.):
+            min01 = 0.
+        else:
+            min01 = np.abs(min01)
+        #print('min01 : {}'.format(min01))
+        SumSeries0 = s0.sum() + N0 * min01
+        SumSeries1 = s1.sum() + N1 * min01
+        v0 = 0.
+        v1 = 0.
+        sDKS = []
+        for i in range(0, N0):
+            t0 = (min01 + s0[i])/SumSeries0
+            t1 = (min01 + s1[i])/SumSeries1
+            v0 += t0
+            v1 += t1
+            sDKS.append(np.abs(v1 - v0))
+        v = max(sDKS)
+        ind = sDKS.index(v)
+        return v, ind, sDKS 
+
     def integralpValue(self, abscisses, ordonnees, x):
         v = 0.0
         N = len(abscisses)
@@ -212,7 +276,7 @@ class DecisionBox:
         else: # general case
             ind = 0
             for i in range(0, N):
-                if (np.floor(x/abscisses[i]) == 0):
+                if ((abscisses[i] != 0) and (np.floor(x/abscisses[i]) == 0)):
                     ind = i
                     break
             v = (abscisses[ind] - x) * ordonnees[ind-1]
@@ -222,10 +286,6 @@ class DecisionBox:
 
     # major function to be called (ref is GevSeq.py)
     def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel, shortRef):
-        #print('histoname : %s' % histoName)
-        #print('KS_path_local : %s' % KS_path_local)
-        #print('shortRel : %s' % shortRel)
-        #print('shortRef : %s' % shortRef)
         s0, e0 = self.getHistoValues(h1)
         s1, e1 = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
@@ -317,7 +377,7 @@ class DecisionBox:
 
             wKS.close()
             # Get the Kolmogoroff-Smirnov diff. for reference curve (s0) vs test curve (s1)
-            diffKS, ind_pos_max = self.diffMAXKS(s0, s1, new_entries, ref_entries)
+            diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
             #print('%s :: u p-Value 2 : %f' % (histoName, pValue))
