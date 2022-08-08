@@ -90,3 +90,10 @@ def reduceBranch(branch):
     shn = branch.replace("h_", "").replace("ele_", "").replace("scl_", "").replace("bcl_", "")
     return shn
 
+def change_nbFiles(nbFiles_computed, nbFiles):
+    if (nbFiles_computed != nbFiles):
+        print('the number of computed files is differents from the pre supposed number.')
+        print('switching to the computed number.')
+        return nbFiles_computed
+    else:
+        return nbFiles
