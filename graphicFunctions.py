@@ -35,6 +35,21 @@ def getHisto(file, tp):
     t_path = file.Get(path)
     return t_path # t5
 
+def getHistoConfEntry(h1):
+    d = 1
+
+    if ( h1.InheritsFrom("TH2") ):
+        print('TH2')
+    elif ( h1.InheritsFrom("TProfile") ):
+        #print('TProfile')
+        d = 0
+    elif ( h1.InheritsFrom("TH1")): # TH1
+        print('TH1')
+    else:
+        print("don't know")
+
+    return d
+
 def RenderHisto(histo, self):
 
     if ("ELE_LOGY" in histo.GetOption() and histo.GetMaximum() > 0):

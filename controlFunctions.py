@@ -92,7 +92,7 @@ def reduceBranch(branch):
 
 def change_nbFiles(nbFiles_computed, nbFiles):
     if (nbFiles_computed != nbFiles):
-        print('the number of computed files is differents from the pre supposed number.')
+        print('the number of computed files (' + '{:d}'.format(nbFiles_computed) + ') is different from the pre supposed number (' + '{:d}'.format(nbFiles) + ').')
         print('switching to the computed number.')
         return nbFiles_computed
     else:
