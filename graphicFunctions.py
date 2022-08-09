@@ -39,16 +39,46 @@ def getHistoConfEntry(h1):
     d = 1
 
     if ( h1.InheritsFrom("TH2") ):
-        print('TH2')
+        #print('TH2')
+        d = 1
     elif ( h1.InheritsFrom("TProfile") ):
         #print('TProfile')
         d = 0
     elif ( h1.InheritsFrom("TH1")): # TH1
-        print('TH1')
+        #print('TH1')
+        d = 1
     else:
         print("don't know")
 
     return d
+
+def fill_Snew(histo):
+    s_new = []
+    for entry in histo:
+        s_new.append(entry)
+    s_new = np.asarray(s_new)
+    s_new = s_new[1:-1]
+    return s_new
+
+def fill_Snew2(d, histo):
+    s_new = []
+    ii = 0
+    if (d==1):
+        for entry in histo_1:
+            s_new.append(entry)
+    else:
+        for entry in histo:
+            if ((histo.GetBinEntries(ii) == 0.) and (entry == 0.)):
+                s_new.append(0.)
+            elif ((histo.GetBinEntries(ii) == 0.) and (entry != 0.)):
+                s_new.append(1.e38)
+                print('========================================',ii,entry,histo.GetBinEntries(ii))
+            else:
+                s_new.append(entry/histo.GetBinEntries(ii))
+            ii+=1
+    s_new = np.asarray(s_new)
+    s_new = s_new[1:-1]
+    return s_new
 
 def RenderHisto(histo, self):
 
