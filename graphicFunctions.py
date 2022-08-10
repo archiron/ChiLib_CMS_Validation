@@ -64,7 +64,7 @@ def fill_Snew2(d, histo):
     s_new = []
     ii = 0
     if (d==1):
-        for entry in histo_1:
+        for entry in histo:
             s_new.append(entry)
     else:
         for entry in histo:

@@ -90,6 +90,23 @@ def reduceBranch(branch):
     shn = branch.replace("h_", "").replace("ele_", "").replace("scl_", "").replace("bcl_", "")
     return shn
 
+def optimizeBranches(tmp_branches):
+    #tmp_branches = np.asarray(tmp_branches)
+    nb_branches = len(tmp_branches)
+    print('nb branches : %d' % nb_branches)
+    t0 = tmp_branches[0]
+    print(t0)
+    for i in range(1,nb_branches):
+        #print(i)
+        t1 = tmp_branches[i]
+        for item in t0:
+            if (t1.count(item) == 0):
+                print('%s not in t1' % item)
+                t0.remove(item)
+        print('{:d} : '.format(i), t0)
+    print(len(t0))
+    return t0
+
 def change_nbFiles(nbFiles_computed, nbFiles):
     if (nbFiles_computed != nbFiles):
         print('the number of computed files (' + '{:d}'.format(nbFiles_computed) + ') is different from the pre supposed number (' + '{:d}'.format(nbFiles) + ').')
