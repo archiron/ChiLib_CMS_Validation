@@ -21,6 +21,18 @@ def checkFolderName(folderName):
         folderName += '/'
     return folderName
 
+'''    # create folder 
+    if not os.path.exists(folder):
+        try:
+            os.makedirs(folder)
+        except OSError as e:
+            if e.errno != errno.EEXIST: # the folder did not exist
+                raise  # raises the error again
+        print('Creation of %s release folder\n' % folder)
+    else:
+        print('Folder %s already created\n' % folder)
+'''
+
 def checkFolder(folder):
     if not os.path.exists(folder): # create folder
         os.makedirs(folder) # create reference folder

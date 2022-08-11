@@ -1149,3 +1149,34 @@ def getCurveTailPos(self, histo1, histo2):
     relativePos = (pos - ymin) / (ymax - ymin)
     print('relative position : %f' % relativePos)
     return relativePos
+
+def createHistoPicture(histo1, filename):
+    # draw a filled histogram & save it into a file.
+    cnv = TCanvas(str(id), "canvas")
+    print('createPicture')
+    color1 = ROOT.kRed #
+    color0 = ROOT.kBlack
+    color2 = ROOT.kBlue
+
+    cnv.SetCanvasSize(960, 600)
+
+    cnv.Clear()
+    histo1.Draw()
+    histo1.SetLineWidth(3)
+    histo1.SetStats(1)
+    #enderHisto(histo1)
+    gPad.Update()
+    statBox1 = histo1.GetListOfFunctions().FindObject("stats")
+    histo1.SetLineColor(color0)
+    histo1.SetMarkerColor(color1)
+    statBox1.SetTextColor(color2)
+    statBox1.SetFillStyle(0);
+    statBox1.SetY1NDC(0.800)
+    gPad.Update()
+
+    cnv.Draw()
+    cnv.Update()
+    
+    cnv.SaveAs(filename)
+
+    return
