@@ -149,9 +149,11 @@ def PictureChoice(histo1, histo2, scaled, err, filename, self, id):
     else:
         v_h2 = 0
 
-    if ( (v_h1 * v_h2) == 0 ):
+    if ( (v_h1 + v_h2) == 0): # no histos at all
+        return
+    if ( (v_h1 * v_h2) == 0 ): # only one histo
         createSinglePicture(histo1, histo2, scaled, err, filename, self, id, v_h1, v_h2)
-    else: 
+    else: # two histos
         if( histo1.InheritsFrom("TH1F") ):
             createPicture2(histo1, histo2, scaled, err, filename, self, id)
             #print('inherit from TH1F')
