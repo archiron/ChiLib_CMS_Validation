@@ -1,7 +1,6 @@
 
 Collections sizes
 
-ElectronMcSignalValidatorMiniAOD/h_recEleNum                       1 1 1 0
 ElectronMcSignalValidatorMiniAOD/h_recEleNum                       1 1 1 1
 
 Basic electron quantities
