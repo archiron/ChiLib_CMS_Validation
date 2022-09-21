@@ -154,12 +154,12 @@ def test_epoch_den(encoder,decoder,device,dataloader,loss_fn):
         test_loss=loss_fn(conc_out,conc_label)
     return test_loss.data, decoded_data, encoded_data
 
-def createAEfolderName(hs1, hs2, hs3, hs4, useHL3, useHL4, ls, histoName, tF): # , nbFiles
+def createAEfolderName(hs1, hs2, hs3, hs4, useHL3, useHL4, ls): # , tF, nbFiles, histoName
     folderName = "/HL_1.{:03d}".format(hs1) + "_HL_2.{:03d}".format(hs2)
     if useHL3 == 1:
         folderName += "_HL_3.{:03d}".format(hs3)
     if useHL4 == 1:
         folderName += "_HL_4.{:03d}".format(hs4)
     folderName += "_LT.{:02d}".format(ls) + '/' # + "{:03d}".format(nbFiles)
-    folderName += tF + '/' + histoName + '/'
+    #folderName += '/' + histoName + '/' # tF + 
     return folderName
