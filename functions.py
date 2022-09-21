@@ -134,7 +134,7 @@ class Tools:
 
     def shortHistoName(self, elem):
         histo_names = elem.split("/")
-        histo_name = histo_names[0]
+        #histo_name = histo_names[0]
         histoShortNames = histo_names[1]
         histo_pos = histoShortNames
         histo_positions = histo_pos.split()
