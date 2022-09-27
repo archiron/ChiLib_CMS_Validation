@@ -90,6 +90,32 @@ def getBranches(t_p, branchPath):
     source.close()
     return b
 
+def getKeysName(t_p, branchPath):
+    b = []
+    key = ''
+    tmp = []
+    source = open(branchPath, "r")
+    for line in source:
+        if line in ['\n', '\r\n']: # blank line
+            if ( (len(key) != 0) and (len(tmp) != 0) ):
+                b.append([key, tmp])
+                key = ''
+                tmp = []
+        else: # line not empty
+            if t_p in line:
+                aaa = line.split(' ')
+                bbb = []
+                for elem in aaa:
+                    if elem != '':
+                        bbb.append(elem)
+                line = bbb[0].split('/')[1].replace(t_p, '')
+                name = line.split(' ')[0]
+                tmp.append([name, bbb[3]]) 
+            else:
+                key = line
+    source.close()
+    return b
+
 def cleanBranches(branches):
     #if (branches[i] == 'h_ele_seedMask_Tec'): # temp (pbm with nan)
     #if re.search('OfflineV', branches[i]): # temp (pbm with nbins=81 vs nbins=80)
