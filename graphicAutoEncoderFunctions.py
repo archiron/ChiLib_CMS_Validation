@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+
+matplotlib.use('agg')
 
 def createLossPictures(branch, history_da, nb_epochs, fileName):
     plt.clf()
@@ -247,14 +250,14 @@ def createLatentPictureTrainTest(x_tr,y_tr,x_te,y_te, pictureName, title):
     N = len(x_tr)
 
     fig, ax1 = plt.subplots(figsize=(10, 5))
-    ax1.scatter(x_tr, y_tr, color='red')
-    ax1.scatter(x_te, y_te, color='blue', marker='+')
+    ax1.scatter(x_tr, y_tr, color='red', label="train")
+    ax1.scatter(x_te, y_te, color='blue', label="test", marker='+')
     ax1.set_xlabel('dim 1')
     ax1.set_xlabel('dim 2')
     ax1.set_title(title)
     ax1.annotate('0', (x_tr[0], y_tr[0]), xytext=(10,10), textcoords='offset points')
     ax1.annotate(N-1, (x_tr[N-1], y_tr[N-1]), xytext=(10,10), textcoords='offset points')
-    plt.legend()
+    ax1.legend()
     fig.tight_layout()
     plt.savefig(pictureName)
     return
