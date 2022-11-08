@@ -134,7 +134,7 @@ class Tools:
 
     def shortHistoName(self, elem):
         histo_names = elem.split("/")
-        #histo_name = histo_names[0]
+        histo_name = histo_names[0]
         histoShortNames = histo_names[1]
         histo_pos = histoShortNames
         histo_positions = histo_pos.split()
@@ -192,6 +192,7 @@ class Tools:
         # ElectronMcSignalValidatorPt1000
         # ElectronMcFakeValidator
 
+        print('dataset name : {:s}'.format(dataSetsName))
         t_rel = tmp_path + 'ElectronMcSignalHistos.txt'
         t_ref = t_rel
         tp_rel = 'ElectronMcSignalValidator'
@@ -202,6 +203,49 @@ class Tools:
             tp_rel = 'ElectronMcSignalValidatorPt1000'
             tp_ref = tp_rel
         elif ( re.search('QCD', dataSetsName) ):
+            t_rel = tmp_path + 'ElectronMcFakeHistos.txt'
+            t_ref = t_rel
+            tp_rel = 'ElectronMcFakeValidator'
+            tp_ref = tp_rel
+        else: # general
+            if type[0] == 'RECO': # RECO
+                if type[1] == 'miniAOD': # RECO vs miniAOD
+                    t_rel = tmp_path + 'ElectronMcSignalHistosMiniAOD.txt' # we have only miniAOD histos to compare.
+                    t_ref = tmp_path + 'ElectronMcSignalHistosMiniAOD.txt'
+                    tp_rel = 'ElectronMcSignalValidator'
+                    tp_ref = 'ElectronMcSignalValidatorMiniAOD'
+                else: # RECO vs RECO
+                    t_rel = tmp_path + 'ElectronMcSignalHistos.txt'
+                    t_ref = t_rel
+                    tp_rel = 'ElectronMcSignalValidator'
+                    tp_ref = 'ElectronMcSignalValidator'
+            elif type[0] == 'miniAOD': # miniAOD vs miniAOD
+                t_rel = tmp_path + 'ElectronMcSignalHistosMiniAOD.txt'
+                t_ref = t_rel
+                tp_rel = 'ElectronMcSignalValidatorMiniAOD'
+                tp_ref = tp_rel
+        return [t_rel, t_ref, tp_rel, tp_ref]
+
+    def testForDataSetsFile2(self, tmp_path, type, dataSetsName): # only for dev !!!
+        # also get the tree path part (tp_rel, tp_ref) for root files :
+        # folder location for those files : HistosConfigFiles/
+        # ElectronMcSignalValidator
+        # ElectronMcSignalValidatorMiniAOD
+        # ElectronMcSignalValidatorPt1000
+        # ElectronMcFakeValidator
+
+        print('dataset name : {:s}'.format(dataSetsName))
+        print('type : {:s}'.format(type))
+        t_rel = tmp_path + 'ElectronMcSignalHistos.txt'
+        t_ref = t_rel
+        tp_rel = 'ElectronMcSignalValidator'
+        tp_ref = tp_rel
+        if ( 'Pt1000' in type[0] ):
+            t_rel = tmp_path + 'ElectronMcSignalHistosPt1000.txt'
+            t_ref = t_rel
+            tp_rel = 'ElectronMcSignalValidatorPt1000'
+            tp_ref = tp_rel
+        elif ( 'Fake' in type[0] ):
             t_rel = tmp_path + 'ElectronMcFakeHistos.txt'
             t_ref = t_rel
             tp_rel = 'ElectronMcFakeValidator'

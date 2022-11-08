@@ -520,7 +520,8 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id):
     histo3.SetMinimum(0.)
     histo3.SetStats(0)
     histo3.Sumw2() ########
-    histo3.Divide(histo2)
+    #histo3.Divide(histo2) # divide by the original nb of events
+    histo3.Divide(histo2c) # divide by the scaled nb of events
     histo3.SetMarkerStyle(21)
     histo3.Draw("ep")
     
