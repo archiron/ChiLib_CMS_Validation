@@ -3,9 +3,12 @@
 
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
+from matplotlib.ticker import AutoMinorLocator
 import numpy as np
 
 matplotlib.use('agg')
+print('matplotlib: {}'.format(matplotlib.__version__))
 
 def createLossPictures(branch, history_da, nb_epochs, fileName):
     plt.clf()
@@ -290,7 +293,7 @@ def createCompKSvsAEPicture(labels, val1, val2, fileName, title):
     plt.clf()
     plt.figure(figsize=(10, 5))
     title = title.replace("_", "\_")
-    plt.suptitle(title, x=0.35)
+    plt.suptitle(title, x=0.35, y=1.000)
 
     plt.subplot(1, 2, 1)
     plt.plot(x_pos, val1, color='blue', marker='*', linestyle = 'None', label='KS values')
@@ -339,3 +342,100 @@ def createCompKSvsAEPicture2Axis(labels, val1, val2, fileName, title):
     plt.savefig(fileName)
     return
 
+def createSimplePicture(title, y, labels, fileName): #, histos):
+    plt.clf()
+    plt.figure(figsize=(10, 5))
+    plt.suptitle(title)
+
+    plt.plot(y,color='red', linestyle = 'dotted')
+    #plt.legend()
+    plt.title(title)
+    #N = len(histos)
+    #locs = list(range(0, N))
+    #plt.xticks(locs, histos, rotation=90, ha="right", rotation_mode="anchor")
+    plt.xlabel(labels[0])
+    plt.ylabel(labels[1])
+
+    plt.tight_layout()
+    plt.savefig(fileName)
+    return
+
+def createComplexPicture(legende, y, labels, fileName):
+    plt.clf()
+    plt.figure(figsize=(10, 15))
+    plt.suptitle('suptitle')
+    N = len(legende)
+
+    plt.subplot(2,1,1)
+    for i in range(0, N):
+        plt.plot(y[i], label=legende[i]) #,color='red', linestyle = 'dotted')
+    plt.legend()
+    #plt.title('title')
+    plt.xlabel(labels[0])
+    plt.ylabel(labels[1])
+
+    plt.subplot(2,1,2)
+    for i in range(0, N):
+        plt.plot(y[i], label=legende[i]) #,color='red', linestyle = 'dotted')
+    plt.legend()
+    #plt.title('title')
+    plt.xlabel(labels[0])
+    plt.ylabel(labels[1])
+    plt.yscale("log")
+
+    plt.tight_layout()
+    plt.savefig(fileName)
+    return
+
+def createComplexPicture2(legende, y, labels, fileName, histos):
+    N = len(legende)
+    M = len(histos)
+    texte = ''
+    fig, axs = plt.subplots(nrows=N, ncols=2, figsize=(20, 15))
+    fig.suptitle('Loss value prediction by histo for various releases.')
+    max_len = max(len(l) for l in histos)
+    
+    for j in range(0, M, 3):
+        aa = histos[j].replace('h_ele_', '')
+        if ((j+1) < M):
+            bb = histos[j+1].replace('h_ele_', '')
+        if ((j+2) < M):
+            cc = histos[j+2].replace('h_ele_', '')
+        aa = aa.replace('h_', '')
+        bb = bb.replace('h_', '')
+        cc = cc.replace('h_', '')
+        aa = aa.replace('scl_', '')
+        bb = bb.replace('scl_', '')
+        cc = cc.replace('scl_', '')
+        texte += '{:03d} - {:s}'.format(j, aa.ljust(max_len - 5))
+        if ((j+1) < M):
+            texte += ' {:03d} - {:s}'.format((j+1), bb.ljust(max_len - 5))
+        if ((j+2) < M):
+            texte += '  {:03d} - {:s}'.format((j+1), cc.ljust(max_len - 5))
+        texte += '\n'
+    print(texte)
+
+    axs[0,0].plot(y[0],color='blue', linestyle = 'dotted')
+    axs[0,0].set_title(legende[0], y=0.65, x=0.85)
+    axs[0,0].xaxis.set_minor_locator(AutoMinorLocator())
+    axs[0,1].remove()
+    for i in range(1, N-1):
+        axs[i,0].plot(y[i],color='blue', linestyle = 'dotted')
+        axs[i,0].set_title(legende[i], y=0.65, x=0.85)
+        axs[i,0].xaxis.set_minor_locator(AutoMinorLocator())
+        axs[i,1].remove()
+
+    axs[N-1,0].plot(y[N-1],color='blue', linestyle = 'dotted')
+    axs[N-1,0].set_title(legende[N-1], y=0.65, x=0.85)
+    axs[N-1,0].set_xlabel(labels[0])
+    axs[N-1,0].set_ylabel(labels[1], rotation=90)
+    axs[N-1,0].xaxis.set_minor_locator(AutoMinorLocator())
+
+    axs[N-1,1].remove()
+
+    rcParams["font.family"] = "monospace"
+    fig.text(0.60, 0.05, texte, fontsize=7)
+    fig.tight_layout()
+    fig.savefig(fileName)
+    fig.clf()
+    return
