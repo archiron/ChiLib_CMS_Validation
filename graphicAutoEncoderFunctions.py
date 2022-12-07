@@ -214,7 +214,7 @@ def createCompPValuesPicture(labels, val, fileName, title):
     plt.subplot(1, 2, 1)
     plt.plot(x_pos, val1, color='blue', marker='*', linestyle = 'None', label='KS 1')
     plt.plot(x_pos, val2, color='green', marker='+', linestyle = 'None', label='KS 2')
-    plt.plot(x_pos, val3, color='black', marker='o', linestyle = 'None', label='KS 3')
+    plt.plot(x_pos, val3, color='black', marker='+', linestyle = 'None', label='KS 3')
     plt.ylabel('max. diff.')
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
     plt.legend()
@@ -222,7 +222,7 @@ def createCompPValuesPicture(labels, val, fileName, title):
     plt.subplot(1, 2, 2)
     plt.plot(labels, val1, color='blue', marker='*', linestyle = 'None')
     plt.plot(x_pos, val2, color='green', marker='+', linestyle = 'None')
-    plt.plot(x_pos, val3, color='black', marker='o', linestyle = 'None')
+    plt.plot(x_pos, val3, color='black', marker='+', linestyle = 'None')
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
     plt.yscale("log")
  
@@ -345,7 +345,7 @@ def createCompKSvsAEPicture2Axis(labels, val1, val2, fileName, title):
 def createSimplePicture(title, y, labels, fileName): #, histos):
     plt.clf()
     plt.figure(figsize=(10, 5))
-    plt.suptitle(title)
+    #plt.suptitle(title)
 
     plt.plot(y,color='red', linestyle = 'dotted')
     #plt.legend()
@@ -363,7 +363,7 @@ def createSimplePicture(title, y, labels, fileName): #, histos):
 def createComplexPicture(legende, y, labels, fileName):
     plt.clf()
     plt.figure(figsize=(10, 15))
-    plt.suptitle('suptitle')
+    #plt.suptitle('suptitle')
     N = len(legende)
 
     plt.subplot(2,1,1)
@@ -392,7 +392,7 @@ def createComplexPicture2(legende, y, labels, fileName, histos):
     M = len(histos)
     texte = ''
     fig, axs = plt.subplots(nrows=N, ncols=2, figsize=(20, 15))
-    fig.suptitle('Loss value prediction by histo for various releases.')
+    fig.suptitle('Loss value prediction by histo for various releases.', x=0.75)
     max_len = max(len(l) for l in histos)
     
     for j in range(0, M, 3):
@@ -411,22 +411,22 @@ def createComplexPicture2(legende, y, labels, fileName, histos):
         if ((j+1) < M):
             texte += ' {:03d} - {:s}'.format((j+1), bb.ljust(max_len - 5))
         if ((j+2) < M):
-            texte += '  {:03d} - {:s}'.format((j+1), cc.ljust(max_len - 5))
+            texte += '  {:03d} - {:s}'.format((j+2), cc.ljust(max_len - 5))
         texte += '\n'
-    print(texte)
+    #print(texte)
 
-    axs[0,0].plot(y[0],color='blue', linestyle = 'dotted')
-    axs[0,0].set_title(legende[0], y=0.65, x=0.85)
+    axs[0,0].plot(y[0],color='blue', marker='+')#, linestyle = 'none'
+    axs[0,0].set_title(legende[0], y=0.70, x=0.85)
     axs[0,0].xaxis.set_minor_locator(AutoMinorLocator())
     axs[0,1].remove()
     for i in range(1, N-1):
-        axs[i,0].plot(y[i],color='blue', linestyle = 'dotted')
-        axs[i,0].set_title(legende[i], y=0.65, x=0.85)
+        axs[i,0].plot(y[i],color='blue', marker='+')#, linestyle = 'none'
+        axs[i,0].set_title(legende[i], y=0.70, x=0.85)
         axs[i,0].xaxis.set_minor_locator(AutoMinorLocator())
         axs[i,1].remove()
 
-    axs[N-1,0].plot(y[N-1],color='blue', linestyle = 'dotted')
-    axs[N-1,0].set_title(legende[N-1], y=0.65, x=0.85)
+    axs[N-1,0].plot(y[N-1],color='blue', marker='+')#, linestyle = 'none'
+    axs[N-1,0].set_title(legende[N-1], y=0.70, x=0.85)
     axs[N-1,0].set_xlabel(labels[0])
     axs[N-1,0].set_ylabel(labels[1], rotation=90)
     axs[N-1,0].xaxis.set_minor_locator(AutoMinorLocator())
@@ -435,6 +435,84 @@ def createComplexPicture2(legende, y, labels, fileName, histos):
 
     rcParams["font.family"] = "monospace"
     fig.text(0.60, 0.05, texte, fontsize=7)
+    fig.tight_layout()
+    fig.savefig(fileName)
+    fig.clf()
+    return
+
+def createComplexPicture3(legende, y,z, labels, fileName, histos1, histos2):
+    N = len(legende) # various releases
+    M = len(histos1)
+    texte = ''
+    fig, axs = plt.subplots(nrows=N, ncols=2, figsize=(20, 30))
+    fig.suptitle('Loss vs Difference value prediction by histo for various releases.', x=0.75)
+    autreTexte1 = 'Losses are in '
+    autreTexte2 = 'blue'
+    autreTexte3 = ', Differences are in '
+    autreTexte4 = 'red'
+    max_len = max(len(l) for l in histos1)
+    y_abs = np.array(list(histos1.values()))
+    z_abs = np.array(list(histos2.values()))
+    #print(y_abs)
+    #print(z_abs)
+    histos = np.array(list(histos1.keys()))
+    #print(histos)
+    
+    for i in range(0, N):
+        yMax = np.amax(y[i])
+        zMax = np.amax(z[i])
+        if (yMax != 0.):
+            y[i] = y[i] / yMax
+        if (zMax != 0.):
+            z[i] = -z[i] / zMax
+    
+    for j in range(0, M, 3):
+        aa = histos[j].replace('h_ele_', '')
+        if ((j+1) < M):
+            bb = histos[j+1].replace('h_ele_', '')
+        if ((j+2) < M):
+            cc = histos[j+2].replace('h_ele_', '')
+        aa = aa.replace('h_', '')
+        bb = bb.replace('h_', '')
+        cc = cc.replace('h_', '')
+        aa = aa.replace('scl_', '')
+        bb = bb.replace('scl_', '')
+        cc = cc.replace('scl_', '')
+        texte += '{:03d} - {:s}'.format(j, aa.ljust(max_len - 5))
+        if ((j+1) < M):
+            texte += ' {:03d} - {:s}'.format((j+1), bb.ljust(max_len - 5))
+        if ((j+2) < M):
+            texte += '  {:03d} - {:s}'.format((j+2), cc.ljust(max_len - 5))
+        texte += '\n'
+    #print(texte)
+
+    axs[0,0].plot(y_abs, y[0],color='blue', marker='+', linestyle = 'none')#
+    axs[0,0].plot(z_abs, z[0],color='red', marker='+', linestyle = 'none')#
+    axs[0,0].set_title(legende[0], y=0.92, x=0.90)
+    axs[0,0].xaxis.set_minor_locator(AutoMinorLocator())
+    axs[0,1].remove()
+    for i in range(1, N-1):
+        axs[i,0].plot(y_abs, y[i],color='blue', marker='+', linestyle = 'none')#
+        axs[i,0].plot(z_abs, z[i],color='red', marker='+', linestyle = 'none')#
+        axs[i,0].set_title(legende[i], y=0.92, x=0.90)
+        axs[i,0].xaxis.set_minor_locator(AutoMinorLocator())
+        axs[i,1].remove()
+
+    axs[N-1,0].plot(y_abs, y[N-1],color='blue', marker='+', linestyle = 'none')#
+    axs[N-1,0].plot(z_abs, z[N-1],color='red', marker='+', linestyle = 'none')#
+    axs[N-1,0].set_title(legende[N-1], y=0.92, x=0.90)
+    axs[N-1,0].set_xlabel(labels[0])
+    axs[N-1,0].set_ylabel(labels[1], rotation=90)
+    axs[N-1,0].xaxis.set_minor_locator(AutoMinorLocator())
+
+    axs[N-1,1].remove()
+
+    rcParams["font.family"] = "monospace"
+    fig.text(0.60, 0.05, texte, fontsize=7)
+    fig.text(0.60, 0.95, autreTexte1, color='black', fontsize=7)
+    fig.text(0.64, 0.95, autreTexte2, color='blue', fontsize=7)
+    fig.text(0.651, 0.95, autreTexte3, color='black', fontsize=7)
+    fig.text(0.711, 0.95, autreTexte4, color='red', fontsize=7)
     fig.tight_layout()
     fig.savefig(fileName)
     fig.clf()
