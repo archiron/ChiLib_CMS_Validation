@@ -4,12 +4,9 @@
 import numpy as np
 import torch
 from torch import nn
-#from torch.utils import data
-#from torch.nn.functional import normalize
-#import pandas as pd
 
 class Encoder2(nn.Module):
-    def __init__(self,latent_size,input_size,hidden_size_1,hidden_size_2):
+    def __init__(self,device,latent_size,input_size,hidden_size_1,hidden_size_2):
         super().__init__()
         
     ### Linear section
@@ -27,7 +24,7 @@ class Encoder2(nn.Module):
 
 class Decoder2(nn.Module):
     
-    def __init__(self,latent_size,input_size,hidden_size_1,hidden_size_2):
+    def __init__(self,device,latent_size,input_size,hidden_size_1,hidden_size_2):
         super().__init__()
         self.decoder_lin=nn.Sequential(
         nn.Linear(latent_size, hidden_size_2),
@@ -43,7 +40,7 @@ class Decoder2(nn.Module):
         return x
 
 class Encoder3(nn.Module):
-    def __init__(self,latent_size,input_size,hidden_size_1,hidden_size_2,hidden_size_3):
+    def __init__(self,device,latent_size,input_size,hidden_size_1,hidden_size_2,hidden_size_3):
         super().__init__()
         
     ### Linear section
@@ -63,7 +60,7 @@ class Encoder3(nn.Module):
 
 class Decoder3(nn.Module):
     
-    def __init__(self,latent_size,input_size,hidden_size_1,hidden_size_2,hidden_size_3):
+    def __init__(self,device,latent_size,input_size,hidden_size_1,hidden_size_2,hidden_size_3):
         super().__init__()
         self.decoder_lin=nn.Sequential(
         nn.Linear(latent_size, hidden_size_3),
@@ -81,7 +78,7 @@ class Decoder3(nn.Module):
         return x
 
 class Encoder4(nn.Module):
-    def __init__(self,latent_size,input_size,hidden_size_1,hidden_size_2,hidden_size_3,hidden_size_4):
+    def __init__(self,device,latent_size,input_size,hidden_size_1,hidden_size_2,hidden_size_3,hidden_size_4):
         super().__init__()
         
     ### Linear section
@@ -103,7 +100,7 @@ class Encoder4(nn.Module):
 
 class Decoder4(nn.Module):
     
-    def __init__(self,latent_size,input_size,hidden_size_1,hidden_size_2,hidden_size_3,hidden_size_4):
+    def __init__(self,device,latent_size,input_size,hidden_size_1,hidden_size_2,hidden_size_3,hidden_size_4):
         super().__init__()
         self.decoder_lin=nn.Sequential(
         nn.Linear(latent_size, hidden_size_4),
@@ -127,16 +124,17 @@ def train_epoch_den(encoder,decoder,device,dataloader,loss_fn,optimizer):
     decoder.train()
     train_loss=[]
     for item in dataloader: # "_" ignore labels
+        item.to(device)
         encoded_data=encoder(item.float())
         decoded_data=decoder(encoded_data)
-        #print(encoded_data[0])
         loss=loss_fn(decoded_data,item.float())
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         train_loss.append(loss.detach().cpu().numpy())
-        #i+=1
-    return np.mean(train_loss), encoded_data[0]
+    train_loss = torch.tensor(train_loss).clone().detach()
+    return torch.mean(train_loss), encoded_data[0]
+    #return np.mean(train_loss), encoded_data[0]
 
 def test_epoch_den(encoder,decoder,device,dataloader,loss_fn):
     encoder.eval()
@@ -145,6 +143,7 @@ def test_epoch_den(encoder,decoder,device,dataloader,loss_fn):
         conc_out=[]
         conc_label=[]
         for item in dataloader:
+            item.to(device)
             encoded_data=encoder(item.float())
             decoded_data=decoder(encoded_data)
             conc_out.append(decoded_data)
