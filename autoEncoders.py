@@ -124,15 +124,15 @@ def train_epoch_den(encoder,decoder,device,dataloader,loss_fn,optimizer):
     decoder.train()
     train_loss=[]
     for item in dataloader: # "_" ignore labels
-        item.to(device)
-        encoded_data=encoder(item.float())
+        #item.to(device)
+        encoded_data=encoder(item) # .float()
         decoded_data=decoder(encoded_data)
-        loss=loss_fn(decoded_data,item.float())
+        loss=loss_fn(decoded_data,item) # .float()
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        train_loss.append(loss.detach().cpu().numpy())
-    train_loss = torch.tensor(train_loss).clone().detach()
+        train_loss.append(loss.detach()) # .cpu().numpy()
+    train_loss = torch.tensor(train_loss) # .clone().detach()
     return torch.mean(train_loss), encoded_data[0]
     #return np.mean(train_loss), encoded_data[0]
 
@@ -143,11 +143,11 @@ def test_epoch_den(encoder,decoder,device,dataloader,loss_fn):
         conc_out=[]
         conc_label=[]
         for item in dataloader:
-            item.to(device)
-            encoded_data=encoder(item.float())
+            #item.to(device)
+            encoded_data=encoder(item) # .float()
             decoded_data=decoder(encoded_data)
             conc_out.append(decoded_data)
-            conc_label.append(item.float())
+            conc_label.append(item) # .float()
         conc_out=torch.cat(conc_out)
         conc_label=torch.cat(conc_label)
         test_loss=loss_fn(conc_out,conc_label)
