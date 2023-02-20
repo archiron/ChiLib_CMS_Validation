@@ -251,7 +251,7 @@ def createSinglePicture(histo1, histo2, scaled, err, filename, self, id, v_h1, v
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
     color1 = ROOT.kRed #
-    print(filename)
+    #print(filename)
 
     histo2c = histo2.Clone()
     if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
@@ -443,7 +443,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, self, id):
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
     color1 = ROOT.kRed #
-    print(filename)
+    #print(filename)
 
     histo2c = histo2.Clone()
     if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
@@ -991,7 +991,7 @@ def createCumulPicture3(histo1, histo2, filename, self, id, s0):
     #print('len cumul new/ref : %d/%d - len s0 : %d' % (len(cumulNew), len(cumulRef), len(s0)))
     diff1 = np.abs(cumulNew - cumulRef)
     diff2 = np.abs(s0 - cumulNew)
-    print('diff 1 : %f - diff 2 : %f' % (np.max(diff1), np.max(diff2)))
+    #print('diff 1 : %f - diff 2 : %f' % (np.max(diff1), np.max(diff2)))
 
     self.cnv.SetCanvasSize(960, 900)
     self.cnv.Clear()

@@ -301,7 +301,7 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '-' + shortRel + '-' + shortRef + '/histo_' + histoName + '_KScurve1.txt'
+        fileName = KS_path_local + '/CMSSW_' + shortRel + '/histo_' + histoName + '_KScurve1.txt' # + '-' + shortRef 
         fileExist = path.exists(fileName)
         if ( fileExist):
             wKS = open(fileName, 'r')
@@ -350,7 +350,7 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '-' + shortRel + '-' + shortRef + '/histo_' + histoName + '_KScurve2.txt'
+        fileName = KS_path_local + '/CMSSW_' + shortRel + '/histo_' + histoName + '_KScurve2.txt' # + '-' + shortRef 
         fileExist = path.exists(fileName)
         if ( fileExist ):
             wKS = open(fileName, 'r')
@@ -389,8 +389,8 @@ class DecisionBox:
             return diffKS, pValue/I_Max # return normalized pValue
 
     def decisionBox3(self, histoName, h1, h2, KS_path_local, shortRel, shortRef):
-        s0, e0 = self.getHistoValues(h1)
-        s1, e1 = self.getHistoValues(h2)
+        s0, _ = self.getHistoValues(h1)
+        s1, _ = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
         ref_entries = h2.GetEntries()
 
@@ -398,7 +398,7 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '-' + shortRel + '-' + shortRef + '/histo_' + histoName + '_KScurve3.txt'
+        fileName = KS_path_local + '/CMSSW_' + shortRel + '/histo_' + histoName + '_KScurve3.txt' # + '-' + shortRef
         fileExist = path.exists(fileName)
         if ( fileExist ):
             wKS = open(fileName, 'r')
@@ -435,6 +435,110 @@ class DecisionBox:
             return diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
         else:
             return diffKS, pValue/I_Max # return normalized pValue
+
+    def decB(self, histoName, h1, h2, KS_path_local, shortRel):
+        # written only for tests. does not make any useful computation
+        s0, _ = self.getHistoValues(h1)
+        s1, _ = self.getHistoValues(h2)
+        new_entries = h1.GetEntries()
+        ref_entries = h2.GetEntries()
+        #print('  *** new_entries : ', new_entries)
+        #print('  *** ref_entries : ', ref_entries)
+        sum0 = new_entries
+        sum1 = ref_entries
+        print('  *** calcul diff max ks 1')
+        s0 = np.asarray(s0) # 
+        s1 = np.asarray(s1)
+        N = len(s0)
+        v0 = 0.
+        v1 = 0.
+        sDKS = []
+        for i in range(0, N):
+            t0 = s0[i]/sum0
+            t1 = s1[i]/sum1
+            v0 += t0
+            v1 += t1
+            sDKS.append(np.abs(v1 - v0))
+        diff1 = max(sDKS)
+        print('  *** diff1 : ', diff1)
+        #print('  *** calcul diff max ks 3')
+        N0 = len(s0)
+        N1 = len(s1)
+        if (N0 != N1):
+            print('not the same lengths')
+            exit()
+        min0 = min(s0)
+        min1 = min(s1)
+        min01 = min(min0, min1)
+        if (min01 > 0.):
+            min01 = 0.
+        else:
+            min01 = np.abs(min01)
+        SumSeries0 = s0.sum() + N0 * min01
+        SumSeries1 = s1.sum() + N1 * min01
+        v0 = 0.
+        v1 = 0.
+        sDKS = []
+        for i in range(0, N0):
+            t0 = (min01 + s0[i])/SumSeries0
+            t1 = (min01 + s1[i])/SumSeries1
+            v0 += t0
+            v1 += t1
+            sDKS.append(np.abs(v1 - v0))
+        diff3 = max(sDKS)
+        print('  *** diff3 : ', diff3)
+        #print('  *** lecture fichiers et calculs intégrales : ')
+        for ii in range(1,4):
+            fileName = KS_path_local + '/CMSSW_' + shortRel + '/histo_' + histoName + '_KScurve' + str(ii) + '.txt' #
+            #print('  *** ', fileName)
+            fileExist = path.exists(fileName)
+            if ( fileExist):
+                wKS = open(fileName, 'r')
+                l1 = wKS.readline().rstrip('\n\r')
+                _ = wKS.readline().rstrip('\n\r')
+                l3 = wKS.readline().rstrip('\n\r')
+                l4 = wKS.readline().rstrip('\n\r')
+                I_Max = float(l1.split(',')[0])
+                #print('  *** ii = {:d} : Imax : {:f}'.format(ii, I_Max))
+                count = []
+                division = []
+                for elem in l3.split(' '):
+                    count.append(float(elem))
+                for elem in l4.split(' '):
+                    division.append(float(elem))
+                wKS.close()
+                abscisses = division
+                ordonnees = count
+                #print('  *** [x,y] : [{:3f}, {:3f}]'.format(np.min(abscisses), np.max(abscisses)))
+                val_int = 0.
+                for i in range(0, N-1):
+                    val_int += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
+                #print('  *** ii = {:d} : Imax : {:f}'.format(ii, val_int))
+                #print('  *** pValue non normalisee')
+                x = diff1
+                v = 0.0
+                N = len(abscisses)
+                if (x <= abscisses[0]) :
+                    x = 0. # ttl integral
+                    for i in range(0, N-1):
+                        v += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
+                elif (x >= abscisses[N-1]):
+                    v = 0. # null integral
+                else: # general case
+                    ind = 0
+                    for i in range(0, N):
+                        if ((abscisses[i] != 0) and (np.floor(x/abscisses[i]) == 0)):
+                            ind = i
+                            break
+                    v = (abscisses[ind] - x) * ordonnees[ind-1]
+                    for i in range(ind, N-1):
+                        v += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
+                #print('  *** pValue non normalisee : ', v)
+                #print('  *** pValue normalisee : ', v/I_Max)
+            else:
+                print('  *** PBM !!!')
+
+        return
 
     def setColor(self, coeff):
         tmp = str("%6.4f" % coeff)
@@ -538,8 +642,12 @@ class DecisionBox:
         pngCum_valid = False
         for i in range(0,3):
             picture = 'KS-ttlDiff_' + str(i+1) + '_' + short_histo_names + '.png'
-            KS_Picture.append(KS_Path + '-' + shortRelease + '-' + shortReference + '/' + picture)
-            KS_fileExist.append(path.exists(KS_Path0 + '-' + shortRelease + '-' + shortReference + '/' + picture))
+            #KS_Picture.append(KS_Path + '-' + shortRelease + '-' + shortReference + '/' + picture)
+            #KS_fileExist.append(path.exists(KS_Path0 + '-' + shortRelease + '-' + shortReference + '/' + picture))
+            KS_Picture.append(KS_Path + '/CMSSW_' + shortRelease  + '/' + picture) # + '-' + shortReference
+            KS_fileExist.append(path.exists(KS_Path0 + '/CMSSW_' + shortRelease  + '/' + picture)) # + '-' + shortReference
+            #print('KS picture : {:s}'.format(KS_Path + '/CMSSW_' + shortRelease  + '/' + picture))
+            #print('KS KS_fileExist : {:s}'.format(KS_Path0 + '/CMSSW_' + shortRelease  + '/' + picture))
             KS_valid = KS_valid or KS_fileExist[i]
         if ycFlag:
             png_Picture = png_name.split('.')[0] + str(0) + '.png'
