@@ -11,7 +11,7 @@
 ################################################################################
 
 import os,sys
-from default import *
+from defEnv import *
 
 class env_default:
     localWorkDir = os.getcwd() + '/'

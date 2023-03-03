@@ -10,8 +10,7 @@
 #                                                                              
 ################################################################################
 
-import os #,sys
-#import urllib2
+import os 
 
 class cms_env:
     def __init__(self): 

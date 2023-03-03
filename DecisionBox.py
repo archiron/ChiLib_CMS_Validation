@@ -285,7 +285,7 @@ class DecisionBox:
         return v
 
     # major function to be called (ref is GevSeq.py)
-    def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel, shortRef):
+    def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel): # , shortRef
         s0, e0 = self.getHistoValues(h1)
         s1, e1 = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
@@ -301,7 +301,7 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '/CMSSW_' + shortRel + '/histo_' + histoName + '_KScurve1.txt' # + '-' + shortRef 
+        fileName = KS_path_local + '/histo_' + histoName + '_KScurve1' + '_' + shortRel + '.txt' # + '/CMSSW_' + shortRef 
         fileExist = path.exists(fileName)
         if ( fileExist):
             wKS = open(fileName, 'r')
@@ -340,7 +340,7 @@ class DecisionBox:
             print('no file name : %s' % fileName)
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max # return normalized pValue
 
-    def decisionBox2(self, histoName, h1, h2, KS_path_local, shortRel, shortRef):
+    def decisionBox2(self, histoName, h1, h2, KS_path_local, shortRel): # , shortRef
         s0, e0 = self.getHistoValues(h1)
         s1, e1 = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
@@ -350,7 +350,7 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '/CMSSW_' + shortRel + '/histo_' + histoName + '_KScurve2.txt' # + '-' + shortRef 
+        fileName = KS_path_local + '/histo_' + histoName + '_KScurve2' + shortRel + '.txt' # + '/CMSSW_' + '-' + shortRef 
         fileExist = path.exists(fileName)
         if ( fileExist ):
             wKS = open(fileName, 'r')
@@ -388,7 +388,7 @@ class DecisionBox:
         else:
             return diffKS, pValue/I_Max # return normalized pValue
 
-    def decisionBox3(self, histoName, h1, h2, KS_path_local, shortRel, shortRef):
+    def decisionBox3(self, histoName, h1, h2, KS_path_local, shortRel): # , shortRef
         s0, _ = self.getHistoValues(h1)
         s1, _ = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
@@ -398,7 +398,7 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '/CMSSW_' + shortRel + '/histo_' + histoName + '_KScurve3.txt' # + '-' + shortRef
+        fileName = KS_path_local + '/histo_' + histoName + '_KScurve3' + shortRel + '.txt' # + '/CMSSW_' + '-' + shortRef
         fileExist = path.exists(fileName)
         if ( fileExist ):
             wKS = open(fileName, 'r')
@@ -739,4 +739,118 @@ class DecisionBox:
         fHisto.write( "</td>\n")
         fHisto.write("</tr>\n")#
         return
+
+    def DBwebPage2(self, fHisto, Names, KS_V, DB_picture, KS_Path0, KS_Path, ycFlag, shortRelease): # , shortReference, webURL, shortWebFolder, dataSetFolder
+            tool = Tools()
+            explanationName = "/DBox/explanation.html"
+            gif_name = Names[1]
+
+            #print('DB - Path0 : %s' % (KS_Path0 + '-' + shortRelease + '/'))
+            short_histo_names = Names[2]
+            png_name = Names[3]
+            png_cumul_name = Names[4]
+            KS_Picture = []
+            KS_fileExist = []
+            KS_valid = False
+            png_Picture = False
+            png_fileExist = False
+            png_valid = False
+            pngCum_Picture = False
+            pngCum_fileExist = False
+            pngCum_valid = False
+            for i in range(0,3):
+                picture = 'KS-ttlDiff_' + str(i+1) + '_' + short_histo_names + '.png'
+                KS_Picture.append(KS_Path + '/CMSSW_' + shortRelease  + '/' + picture) # + '-' + shortReference
+                KS_fileExist.append(path.exists(KS_Path0 + '/CMSSW_' + shortRelease  + '/' + picture)) # + '-' + shortReference
+                KS_valid = KS_valid or KS_fileExist[i]
+            if ycFlag:
+                png_Picture = png_name.split('.')[0] + str(0) + '.png'
+                png_fileExist = path.exists(png_Picture)
+                png_valid = png_valid or png_fileExist
+                pngCum_Picture = png_cumul_name.split('.')[0] + str(0) + '.png'
+                pngCum_fileExist = path.exists(pngCum_Picture)
+                pngCum_valid = pngCum_valid or pngCum_fileExist
+
+            # write the KS reference release used.
+            fHisto.write("<tr>\n")
+            fHisto.write("<td colspan=3 style=\"text-align:center\">\n")
+            fHisto.write("<br><b>Kolmogorov-Smirnov reference release used : <font color=\"red\">%s</font></b>\n" % KS_Path.split('/')[-1])
+            fHisto.write("<br><br></td>\n")
+            fHisto.write("</tr>\n")
+            fHisto.write("<br>\n")
+            fHisto.write("<tr>\n")
+            fHisto.write("<th scope=\"col\">Comparison with average curve</th>\n")
+            fHisto.write("<th scope=\"col\">KS Values</th>\n")
+            fHisto.write("<th scope=\"col\">cumulatives & differences curves</th>\n")
+            fHisto.write("</tr>\n")
+            fHisto.write("<tr>")
+            fHisto.write("<td>")
+            if (png_valid and png_fileExist):
+                fHisto.write("<div><a href=\"" + png_Picture + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + png_Picture + "\"></a></div>")
+            else: # no png file (yellow curve)
+                fHisto.write("<div><a href=\"" + gif_name + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + gif_name + "\"></a></div>")
+            fHisto.write("</td>\n")
+            KS_val_1 = KS_V[0]
+            KS_val_2 = KS_V[1]
+            KS_val_3 = KS_V[2]
+
+            fHisto.write("<td>")
+            fHisto.write(" <p><b>confiance : </b></p><p>coeff 1 : %6.4f<br>coeff 2 : %6.4f<br>coeff 3 : %6.4f</p>\n" % (KS_val_1[0], KS_val_1[1], KS_val_1[2]))
+            fHisto.write(" <p>diff. max. : %6.4f</p>" % (KS_val_1[3]))
+            if (KS_val_1[4] != -1.):
+                pv1 = KS_val_1[4]
+            else:
+                pv1 = -1.0
+            if ( KS_val_2[1] != -1. ):
+                pv2 = KS_val_2[1]
+            else:
+                pv2 = -1.0
+            if ( KS_val_3[1] != -1. ):
+                pv3 = KS_val_3[1]
+            else:
+                pv3 = -1.0
+            fHisto.write(" \n<p><b>KS 1 : </b> pValue : %6.4f</p>" % (pv1))
+            fHisto.write("   <p><b>KS 2 : </b> pValue : %6.4f</p>" % (pv2))
+            fHisto.write("   <p><b>KS 3 : </b> pValue : %6.4f</p>" % (pv3))
+            fHisto.write("\n<div><a href=\"" + DB_picture + "\"><img border=\"0\" class=\"image\" width=\"40\" src=\"" + DB_picture + "\"></a></div>")
+            fHisto.write("</td>\n")
+
+            fHisto.write( "<td>")
+            if (pngCum_valid and pngCum_fileExist):
+                tool.extWrite( "<div><a href=\"" + pngCum_Picture + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + pngCum_Picture + "\"></a></div>", [fHisto] )
+            fHisto.write( "</td>\n")
+            fHisto.write("</tr>")
+
+            fHisto.write("\n</table>\n")
+            fHisto.write("\n")
+            fHisto.write("<br>\n")
+            fHisto.write("<table border=\"1\" bordercolor=\"blue\" cellpadding=\"2\" style=\"margin-left:auto;margin-right:auto\">\n")
+            fHisto.write("<tr>\n")
+            urlPath = explanationName # webURL + shortWebFolder + '/' + dataSetFolder + 
+            fHisto.write("<th scope=\"col\"> <a href=\"" + urlPath + ">Explanations</a> </th>\n")
+            fHisto.write("<th scope=\"col\">Kolmogorov-Smirnov curves</th>\n")
+            fHisto.write("</tr>\n")
+
+            fHisto.write("<tr>\n")
+            fHisto.write( "<th scope=\"row\">p-Value 1 : %6.4f</th>\n" % pv1)
+            fHisto.write( "<td>")
+            if (KS_valid and KS_fileExist[0]):
+                tool.extWrite( "<div><a href=\"" + KS_Picture[0] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[0] + "\"></a></div>", [fHisto] )
+            fHisto.write( "</td>\n")
+            fHisto.write("</tr>\n")#
+            fHisto.write("<tr>\n")
+            fHisto.write( "<th scope=\"row\">p-Value 2 : %6.4f</th>\n" % pv2)
+            fHisto.write( "<td>")
+            if (KS_valid and KS_fileExist[1]):
+                tool.extWrite( "<div><a href=\"" + KS_Picture[1] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[1] + "\"></a></div>", [fHisto] )
+            fHisto.write( "</td>\n")
+            fHisto.write("</tr>\n")#
+            fHisto.write("<tr>\n")
+            fHisto.write( "<th scope=\"row\">p-Value 3 : %6.4f</th>\n" % pv3)
+            fHisto.write( "<td>")
+            if (KS_valid and KS_fileExist[2]):
+                tool.extWrite( "<div><a href=\"" + KS_Picture[2] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[2] + "\"></a></div>", [fHisto] )
+            fHisto.write( "</td>\n")
+            fHisto.write("</tr>\n")#
+            return
 

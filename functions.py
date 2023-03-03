@@ -269,7 +269,7 @@ class Tools:
                 tp_ref = tp_rel
         return [t_rel, t_ref, tp_rel, tp_ref]
 
-    def createDefinitionsFile(self, datas):
+    def createDefinitionsFile(self, datas, fileName):
         '''
         gedGsfElectrons ZEE_14
         RECO
@@ -283,8 +283,12 @@ class Tools:
         https://hypernews.cern.ch/HyperNews/CMS/get/relval/16218.html
         config_target.txt
         '''
-        wp_defs = open('definitions.txt', 'w') # definitions for PHP page
-        print('\n\t ==== definitions.txt ====\n')
+        if ( fileName ):
+            wp_defs = open(fileName, 'w') # definitions for PHP page
+            print('\n\t ==== ' + fileName + ' ====\n')
+        else:
+            wp_defs = open('definitions.txt', 'w') # definitions for PHP page
+            print('\n\t ==== definitions.txt ====\n')
         for elem in datas:
             print(elem)
             wp_defs.write(elem + "\n")
