@@ -441,7 +441,7 @@ def createComplexPicture2(legende, y, labels, fileName, histos):
     return
 
 def createComplexPicture3(legende, y,z, labels, fileName, histos1, histos2):
-    N = len(legende) # various releases
+    N = len(legende)
     M = len(histos1)
     texte = ''
     fig, axs = plt.subplots(nrows=N, ncols=2, figsize=(20, 30))
