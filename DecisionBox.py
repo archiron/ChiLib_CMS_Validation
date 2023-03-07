@@ -551,9 +551,10 @@ class DecisionBox:
         #print("%6.4f : %s" % (coeff, text))
         return text
 
-    def generateExplanation(self): # 1 line
+    def generateExplanation(self, path = 'DBox'): # 1 line
         # creating shortHistoName file in DBox folder
-        fExplain = open('DBox/explanation.html', 'w')  # web page
+        explanationName = path + '/explanation.html';
+        fExplain = open(explanationName, 'w')  # web page
         fExplain.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n")
         fExplain.write("<html>\n")
         fExplain.write("<head>\n")
@@ -713,7 +714,7 @@ class DecisionBox:
         fHisto.write("<table border=\"1\" bordercolor=\"blue\" cellpadding=\"2\" style=\"margin-left:auto;margin-right:auto\">\n")
         fHisto.write("<tr>\n")
         urlPath = webURL + shortWebFolder + '/' + dataSetFolder + explanationName
-        fHisto.write("<th scope=\"col\"> <a href=\"" + urlPath + ">Explanations</a> </th>\n")
+        fHisto.write("<th scope=\"col\"> <a href=\"" + urlPath + "\">Explanations</a> </th>\n")
         fHisto.write("<th scope=\"col\">Kolmogorov-Smirnov curves</th>\n")
         fHisto.write("</tr>\n")
 
@@ -738,11 +739,11 @@ class DecisionBox:
             tool.extWrite( "<div><a href=\"" + KS_Picture[2] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[2] + "\"></a></div>", [fHisto] )
         fHisto.write( "</td>\n")
         fHisto.write("</tr>\n")#
+        fHisto.write("</table>\n")#
         return
 
-    def DBwebPage2(self, fHisto, Names, KS_V, DB_picture, KS_Path0, KS_Path, ycFlag, shortRelease): # , shortReference, webURL, shortWebFolder, dataSetFolder
-            tool = Tools()
-            explanationName = "/DBox/explanation.html"
+    def DBwebPage2(self, fHisto, Names, KS_V, DB_picture, KS_Path, ycFlag): # , KS_Path0, shortRelease, shortReference, webURL, shortWebFolder, dataSetFolder
+            explanationName = "explanation.html"
             gif_name = Names[1]
 
             #print('DB - Path0 : %s' % (KS_Path0 + '-' + shortRelease + '/'))
@@ -750,26 +751,18 @@ class DecisionBox:
             png_name = Names[3]
             png_cumul_name = Names[4]
             KS_Picture = []
-            KS_fileExist = []
-            KS_valid = False
             png_Picture = False
             png_fileExist = False
             png_valid = False
             pngCum_Picture = False
-            pngCum_fileExist = False
-            pngCum_valid = False
             for i in range(0,3):
                 picture = 'KS-ttlDiff_' + str(i+1) + '_' + short_histo_names + '.png'
-                KS_Picture.append(KS_Path + '/CMSSW_' + shortRelease  + '/' + picture) # + '-' + shortReference
-                KS_fileExist.append(path.exists(KS_Path0 + '/CMSSW_' + shortRelease  + '/' + picture)) # + '-' + shortReference
-                KS_valid = KS_valid or KS_fileExist[i]
+                KS_Picture.append(picture) # KS_Path + '/CMSSW_' + shortRelease  + '/' + + '-' + shortReference
             if ycFlag:
                 png_Picture = png_name.split('.')[0] + str(0) + '.png'
                 png_fileExist = path.exists(png_Picture)
                 png_valid = png_valid or png_fileExist
                 pngCum_Picture = png_cumul_name.split('.')[0] + str(0) + '.png'
-                pngCum_fileExist = path.exists(pngCum_Picture)
-                pngCum_valid = pngCum_valid or pngCum_fileExist
 
             # write the KS reference release used.
             fHisto.write("<tr>\n")
@@ -816,8 +809,7 @@ class DecisionBox:
             fHisto.write("</td>\n")
 
             fHisto.write( "<td>")
-            if (pngCum_valid and pngCum_fileExist):
-                tool.extWrite( "<div><a href=\"" + pngCum_Picture + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + pngCum_Picture + "\"></a></div>", [fHisto] )
+            fHisto.write( "<div><a href=\"" + pngCum_Picture + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + pngCum_Picture + "\"></a></div>")
             fHisto.write( "</td>\n")
             fHisto.write("</tr>")
 
@@ -827,30 +819,28 @@ class DecisionBox:
             fHisto.write("<table border=\"1\" bordercolor=\"blue\" cellpadding=\"2\" style=\"margin-left:auto;margin-right:auto\">\n")
             fHisto.write("<tr>\n")
             urlPath = explanationName # webURL + shortWebFolder + '/' + dataSetFolder + 
-            fHisto.write("<th scope=\"col\"> <a href=\"" + urlPath + ">Explanations</a> </th>\n")
+            fHisto.write("<th scope=\"col\"> <a href=\"" + urlPath + "\">Explanations</a> </th>\n")
             fHisto.write("<th scope=\"col\">Kolmogorov-Smirnov curves</th>\n")
             fHisto.write("</tr>\n")
 
             fHisto.write("<tr>\n")
             fHisto.write( "<th scope=\"row\">p-Value 1 : %6.4f</th>\n" % pv1)
             fHisto.write( "<td>")
-            if (KS_valid and KS_fileExist[0]):
-                tool.extWrite( "<div><a href=\"" + KS_Picture[0] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[0] + "\"></a></div>", [fHisto] )
+            fHisto.write( "<div><a href=\"" + KS_Picture[0] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[0] + "\"></a></div>")
             fHisto.write( "</td>\n")
             fHisto.write("</tr>\n")#
             fHisto.write("<tr>\n")
             fHisto.write( "<th scope=\"row\">p-Value 2 : %6.4f</th>\n" % pv2)
             fHisto.write( "<td>")
-            if (KS_valid and KS_fileExist[1]):
-                tool.extWrite( "<div><a href=\"" + KS_Picture[1] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[1] + "\"></a></div>", [fHisto] )
+            fHisto.write( "<div><a href=\"" + KS_Picture[1] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[1] + "\"></a></div>")
             fHisto.write( "</td>\n")
             fHisto.write("</tr>\n")#
             fHisto.write("<tr>\n")
             fHisto.write( "<th scope=\"row\">p-Value 3 : %6.4f</th>\n" % pv3)
             fHisto.write( "<td>")
-            if (KS_valid and KS_fileExist[2]):
-                tool.extWrite( "<div><a href=\"" + KS_Picture[2] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[2] + "\"></a></div>", [fHisto] )
+            fHisto.write( "<div><a href=\"" + KS_Picture[2] + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + KS_Picture[2] + "\"></a></div>")
             fHisto.write( "</td>\n")
             fHisto.write("</tr>\n")#
+            fHisto.write("</table>\n")#
             return
 
