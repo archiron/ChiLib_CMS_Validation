@@ -331,8 +331,8 @@ class DecisionBox:
             diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
-            print('%s :: u p-Value 1 : %f' % (histoName, pValue))
-            print('%s :: n p-Value 1 : %f' % (histoName, pValue/I_Max))
+            #print('%s :: u p-Value 1 : %f' % (histoName, pValue))
+            #print('%s :: n p-Value 1 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum)
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
@@ -380,8 +380,8 @@ class DecisionBox:
             diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
-            print('%s :: u p-Value 2 : %f' % (histoName, pValue))
-            print('%s :: n p-Value 2 : %f' % (histoName, pValue/I_Max))
+            #print('%s :: u p-Value 2 : %f' % (histoName, pValue))
+            #print('%s :: n p-Value 2 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum[1:-1])
             return diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
@@ -429,8 +429,8 @@ class DecisionBox:
             diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
-            print('%s :: u p-Value 3 : %f' % (histoName, pValue))
-            print('%s :: n p-Value 3 : %f' % (histoName, pValue/I_Max))
+            #print('%s :: u p-Value 3 : %f' % (histoName, pValue))
+            #print('%s :: n p-Value 3 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum[1:-1])
             return diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
