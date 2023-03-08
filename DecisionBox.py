@@ -331,13 +331,13 @@ class DecisionBox:
             diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
-            #print('%s :: u p-Value 1 : %f' % (histoName, pValue))
-            #print('%s :: n p-Value 1 : %f' % (histoName, pValue/I_Max))
+            print('%s :: u p-Value 1 : %f' % (histoName, pValue))
+            print('%s :: n p-Value 1 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum)
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
         else:
-            print('no file name : %s' % fileName)
+            print('file {:s} does not exist'.format(fileName))
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max # return normalized pValue
 
     def decisionBox2(self, histoName, h1, h2, KS_path_local, shortRel): # , shortRef
@@ -350,7 +350,7 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '/histo_' + histoName + '_KScurve2' + shortRel + '.txt' # + '/CMSSW_' + '-' + shortRef 
+        fileName = KS_path_local + '/histo_' + histoName + '_KScurve2' + '_' + shortRel + '.txt' # + '/CMSSW_' + '-' + shortRef 
         fileExist = path.exists(fileName)
         if ( fileExist ):
             wKS = open(fileName, 'r')
@@ -380,12 +380,13 @@ class DecisionBox:
             diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
-            #print('%s :: u p-Value 2 : %f' % (histoName, pValue))
-            #print('%s :: n p-Value 2 : %f' % (histoName, pValue/I_Max))
+            print('%s :: u p-Value 2 : %f' % (histoName, pValue))
+            print('%s :: n p-Value 2 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum[1:-1])
             return diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
         else:
+            print('file {:s} does not exist'.format(fileName))
             return diffKS, pValue/I_Max # return normalized pValue
 
     def decisionBox3(self, histoName, h1, h2, KS_path_local, shortRel): # , shortRef
@@ -398,7 +399,7 @@ class DecisionBox:
         diffKS = 0.
         pValue = -1.
         I_Max = 1.
-        fileName = KS_path_local + '/histo_' + histoName + '_KScurve3' + shortRel + '.txt' # + '/CMSSW_' + '-' + shortRef
+        fileName = KS_path_local + '/histo_' + histoName + '_KScurve3' + '_' + shortRel + '.txt' # + '/CMSSW_' + '-' + shortRef
         fileExist = path.exists(fileName)
         if ( fileExist ):
             wKS = open(fileName, 'r')
@@ -428,12 +429,13 @@ class DecisionBox:
             diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
-            #print('%s :: u p-Value 3 : %f' % (histoName, pValue))
-            #print('%s :: n p-Value 3 : %f' % (histoName, pValue/I_Max))
+            print('%s :: u p-Value 3 : %f' % (histoName, pValue))
+            print('%s :: n p-Value 3 : %f' % (histoName, pValue/I_Max))
             yellowCurve = np.asarray(yellowCurve)
             yellowCurveCum = np.asarray(yellowCurveCum[1:-1])
             return diffKS, pValue/I_Max, yellowCurve, yellowCurveCum # return normalized pValue
         else:
+            print('file {:s} does not exist'.format(fileName))
             return diffKS, pValue/I_Max # return normalized pValue
 
     def decB(self, histoName, h1, h2, KS_path_local, shortRel):
@@ -752,16 +754,12 @@ class DecisionBox:
             png_cumul_name = Names[4]
             KS_Picture = []
             png_Picture = False
-            png_fileExist = False
-            png_valid = False
             pngCum_Picture = False
             for i in range(0,3):
                 picture = 'KS-ttlDiff_' + str(i+1) + '_' + short_histo_names + '.png'
                 KS_Picture.append(picture) # KS_Path + '/CMSSW_' + shortRelease  + '/' + + '-' + shortReference
             if ycFlag:
                 png_Picture = png_name.split('.')[0] + str(0) + '.png'
-                png_fileExist = path.exists(png_Picture)
-                png_valid = png_valid or png_fileExist
                 pngCum_Picture = png_cumul_name.split('.')[0] + str(0) + '.png'
 
             # write the KS reference release used.
@@ -778,7 +776,7 @@ class DecisionBox:
             fHisto.write("</tr>\n")
             fHisto.write("<tr>")
             fHisto.write("<td>")
-            if (png_valid and png_fileExist):
+            if ( ycFlag ):
                 fHisto.write("<div><a href=\"" + png_Picture + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + png_Picture + "\"></a></div>")
             else: # no png file (yellow curve)
                 fHisto.write("<div><a href=\"" + gif_name + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + gif_name + "\"></a></div>")
@@ -807,10 +805,10 @@ class DecisionBox:
             fHisto.write("   <p><b>KS 3 : </b> pValue : %6.4f</p>" % (pv3))
             fHisto.write("\n<div><a href=\"" + DB_picture + "\"><img border=\"0\" class=\"image\" width=\"40\" src=\"" + DB_picture + "\"></a></div>")
             fHisto.write("</td>\n")
-
-            fHisto.write( "<td>")
-            fHisto.write( "<div><a href=\"" + pngCum_Picture + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + pngCum_Picture + "\"></a></div>")
-            fHisto.write( "</td>\n")
+            if ( ycFlag ):
+                fHisto.write( "<td>")
+                fHisto.write( "<div><a href=\"" + pngCum_Picture + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + pngCum_Picture + "\"></a></div>")
+                fHisto.write( "</td>\n")
             fHisto.write("</tr>")
 
             fHisto.write("\n</table>\n")
