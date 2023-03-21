@@ -527,24 +527,23 @@ class GraphicKS:
         ng = 0
         nr = 0
         seriesTab = pd.DataFrame(tab, columns=['new'])
-        plt_diff_KS = seriesTab.plot.hist(bins=nbins, title=title)
+        plt_diff_KS = seriesTab.plot.hist(bins=nbins, title=title, legend=False)
         ymi, yMa = plt_diff_KS.get_ylim()
         if (diffM >= seriesTab.values.max()):
             color = 'r'
             nr += 1
             xp = seriesTab.values.max()
-            plt.text(xp, yMa/2., '== ' + str(diffM) + ' =>', fontsize = 12, bbox = dict(facecolor = 'red', alpha = 0.5))
+            plt.text(xp, yMa/2., '== ' + str(diffM) + ' =>', fontsize = 10, bbox = dict(facecolor = 'red', alpha = 0.5))
         elif (diffM <= seriesTab.values.min()):
             color = 'g'
             ng += 1
             xp = seriesTab.values.min()
-            plt.text(xp, yMa/2., '<= ' + str(diffM) + ' ==', fontsize = 12, bbox = dict(facecolor = 'green', alpha = 0.5))
+            plt.text(xp, yMa/2., '<= ' + str(diffM) + ' ==', fontsize = 10, bbox = dict(facecolor = 'green', alpha = 0.5))
         else:
             color = 'g'
             ng += 1
             xp = diffM
             plt_diff_KS.vlines(xp, ymi, 0.9*yMa, color=color, linewidth=4)
-        plt_diff_KS.legend([""])
         fig = plt_diff_KS.get_figure()
         fig.savefig(fileName)
         fig.clf()
