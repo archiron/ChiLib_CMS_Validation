@@ -548,3 +548,23 @@ class GraphicKS:
         fig.savefig(fileName)
         fig.clf()
         return ng, nr
+
+    def createSimpleKSttlDiffPicture(self, tab, nbins, title, fileName):
+        import pandas as pd
+        seriesTab = pd.DataFrame(tab, columns=['new'])
+        plt_diff_KS = seriesTab.plot.hist(bins=nbins, title=title, legend=False)
+        fig = plt_diff_KS.get_figure()
+        fig.savefig(fileName)
+        fig.clf()
+        return
+
+    def createSimpleCompKSttlDiffPicture(self, x, y, x_KS, y_KS, legende, title, fileName):
+        print(legende)
+        plt.plot(x, y,color='blue', marker='+', linestyle = 'none', label=legende[0]) #, legend=True
+        plt.plot(x_KS, y_KS,color='red', marker='+', linestyle = 'none', label=legende[1])#, legend=True
+        plt.title(title)
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(fileName)
+        plt.clf()
+        return
