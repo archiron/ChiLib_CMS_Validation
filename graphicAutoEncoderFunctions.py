@@ -533,12 +533,12 @@ class GraphicKS:
             color = 'r'
             nr += 1
             xp = seriesTab.values.max()
-            plt.text(xp, yMa/2., '== ' + str(diffM) + ' =>', fontsize = 10, bbox = dict(facecolor = 'red', alpha = 0.5))
+            plt.text(xp*0.8, yMa/2., '== ' + str(round(diffM,3)) + ' =>', fontsize = 10, bbox = dict(facecolor = 'red', alpha = 0.5))
         elif (diffM <= seriesTab.values.min()):
             color = 'g'
             ng += 1
             xp = seriesTab.values.min()
-            plt.text(xp, yMa/2., '<= ' + str(diffM) + ' ==', fontsize = 10, bbox = dict(facecolor = 'green', alpha = 0.5))
+            plt.text(xp, yMa/2., '<= ' + str(round(diffM,3)) + ' ==', fontsize = 10, bbox = dict(facecolor = 'green', alpha = 0.5))
         else:
             color = 'g'
             ng += 1
