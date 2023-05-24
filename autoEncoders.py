@@ -211,7 +211,7 @@ def createAEfolderName1(hs1, hs2, hs3, hs4, useHL3, useHL4, ls): # , tF, nbFiles
     #folderName += '/' + histoName + '/' # tF + 
     return folderName
 
-def createAEfolderName(HL, useHL, ls): 
+def createAEfolderName2(HL, useHL, ls): 
     folderName = "/HL_1.{:03d}".format(HL[0]) + "_HL_2.{:03d}".format(HL[1])
     if useHL[2] == 1: # Layer 3
         folderName += "_HL_3.{:03d}".format(HL[2])
@@ -224,5 +224,15 @@ def createAEfolderName(HL, useHL, ls):
     if useHL[6] == 1: # Layer 7
         folderName += "_HL_7.{:03d}".format(HL[6])
     folderName += "_LT.{:02d}".format(ls) + '/' # + "{:03d}".format(nbFiles)
-    #folderName += '/' + histoName + '/' # tF + 
+    return folderName
+
+def createAEfolderName(HL, useHL, ls): 
+    nb_Layers = len(HL)
+    folderName = "/" 
+    if (useHL[0] == 1): # Layer 0
+        folderName += "HL_1.{:03d}".format(HL[0])
+    for i in range(1, nb_Layers):
+        if (useHL[i] == 1): # Layer i
+            folderName += "_HL_{:1d}.{:03d}".format(i+1, HL[i])
+    folderName += "_LT.{:02d}".format(ls) + '/' 
     return folderName
