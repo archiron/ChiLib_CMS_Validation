@@ -441,6 +441,8 @@ def createComplexPicture2(legende, y, labels, fileName, histos):
     return
 
 def createComplexPicture3(legende, y,z, labels, fileName, histos1, histos2):
+    print('gr branch : {:d}'.format(len(histos1)))
+    print('gr branch2 : {:d}'.format(len(histos2)))
     N = len(legende)
     M = len(histos1)
     texte = ''
@@ -451,8 +453,8 @@ def createComplexPicture3(legende, y,z, labels, fileName, histos1, histos2):
     autreTexte3 = ', Differences are in '
     autreTexte4 = 'red'
     max_len = max(len(l) for l in histos1)
-    y_abs = np.array(list(histos1.values()))
-    z_abs = np.array(list(histos2.values()))
+    y_abs = np.array(list(histos1.values())) # branch 263
+    z_abs = np.array(list(histos2.values())) # branch2 240
     #print(y_abs)
     #print(z_abs)
     histos = np.array(list(histos1.keys()))
@@ -522,13 +524,18 @@ class GraphicKS:
     def __init__(self):
         self.toto = 1.2
 
-    def createKSttlDiffPicture(self, tab, nbins, diffM,title, fileName):
+    def createKSttlDiffPicture(self, tab, nbins, diffM,title, fileName, pValue, I_max):
         import pandas as pd
+        pValue_norm = pValue / I_max
+        pV_text = 'pValue : ' + str(round(pValue, 3)) + '\n'
+        pV_text += 'I_max : ' + str(round(I_max, 3)) + '\n'
+        pV_text += 'norm. pValue : ' + str(round(pValue_norm, 3)) 
         ng = 0
         nr = 0
         seriesTab = pd.DataFrame(tab, columns=['new'])
         plt_diff_KS = seriesTab.plot.hist(bins=nbins, title=title, legend=False)
         ymi, yMa = plt_diff_KS.get_ylim()
+        xmi, xMa = plt_diff_KS.get_xlim()
         if (diffM >= seriesTab.values.max()):
             color = 'r'
             nr += 1
@@ -544,6 +551,7 @@ class GraphicKS:
             ng += 1
             xp = diffM
             plt_diff_KS.vlines(xp, ymi, 0.9*yMa, color=color, linewidth=4)
+        plt.text(0.65*xMa, 0.85*yMa, pV_text, fontsize = 10, bbox = dict(facecolor = 'green', alpha = 0.5))
         fig = plt_diff_KS.get_figure()
         fig.savefig(fileName)
         fig.clf()

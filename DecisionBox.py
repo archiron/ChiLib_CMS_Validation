@@ -285,7 +285,7 @@ class DecisionBox:
         return v
 
     # major function to be called (ref is GevSeq.py)
-    def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel): # , shortRef
+    def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel, nbFiles): # , shortRef
         s0, e0 = self.getHistoValues(h1)
         s1, e1 = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
@@ -329,6 +329,15 @@ class DecisionBox:
             wKS.close()
             # Get the Kolmogoroff-Smirnov diff. for reference curve (s0) vs test curve (s1)
             diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
+            diffNameFile = KS_path_local + '/histo_differences_KScurve_' + shortRel + '__{:03d}'.format(nbFiles) + '.txt'
+            print(diffNameFile)
+            diffFileExist = path.exists(diffNameFile)
+            if ( diffFileExist ):
+                wdiff = open(diffNameFile, 'r')
+                tmp1 = wdiff.readline().rstrip('\n\r').split(' : ')[1]
+                diff1 = float(tmp1)
+                print('diff 1 : %f' % diff1)
+                diffKS = diff1
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
             #print('%s :: u p-Value 1 : %f' % (histoName, pValue))
@@ -340,7 +349,7 @@ class DecisionBox:
             print('file {:s} does not exist'.format(fileName))
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max # return normalized pValue
 
-    def decisionBox2(self, histoName, h1, h2, KS_path_local, shortRel): # , shortRef
+    def decisionBox2(self, histoName, h1, h2, KS_path_local, shortRel, nbFiles): # , shortRef
         s0, e0 = self.getHistoValues(h1)
         s1, e1 = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
@@ -378,6 +387,15 @@ class DecisionBox:
             wKS.close()
             # Get the Kolmogoroff-Smirnov diff. for reference curve (s0) vs test curve (s1)
             diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
+            diffNameFile = KS_path_local + '/histo_differences_KScurve_' + shortRel + '__{:03d}'.format(nbFiles) + '.txt'
+            print(diffNameFile)
+            diffFileExist = path.exists(diffNameFile)
+            if ( diffFileExist ):
+                wdiff = open(diffNameFile, 'r')
+                tmp1 = wdiff.readline().rstrip('\n\r').split(' : ')[1]
+                diff1 = float(tmp1)
+                print('diff 1 : %f' % diff1)
+                diffKS = diff1
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
             #print('%s :: u p-Value 2 : %f' % (histoName, pValue))
@@ -389,7 +407,7 @@ class DecisionBox:
             print('file {:s} does not exist'.format(fileName))
             return diffKS, pValue/I_Max # return normalized pValue
 
-    def decisionBox3(self, histoName, h1, h2, KS_path_local, shortRel): # , shortRef
+    def decisionBox3(self, histoName, h1, h2, KS_path_local, shortRel, nbFiles): # , shortRef
         s0, _ = self.getHistoValues(h1)
         s1, _ = self.getHistoValues(h2)
         new_entries = h1.GetEntries()
@@ -402,6 +420,7 @@ class DecisionBox:
         fileName = KS_path_local + '/histo_' + histoName + '_KScurve3' + '_' + shortRel + '.txt' # + '/CMSSW_' + '-' + shortRef
         fileExist = path.exists(fileName)
         if ( fileExist ):
+            #print('file %s OK' % fileName)
             wKS = open(fileName, 'r')
             l1 = wKS.readline().rstrip('\n\r')
             _ = wKS.readline().rstrip('\n\r')
@@ -426,7 +445,18 @@ class DecisionBox:
 
             wKS.close()
             # Get the Kolmogoroff-Smirnov diff. for reference curve (s0) vs test curve (s1)
-            diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries)
+            diffKS, _ = self.diffMAXKS(s0, s1, new_entries, ref_entries) # 
+            print('diffKs : %f' % diffKS)
+            diffNameFile = KS_path_local + '/histo_differences_KScurve_' + shortRel + '__{:03d}'.format(nbFiles) + '.txt'
+            #print(diffNameFile)
+            diffFileExist = path.exists(diffNameFile)
+            if ( diffFileExist ):
+                wdiff = open(diffNameFile, 'r')
+                tmp1 = wdiff.readline().rstrip('\n\r').split(' : ')[1]
+                diff1 = float(tmp1)
+                print('diff 1 : %f' % diff1)
+                diffKS = diff1
+            print('diffKs : %f' % diffKS)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
             #print('%s :: u p-Value 3 : %f' % (histoName, pValue))
@@ -784,6 +814,9 @@ class DecisionBox:
             KS_val_1 = KS_V[0]
             KS_val_2 = KS_V[1]
             KS_val_3 = KS_V[2]
+            '''print('pv1 : %f' % KS_val_1[4])
+            print('pv2 : %f' % KS_val_2[1])
+            print('pv3 : %f' % KS_val_3[1])'''
 
             fHisto.write("<td>")
             fHisto.write(" <p><b>confiance : </b></p><p>coeff 1 : %6.4f<br>coeff 2 : %6.4f<br>coeff 3 : %6.4f</p>\n" % (KS_val_1[0], KS_val_1[1], KS_val_1[2]))
@@ -800,6 +833,9 @@ class DecisionBox:
                 pv3 = KS_val_3[1]
             else:
                 pv3 = -1.0
+            '''print('pv1 : %f' % pv1)
+            print('pv2 : %f' % pv2)
+            print('pv3 : %f' % pv3)'''
             fHisto.write(" \n<p><b>KS 1 : </b> pValue : %6.4f</p>" % (pv1))
             fHisto.write("   <p><b>KS 2 : </b> pValue : %6.4f</p>" % (pv2))
             fHisto.write("   <p><b>KS 3 : </b> pValue : %6.4f</p>" % (pv3))
