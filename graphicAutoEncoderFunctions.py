@@ -397,16 +397,16 @@ def createComplexPicture2(legende, y, labels, fileName, histos):
     
     for j in range(0, M, 3):
         aa = histos[j].replace('h_ele_', '')
+        aa = aa.replace('h_', '')
+        aa = aa.replace('scl_', '')
         if ((j+1) < M):
             bb = histos[j+1].replace('h_ele_', '')
+            bb = bb.replace('h_', '')
+            bb = bb.replace('scl_', '')
         if ((j+2) < M):
             cc = histos[j+2].replace('h_ele_', '')
-        aa = aa.replace('h_', '')
-        bb = bb.replace('h_', '')
-        cc = cc.replace('h_', '')
-        aa = aa.replace('scl_', '')
-        bb = bb.replace('scl_', '')
-        cc = cc.replace('scl_', '')
+            cc = cc.replace('h_', '')
+            cc = cc.replace('scl_', '')
         texte += '{:03d} - {:s}'.format(j, aa.ljust(max_len - 5))
         if ((j+1) < M):
             texte += ' {:03d} - {:s}'.format((j+1), bb.ljust(max_len - 5))
@@ -470,16 +470,16 @@ def createComplexPicture3(legende, y,z, labels, fileName, histos1, histos2):
     
     for j in range(0, M, 3):
         aa = histos[j].replace('h_ele_', '')
+        aa = aa.replace('h_', '')
+        aa = aa.replace('scl_', '')
         if ((j+1) < M):
             bb = histos[j+1].replace('h_ele_', '')
+            bb = bb.replace('h_', '')
+            bb = bb.replace('scl_', '')
         if ((j+2) < M):
             cc = histos[j+2].replace('h_ele_', '')
-        aa = aa.replace('h_', '')
-        bb = bb.replace('h_', '')
-        cc = cc.replace('h_', '')
-        aa = aa.replace('scl_', '')
-        bb = bb.replace('scl_', '')
-        cc = cc.replace('scl_', '')
+            cc = cc.replace('h_', '')
+            cc = cc.replace('scl_', '')
         texte += '{:03d} - {:s}'.format(j, aa.ljust(max_len - 5))
         if ((j+1) < M):
             texte += ' {:03d} - {:s}'.format((j+1), bb.ljust(max_len - 5))
