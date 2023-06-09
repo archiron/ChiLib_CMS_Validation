@@ -128,7 +128,7 @@ def reduceBranch(branch):
     shn = branch.replace("h_", "").replace("ele_", "").replace("scl_", "").replace("bcl_", "")
     return shn
 
-def optimizeBranches(tmp_branches):
+def optimizeBranches_old(tmp_branches):
     #tmp_branches = np.asarray(tmp_branches)
     nb_branches = len(tmp_branches)
     print('nb branches : %d' % nb_branches)
@@ -143,6 +143,25 @@ def optimizeBranches(tmp_branches):
                 t0.remove(item)
         print('{:d} : '.format(i), t0)
     print(len(t0))
+    return t0
+
+def optimizeBranches(tmp_branches):
+    #tmp_branches = np.asarray(tmp_branches)
+    nb_branches = len(tmp_branches)
+    print('nb branches : %d' % nb_branches)
+    for i in range(0, nb_branches):
+        print('nb leaves : {:d}'.format(len(tmp_branches[i])))
+    t0 = tmp_branches[0]
+    for i in range(0,len(t0)):
+        for j in range(1,nb_branches):
+            t1 = tmp_branches[j]
+            if (t1[i] == 'KOKO'):
+                t0[i] = 'KOKO'
+    print('before : {:d}'.format(len(t0)))
+
+    t0 = list(set(t0))
+    t0.remove('KOKO')
+    print('after : {:d}'.format(len(t0)))
     return t0
 
 def change_nbFiles(nbFiles_computed, nbFiles):
