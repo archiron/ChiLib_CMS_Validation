@@ -148,6 +148,16 @@ class Tools:
             short_histo_name = short_histo_name.replace("bcl_", "")
         return short_histo_name, short_histo_names, histo_positions
 
+    def shortHistoName_0(self, elem):
+        short_histo_name = elem.replace("h_", "")
+        if "ele_" in short_histo_name:
+            short_histo_name = short_histo_name.replace("ele_", "")
+        if "scl_" in short_histo_name:
+            short_histo_name = short_histo_name.replace("scl_", "")
+        if "bcl_" in short_histo_name:
+            short_histo_name = short_histo_name.replace("bcl_", "")
+        return short_histo_name
+
     def createDatasetFolder(self, folder):
         if not os.path.exists(folder): # create folder
             os.makedirs(folder) # create reference folder

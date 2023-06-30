@@ -16,22 +16,14 @@ def createLossPictures(branch, history_da, nb_epochs, fileName):
     plt.suptitle('Histo Plots for ' + branch)
 
     plt.subplot(1, 2, 1)
-    plt.plot(list(range(nb_epochs))
-    ,history_da['train_loss']
-    ,label="train loss", color='red', linestyle = 'dotted')
-    plt.plot(list(range(nb_epochs))
-    ,history_da['test_loss']
-    ,label="test loss", color='blue')
+    plt.plot(list(range(nb_epochs)), history_da['train_loss'], label="train loss", color='red', linestyle = 'dotted')
+    plt.plot(list(range(nb_epochs)), history_da['test_loss'], label="test loss", color='blue')
     plt.legend()
     plt.xlabel('nb epoch')
 
     plt.subplot(1, 2, 2)
-    plt.plot(list(range(nb_epochs))
-    ,history_da['train_loss']
-    ,label="train loss", color='red', linestyle = 'dotted')
-    plt.plot(list(range(nb_epochs))
-    ,history_da['test_loss']
-    ,label="test loss", color='blue')
+    plt.plot(list(range(nb_epochs)), history_da['train_loss'], label="train loss", color='red', linestyle = 'dotted')
+    plt.plot(list(range(nb_epochs)), history_da['test_loss'], label="test loss", color='blue')
     plt.legend()
     plt.yscale("log")
     plt.xlabel('nb epoch')
@@ -85,6 +77,31 @@ def creatPredPictLinLog(branch, Ncols, new, y_pred_new, new_loss, rel, fileName)
     pred_new = y_pred_new.numpy()
     #plt.plot(list(range(Ncols)), pred_new[0], label="pred.", color='blue')
     plt.step(list(range(Ncols)), pred_new[0], where='mid', label="pred.", color='blue')
+    plt.legend()
+    plt.title("new : loss = {0:1.5e}".format(new_loss))
+    plt.yscale("log")
+
+    plt.tight_layout()
+    plt.savefig(fileName)
+    return
+
+def creatPredPictLinLog_V2(branch, Ncols, new, y_pred_new, new_loss, rel, fileName):
+    plt.clf()
+    plt.figure(figsize=(10, 5))
+    plt.suptitle(branch)
+
+    plt.subplot(1, 2, 1)
+    #y_new = new.numpy()
+    plt.step(list(range(Ncols)), new[0], where='mid', label=rel, color='red', marker='s', linestyle = 'dotted')
+    #pred_new = y_pred_new.numpy()
+    plt.step(list(range(Ncols)), y_pred_new, where='mid', label="pred.", color='blue')
+    plt.legend()
+    plt.title("new : loss = {0:1.5e}".format(new_loss))
+
+    plt.subplot(1, 2, 2)
+    plt.step(list(range(Ncols)), new[0], where='mid', label=rel, color='red', marker='s', linestyle = 'dotted')
+    #pred_new = y_pred_new.numpy()
+    plt.step(list(range(Ncols)), y_pred_new, where='mid', label="pred.", color='blue')
     plt.legend()
     plt.title("new : loss = {0:1.5e}".format(new_loss))
     plt.yscale("log")

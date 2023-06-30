@@ -148,11 +148,17 @@ class Encoder7(nn.Module):
 
 class Decoder7(nn.Module):
     
-    def __init__(self,device,latent_size,input_size,hidden_size_1,hidden_size_2,hidden_size_3,hidden_size_4):
+    def __init__(self,device,latent_size,input_size,hidden_size_1,hidden_size_2,hidden_size_3,hidden_size_4,hidden_size_5,hidden_size_6,hidden_size_7):
         super().__init__()
         self.decoder_lin=nn.Sequential(
-        nn.Linear(latent_size, hidden_size_4),
+        nn.Linear(latent_size, hidden_size_7),
         nn.ReLU(True),
+        nn.Linear(hidden_size_7, hidden_size_6),
+        nn.ReLU(True), 
+        nn.Linear(hidden_size_6, hidden_size_5),
+        nn.ReLU(True), 
+        nn.Linear(hidden_size_5, hidden_size_4),
+        nn.ReLU(True), 
         nn.Linear(hidden_size_4, hidden_size_3),
         nn.ReLU(True), 
         nn.Linear(hidden_size_3, hidden_size_2),
@@ -167,12 +173,54 @@ class Decoder7(nn.Module):
         x=self.decoder_lin(x)
         return x
 
+class simpleEncoder(nn.Module):
+    def __init__(self,device,latent_size,input_size,HL):
+        super().__init__()
+        
+        nb_L = len(HL)
+        print('nb_L : {:d}'.format(nb_L))
+        layers = []
+        layers.append(nn.Linear(input_size, HL[0]))
+        layers.append(nn.ReLU(True))
+        for i in range(0, nb_L - 1):
+            layers.append(nn.Linear(HL[i], HL[i+1]))
+            layers.append(nn.ReLU(True))
+        layers.append(nn.Linear(HL[nb_L - 1], latent_size))
+    ### Linear section
+        self.encoder_lin=nn.Sequential(*layers)
+        #print(self.encoder_lin)
+        
+    def forward(self,x):
+        x=self.encoder_lin(x)
+        return x
+
+class simpleDecoder(nn.Module):
+    
+    def __init__(self,device,latent_size,input_size,HL):
+        super().__init__()
+
+        nb_L = len(HL)
+        layers = []
+        layers.append(nn.Linear(latent_size, HL[nb_L - 1]))
+        layers.append(nn.ReLU(True))
+        for i in range(0, nb_L - 1):
+            layers.append(nn.Linear(HL[nb_L - i - 1], HL[nb_L - i - 2]))
+            layers.append(nn.ReLU(True))
+        layers.append(nn.Linear(HL[0], input_size))
+        #layers.append(nn.Sigmoid())
+        self.decoder_lin=nn.Sequential(*layers)
+        #print(self.decoder_lin)
+        
+    def forward(self,x):
+        x=self.decoder_lin(x)
+        return x
+
 def train_epoch_den(encoder,decoder,device,dataloader,loss_fn,optimizer):
     encoder.train()
     decoder.train()
     train_loss=[]
     for item in dataloader: # "_" ignore labels
-        #item.to(device)
+        #item = item.to(device)
         encoded_data=encoder(item) # .float()
         decoded_data=decoder(encoded_data)
         loss=loss_fn(decoded_data,item) # .float()
@@ -182,7 +230,6 @@ def train_epoch_den(encoder,decoder,device,dataloader,loss_fn,optimizer):
         train_loss.append(loss.detach()) # .cpu().numpy()
     train_loss = torch.tensor(train_loss) # .clone().detach()
     return torch.mean(train_loss), encoded_data[0]
-    #return np.mean(train_loss), encoded_data[0]
 
 def test_epoch_den(encoder,decoder,device,dataloader,loss_fn):
     encoder.eval()
@@ -191,15 +238,56 @@ def test_epoch_den(encoder,decoder,device,dataloader,loss_fn):
         conc_out=[]
         conc_label=[]
         for item in dataloader:
-            #item.to(device)
-            encoded_data=encoder(item) # .float()
+            #item = item.to(device)
+            encoded_data=encoder(item) 
             decoded_data=decoder(encoded_data)
             conc_out.append(decoded_data)
-            conc_label.append(item) # .float()
+            conc_label.append(item) 
         conc_out=torch.cat(conc_out)
         conc_label=torch.cat(conc_label)
         test_loss=loss_fn(conc_out,conc_label)
     return test_loss.data, decoded_data, encoded_data
+
+def train_epoch_den2(encoder,decoder,device,dataloader,loss_fn,optimizer):
+    encoder.train()
+    decoder.train()
+    train_loss=[]
+    for item in dataloader: # "_" ignore labels
+        item = item.to(device)
+        encoded_data=encoder(item) # .float()
+        decoded_data=decoder(encoded_data)
+        loss=loss_fn(decoded_data,item) # .float()
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        train_loss.append(loss.detach()) # .cpu().numpy()
+    train_loss = torch.tensor(train_loss) # .clone().detach()
+    e_o = [encoded_data[0][0].item(), encoded_data[0][1].item()] # = encoded_data[0]
+    return torch.mean(train_loss).item(), e_o # , encoded_data[0]
+        # train_loss : torch tensor cpu - float
+        # encoded_data : torch tensor GPU - tuple 2 elements
+
+def test_epoch_den2(encoder,decoder,device,dataloader,loss_fn):
+    encoder.eval()
+    decoder.eval()
+    with torch.no_grad(): # No need to track the gradients
+        conc_out=[]
+        conc_label=[]
+        for item in dataloader:
+            item = item.to(device)
+            encoded_data=encoder(item) 
+            decoded_data=decoder(encoded_data)
+            conc_out.append(decoded_data)
+            conc_label.append(item) 
+        conc_out=torch.cat(conc_out)
+        conc_label=torch.cat(conc_label)
+        test_loss=loss_fn(conc_out,conc_label)
+    e_o = [encoded_data[0][0].item(), encoded_data[0][1].item()] # = encoded_data[0]
+    #return test_loss.data, decoded_data, encoded_data
+    return test_loss.item(), decoded_data[0], e_o # , encoded_data[0]
+    # test_loss : torch tensor cpu - float
+    # decoded_dta : torch tensor GPU - liste
+    # encoded_data : torch tensor GPU - tuple 2 elements
 
 def createAEfolderName1(hs1, hs2, hs3, hs4, useHL3, useHL4, ls): # , tF, nbFiles, histoName
     folderName = "/HL_1.{:03d}".format(hs1) + "_HL_2.{:03d}".format(hs2)
@@ -236,3 +324,17 @@ def createAEfolderName(HL, useHL, ls):
             folderName += "_HL_{:1d}.{:03d}".format(i+1, HL[i])
     folderName += "_LT.{:02d}".format(ls) + '/' 
     return folderName
+
+def extractLayerList(HL, useHL):
+    t1 = []
+    u1 = []
+    if (len(HL) != len(useHL)):
+        print('HL & useHL MUST have the same length !')
+        exit()
+    else:
+        nb_L = len(HL)
+        for i in range(0, nb_L):
+            if (useHL[i]):
+                u1.append(useHL[i])
+                t1.append(HL[i])
+    return t1, u1
