@@ -359,17 +359,36 @@ def createCompKSvsAEPicture2Axis(labels, val1, val2, fileName, title):
     plt.savefig(fileName)
     return
 
-def createSimplePicture(title, y, labels, fileName): #, histos):
+def createSimplePicture(title, y, labels, fileName): 
+    # labels : axis x,y labels
     plt.clf()
     plt.figure(figsize=(10, 5))
     #plt.suptitle(title)
 
     plt.plot(y,color='red', linestyle = 'dotted')
-    #plt.legend()
     plt.title(title)
-    #N = len(histos)
-    #locs = list(range(0, N))
-    #plt.xticks(locs, histos, rotation=90, ha="right", rotation_mode="anchor")
+    
+    plt.xlabel(labels[0])
+    plt.ylabel(labels[1])
+
+    plt.tight_layout()
+    plt.savefig(fileName)
+    return
+
+def createSimplePicture2(title, y, labels, fileName, ticksLabels): 
+    # labels : axis x,y labels
+    plt.clf()
+    plt.figure(figsize=(10, 5))
+    #plt.suptitle(title)
+
+    plt.plot(y,color='red', linestyle = 'dotted', marker='+')
+    #plt.legend()
+    if ( title != '' ):
+        plt.title(title)
+    if (ticksLabels):
+        N = len(ticksLabels)
+        locs = list(range(0, N))
+        plt.xticks(locs, ticksLabels, rotation=45, ha="right", rotation_mode="anchor")
     plt.xlabel(labels[0])
     plt.ylabel(labels[1])
 
