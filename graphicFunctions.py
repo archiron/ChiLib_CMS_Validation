@@ -1077,9 +1077,9 @@ def createPicture2(self, histo1, histo2, scaled, err, filename, id):
     histo2c.Draw("sames hist")
     
     self.cnv.cd()
-    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.00, 0.25) # ,0,0,0
+    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.00, 0.26) # ,0,0,0
     pad2.SetTopMargin(0.025)
-    pad2.SetBottomMargin(0.2)
+    pad2.SetBottomMargin(0.3)
     pad2.SetGridy()
     pad2.Draw()
     pad2.cd()
@@ -1118,7 +1118,7 @@ def createPicture2(self, histo1, histo2, scaled, err, filename, id):
     # X axis ratio plot settings
     histo3.GetXaxis().SetTitleSize(20)
     histo3.GetXaxis().SetTitleFont(43)
-    histo3.GetXaxis().SetTitleOffset(4.)
+    # histo3.GetXaxis().SetTitleOffset(4.)
     histo3.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
     histo3.GetXaxis().SetLabelSize(15)
 
