@@ -197,7 +197,7 @@ def createCompLossesPicture2Axis(labs, val1, val2, fileName, title):
     #locs = ax2.set_xticks(x_pos, labs)#, rotation=45, ha="right", rotation_mode="anchor")
     ax2.set_xticks(x_pos)
     ax2.set_xticklabels(labs)
-    plot_2 = ax2.plot(x_pos, val2, color='blue', marker='+', linestyle = 'None', label='KS value')
+    plot_2 = ax2.plot(x_pos, val2, color='blue', marker='+', linestyle = 'None', label='KS pValue')
     ax2.tick_params(axis ='y', labelcolor = 'blue') 
 
     lns = plot_1 + plot_2
