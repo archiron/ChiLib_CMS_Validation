@@ -18,10 +18,10 @@ argv.append( '-b-' )
 import ROOT
 ROOT.gROOT.SetBatch(True)
 #ROOT.gErrorIgnoreLevel = ROOT.kWarning # remove info like : Info in <TCanvas::Print>: gif file gifs/h_ele_vertexPhi.gif has been created
-ROOT.gErrorIgnoreLevel = ROOT.kFatal
+ROOT.gErrorIgnoreLevel = ROOT.kBreak # ROOT.kFatal
 argv.remove( '-b-' )
 
-from ROOT import * 
+from ROOT import kWhite, kBlue, kBlack, kRed, gStyle, TCanvas, gPad 
 
 class Graphic:
     def __init__(self):
@@ -97,7 +97,6 @@ class Graphic:
         ref_entries = histo2.GetEntries()
         self.cnv = TCanvas(str(id), "canvas")
         print('createPicture')
-        color1 = ROOT.kRed #
 
         histo2c = histo2.Clone()
         if (scaled and (new_entries != 0) and (ref_entries != 0)):
@@ -105,34 +104,32 @@ class Graphic:
             histo2c.Scale(rescale_factor)
         if (histo2c.GetMaximum() > histo1.GetMaximum()):
             histo1.SetMaximum(histo2c.GetMaximum() * 1.1)
-        #if (filename == "h_ele_charge"):
-        #   n_ele_charge = histo1.GetEntries()
         
         self.cnv.SetCanvasSize(960, 600)
         self.cnv.Clear()
         histo2c.Draw()
         self.cnv.Update()
-        gMax2 = ROOT.gPad.GetUymax()
+        #gMax2 = ROOT.gPad.GetUymax()
 
         self.cnv.Clear()
         histo1.Draw()
         self.cnv.Update()
-        gMax1 = ROOT.gPad.GetUymax()
+        #gMax1 = ROOT.gPad.GetUymax()
 
         #if (gMax1 != gMax2):
         #    var_1 = log10( abs(gMax1 - gMax2) )
 
         self.cnv.Clear()
         histo1.Draw()
-        histo1.SetMarkerColor(color1)
+        histo1.SetMarkerColor(kRed)
         histo1.SetLineWidth(3)
         histo1.SetStats(1)
         RenderHisto(histo1, self)
         gPad.Update()
         statBox1 = histo1.GetListOfFunctions().FindObject("stats")
-        histo1.SetLineColor(color1)
-        histo1.SetMarkerColor(color1)
-        statBox1.SetTextColor(color1)
+        histo1.SetLineColor(kRed)
+        histo1.SetMarkerColor(kRed)
+        statBox1.SetTextColor(kRed)
         gPad.Update()
         histo2c.Draw()
         histo2c.SetLineWidth(3)
@@ -160,8 +157,6 @@ class Graphic:
         new_entries = histo1.GetEntries() # ttl # of bins (9000 in general)
         ref_entries = histo2.GetEntries()
         self.cnv = TCanvas(str(id), "canvas")
-        color1 = ROOT.kRed #
-        #print(filename)
 
         histo2c = histo2.Clone()
         if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
@@ -169,12 +164,11 @@ class Graphic:
             histo2c.Scale(rescale_factor)
         if (histo2c.GetMaximum() > histo1.GetMaximum()):
             histo1.SetMaximum(histo2c.GetMaximum() * 1.1)
-        #if (filename == "h_ele_charge"):
-        #   n_ele_charge = histo1.GetEntries()
         
         self.cnv.SetCanvasSize(960, 900)
         self.cnv.Clear()
         self.cnv.SetFillColor(10)
+        self.cnv.SetBorderMode(1)
         
         pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0) # ,0,0,0
         pad1.SetBottomMargin(0.05)
@@ -188,6 +182,9 @@ class Graphic:
         
         histo1.SetStats(1)
         histo1.Draw(newDrawOptions) # 
+        histo1.SetLineStyle(0)
+        histo1.SetLineWidth(2)
+
         RenderHisto(histo1, self)
         if ("ELE_LOGY" in histo1.GetOption() and histo1.GetMaximum() > 0):
             if (re.search('etaEff_all', filename) or re.search('ptEff_all', filename)):
@@ -196,8 +193,17 @@ class Graphic:
             else:
                 pad1.SetLogy(1)
         gPad.Update()
+
         statBox1 = histo1.GetListOfFunctions().FindObject("stats")
-        statBox1.SetTextColor(color1)    
+        statBox1.SetTextColor(kRed)    
+        statBox1.SetBorderSize(2)
+        #statBox1.SetFillColor(kGray)
+        statBox1.SetFillColorAlpha(18, 0.35) # https://root.cern.ch/doc/master/classTAttFill.html
+        statBox1.SetY2NDC(0.995)
+        statBox1.SetY1NDC(0.755)
+        statBox1.SetX2NDC(0.995)
+        statBox1.SetX1NDC(0.795)
+
         gPad.Update()
         histo2c.Draw("sames hist") # ""  same
         histo2c.SetStats(1)
@@ -215,6 +221,10 @@ class Graphic:
         y2 = statBox1.GetY2NDC()
         statBox2.SetY1NDC(2*y1-y2)
         statBox2.SetY2NDC(y1)
+        statBox2.SetBorderSize(2)
+        statBox2.SetFillColorAlpha(18, 0.35)
+        statBox2.SetX2NDC(0.995)
+        statBox2.SetX1NDC(0.795)
 
         newDrawOptions = "sames "
         if err == "1":
@@ -225,9 +235,10 @@ class Graphic:
         histo2c.Draw("sames hist")
         
         self.cnv.cd()
-        pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.00, 0.25) # ,0,0,0
+        pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.00, 0.26) # ,0,0,0
         pad2.SetTopMargin(0.025)
-        pad2.SetBottomMargin(0.2)
+        pad2.SetBottomMargin(0.3)
+        pad2.SetBorderMode(0)
         pad2.SetGridy()
         pad2.Draw()
         pad2.cd()
@@ -243,12 +254,15 @@ class Graphic:
         histo3.SetMarkerStyle(21)
         histo3.Draw("ep")
         
-        histo1.SetMarkerColor(color1)
+        histo1.SetMarkerColor(kRed)
         histo1.SetLineWidth(3) 
-        histo1.SetLineColor(color1)
+        histo1.SetLineColor(kRed)
         histo1.GetYaxis().SetTitleSize(25)
         histo1.GetYaxis().SetTitleFont(43)
         histo1.GetYaxis().SetTitleOffset(2.00)
+        histo1.GetZaxis().SetTitleSize(0.05)
+        histo1.SetMarkerStyle(21)
+        histo1.SetMarkerSize(0.8)
         
         histo2c.SetLineColor(kBlue)
         histo2c.SetMarkerColor(kBlue)
@@ -266,7 +280,6 @@ class Graphic:
         # X axis ratio plot settings
         histo3.GetXaxis().SetTitleSize(20)
         histo3.GetXaxis().SetTitleFont(43)
-        histo3.GetXaxis().SetTitleOffset(4.)
         histo3.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
         histo3.GetXaxis().SetLabelSize(15)
 
@@ -667,47 +680,49 @@ def initRoot():
     initRootStyle()
 
 def initRootStyle():
-    eleStyle = ROOT.TStyle("eleStyle","Style for electron validation")
-    ROOT.gROOT.ForceStyle()
-    eleStyle.SetCanvasBorderMode(0)
-    eleStyle.SetCanvasColor(kWhite)
-    eleStyle.SetCanvasDefH(600)
-    eleStyle.SetCanvasDefW(800)
-    eleStyle.SetCanvasDefX(0)
-    eleStyle.SetCanvasDefY(0)
-    eleStyle.SetPadBorderMode(0)
-    eleStyle.SetPadColor(kWhite)
-    eleStyle.SetPadGridX(False)
-    eleStyle.SetPadGridY(False)
-    eleStyle.SetGridColor(0)
-    eleStyle.SetGridStyle(3)
-    eleStyle.SetGridWidth(1)
-    eleStyle.SetOptStat(1)
-    eleStyle.SetPadTickX(1)
-    eleStyle.SetPadTickY(1)
-    eleStyle.SetHistLineColor(1)
-    eleStyle.SetHistLineStyle(0)
-    eleStyle.SetHistLineWidth(2)
-    eleStyle.SetEndErrorSize(2)
-    eleStyle.SetErrorX(0.)
-    eleStyle.SetTitleColor(1, "XYZ")
-    eleStyle.SetTitleFont(42, "XYZ")
-    eleStyle.SetTitleXOffset(1.0)
-    eleStyle.SetTitleYOffset(1.0)
-    eleStyle.SetLabelOffset(0.005, "XYZ") # numeric label
-    eleStyle.SetTitleSize(0.05, "XYZ")
-    eleStyle.SetTitleFont(22,"X")
-    eleStyle.SetTitleFont(22,"Y")
-    eleStyle.SetPadBottomMargin(0.13) # 0.05
-    eleStyle.SetPadLeftMargin(0.15)
-    #eleStyle.SetPadRightMargin(0.2)
-    eleStyle.SetMarkerStyle(21)
-    eleStyle.SetMarkerSize(0.8)
-    #eleStyle.SetLegendFont(42)
-    #eleStyle.SetLegendTextSize(0.)
-    eleStyle.cd()
-    gStyle.SetOptTitle(1)
-    gStyle.SetPadRightMargin(0.2)
+    gStyle.SetCanvasBorderMode(1)
+    gStyle.SetCanvasColor(kWhite)
+    gStyle.SetCanvasDefH(600)
+    gStyle.SetCanvasDefW(800)
+    gStyle.SetCanvasDefX(0)
+    gStyle.SetCanvasDefY(0)
+    gStyle.SetPadBorderMode(1)
+    gStyle.SetPadColor(kWhite)
+    gStyle.SetPadGridX(False)
+    gStyle.SetPadGridY(False)
+    gStyle.SetGridColor(0)
+    gStyle.SetGridStyle(3)
+    gStyle.SetGridWidth(1)
+    gStyle.SetOptStat(1)
+    gStyle.SetPadTickX(1)
+    gStyle.SetPadTickY(1)
+    gStyle.SetHistLineColor(1)
+    gStyle.SetHistLineStyle(0)
+    gStyle.SetHistLineWidth(2)
+    gStyle.SetEndErrorSize(2)
+    gStyle.SetErrorX(0.)
+    gStyle.SetTitleColor(1, "XYZ")
+    gStyle.SetTitleFont(32, "XYZ")
+    gStyle.SetTitleX(0) # ne fonctionne pas avec les gds titres
+    gStyle.SetTextAlign(13)
+    gStyle.SetTitleX(0);
+    gStyle.SetTitleAlign(13);
+    gStyle.SetTitleStyle(3002);
+    gStyle.SetTitleFillColor(18);
+    gStyle.SetTitleXOffset(1.0)
+    gStyle.SetTitleYOffset(1.0)
+    gStyle.SetLabelOffset(0.005, "XYZ") # numeric label
+    gStyle.SetTitleSize(0.05, "XYZ")
+    gStyle.SetTitleFont(22,"X")
+    gStyle.SetTitleFont(22,"Y")
+    gStyle.SetTitleBorderSize(2)
+    gStyle.SetPadBottomMargin(0.13) # 0.05
+    gStyle.SetPadLeftMargin(0.15)
+    gStyle.SetMarkerStyle(21)
+    gStyle.SetMarkerSize(0.8)
+    gStyle.SetOptTitle(2)
+    gStyle.SetPadRightMargin(0.20)
+    gStyle.cd()
 
 def PictureChoice(self, histo1, histo2, scaled, err, filename, id):
     if (histo1):
@@ -820,8 +835,6 @@ def createSinglePicture(self, histo1, histo2, scaled, err, filename, id, v_h1, v
     new_entries = histo1.GetEntries() # ttl # of bins (9000 in general)
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
-    color1 = ROOT.kRed #
-    #print(filename)
 
     histo2c = histo2.Clone()
     if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
@@ -855,7 +868,7 @@ def createSinglePicture(self, histo1, histo2, scaled, err, filename, id, v_h1, v
             pad1.SetLogy(1)
     gPad.Update()
     statBox1 = histo1.GetListOfFunctions().FindObject("stats")
-    statBox1.SetTextColor(color1)    
+    statBox1.SetTextColor(kRed)    
     gPad.Update()
     histo2c.Draw("sames hist") # ""  same
     histo2c.SetStats(1)
@@ -910,9 +923,9 @@ def createSinglePicture(self, histo1, histo2, scaled, err, filename, id, v_h1, v
     histo3.SetMarkerStyle(21)
     histo3.Draw("ep")
     
-    histo1.SetMarkerColor(color1)
+    histo1.SetMarkerColor(kRed)
     histo1.SetLineWidth(3) 
-    histo1.SetLineColor(color1)
+    histo1.SetLineColor(kRed)
     histo1.GetYaxis().SetTitleSize(25)
     histo1.GetYaxis().SetTitleFont(43)
     histo1.GetYaxis().SetTitleOffset(2.00)
@@ -949,7 +962,6 @@ def createPicture(self, histo1, histo2, scaled, err, filename, id):
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
     print('createPicture')
-    color1 = ROOT.kRed #
 
     histo2c = histo2.Clone()
     if (scaled and (new_entries != 0) and (ref_entries != 0)):
@@ -957,34 +969,27 @@ def createPicture(self, histo1, histo2, scaled, err, filename, id):
         histo2c.Scale(rescale_factor)
     if (histo2c.GetMaximum() > histo1.GetMaximum()):
         histo1.SetMaximum(histo2c.GetMaximum() * 1.1)
-    #if (filename == "h_ele_charge"):
-    #   n_ele_charge = histo1.GetEntries()
        
     self.cnv.SetCanvasSize(960, 600)
     self.cnv.Clear()
     histo2c.Draw()
     self.cnv.Update()
-    gMax2 = ROOT.gPad.GetUymax()
 
     self.cnv.Clear()
     histo1.Draw()
     self.cnv.Update()
-    gMax1 = ROOT.gPad.GetUymax()
-
-    #if (gMax1 != gMax2):
-    #    var_1 = log10( abs(gMax1 - gMax2) )
 
     self.cnv.Clear()
     histo1.Draw()
-    histo1.SetMarkerColor(color1)
+    histo1.SetMarkerColor(kRed)
     histo1.SetLineWidth(3)
     histo1.SetStats(1)
     RenderHisto(histo1, self)
     gPad.Update()
     statBox1 = histo1.GetListOfFunctions().FindObject("stats")
-    histo1.SetLineColor(color1)
-    histo1.SetMarkerColor(color1)
-    statBox1.SetTextColor(color1)
+    histo1.SetLineColor(kRed)
+    histo1.SetMarkerColor(kRed)
+    statBox1.SetTextColor(kRed)
     gPad.Update()
     histo2c.Draw()
     histo2c.SetLineWidth(3)
@@ -1012,8 +1017,6 @@ def createPicture2(self, histo1, histo2, scaled, err, filename, id):
     new_entries = histo1.GetEntries() # ttl # of bins (9000 in general)
     ref_entries = histo2.GetEntries()
     self.cnv = TCanvas(str(id), "canvas")
-    color1 = ROOT.kRed #
-    #print(filename)
 
     histo2c = histo2.Clone()
     if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
@@ -1021,14 +1024,13 @@ def createPicture2(self, histo1, histo2, scaled, err, filename, id):
         histo2c.Scale(rescale_factor)
     if (histo2c.GetMaximum() > histo1.GetMaximum()):
         histo1.SetMaximum(histo2c.GetMaximum() * 1.1)
-    #if (filename == "h_ele_charge"):
-    #   n_ele_charge = histo1.GetEntries()
        
     self.cnv.SetCanvasSize(960, 900)
     self.cnv.Clear()
     self.cnv.SetFillColor(10)
+    self.cnv.SetBorderMode(1)
     
-    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0) # ,0,0,0
+    pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.00, 1.00) # ,0,0,0
     pad1.SetBottomMargin(0.05)
     pad1.Draw()
     pad1.cd()
@@ -1040,6 +1042,9 @@ def createPicture2(self, histo1, histo2, scaled, err, filename, id):
     
     histo1.SetStats(1)
     histo1.Draw(newDrawOptions) # 
+    histo1.SetLineStyle(0)
+    histo1.SetLineWidth(2)
+
     RenderHisto(histo1, self)
     if ("ELE_LOGY" in histo1.GetOption() and histo1.GetMaximum() > 0):
         if (re.search('etaEff_all', filename) or re.search('ptEff_all', filename)):
@@ -1048,8 +1053,17 @@ def createPicture2(self, histo1, histo2, scaled, err, filename, id):
         else:
             pad1.SetLogy(1)
     gPad.Update()
+
     statBox1 = histo1.GetListOfFunctions().FindObject("stats")
-    statBox1.SetTextColor(color1)    
+    statBox1.SetTextColor(kRed)
+    statBox1.SetBorderSize(2)
+    #statBox1.SetFillColor(kGray)
+    statBox1.SetFillColorAlpha(18, 0.35) # https://root.cern.ch/doc/master/classTAttFill.html
+    statBox1.SetY2NDC(0.995)
+    statBox1.SetY1NDC(0.755)
+    statBox1.SetX2NDC(0.995)
+    statBox1.SetX1NDC(0.795)
+
     gPad.Update()
     histo2c.Draw("sames hist") # ""  same
     histo2c.SetStats(1)
@@ -1067,6 +1081,10 @@ def createPicture2(self, histo1, histo2, scaled, err, filename, id):
     y2 = statBox1.GetY2NDC()
     statBox2.SetY1NDC(2*y1-y2)
     statBox2.SetY2NDC(y1)
+    statBox2.SetBorderSize(2)
+    statBox2.SetFillColorAlpha(18, 0.35)
+    statBox2.SetX2NDC(0.995)
+    statBox2.SetX1NDC(0.795)
 
     newDrawOptions = "sames "
     if err == "1":
@@ -1080,6 +1098,7 @@ def createPicture2(self, histo1, histo2, scaled, err, filename, id):
     pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.00, 0.26) # ,0,0,0
     pad2.SetTopMargin(0.025)
     pad2.SetBottomMargin(0.3)
+    pad2.SetBorderMode(0)
     pad2.SetGridy()
     pad2.Draw()
     pad2.cd()
@@ -1095,13 +1114,16 @@ def createPicture2(self, histo1, histo2, scaled, err, filename, id):
     histo3.SetMarkerStyle(21)
     histo3.Draw("ep")
     
-    histo1.SetMarkerColor(color1)
+    histo1.SetMarkerColor(kRed)
     histo1.SetLineWidth(3) 
-    histo1.SetLineColor(color1)
+    histo1.SetLineColor(kRed)
     histo1.GetYaxis().SetTitleSize(25)
     histo1.GetYaxis().SetTitleFont(43)
     histo1.GetYaxis().SetTitleOffset(2.00)
-    
+    histo1.GetZaxis().SetTitleSize(0.05)
+    histo1.SetMarkerStyle(21)
+    histo1.SetMarkerSize(0.8)
+
     histo2c.SetLineColor(kBlue)
     histo2c.SetMarkerColor(kBlue)
     histo2c.SetLineWidth(3)
@@ -1118,7 +1140,6 @@ def createPicture2(self, histo1, histo2, scaled, err, filename, id):
     # X axis ratio plot settings
     histo3.GetXaxis().SetTitleSize(20)
     histo3.GetXaxis().SetTitleFont(43)
-    # histo3.GetXaxis().SetTitleOffset(4.)
     histo3.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
     histo3.GetXaxis().SetLabelSize(15)
 
@@ -1141,12 +1162,11 @@ def createPicture3(self, histo1, histo2, scaled, err, filename, id, s0):
         histo2c.Scale(rescale_factor)
     if (histo2c.GetMaximum() > histo1.GetMaximum()):
         histo1.SetMaximum(histo2c.GetMaximum() * 1.1)
-    #if (filename == "h_ele_charge"):
-    #   n_ele_charge = histo1.GetEntries()
        
     self.cnv.SetCanvasSize(960, 900)
     self.cnv.Clear()
     self.cnv.SetFillColor(10)
+    self.cnv.SetBorderMode(1)
     
     pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0) # ,0,0,0
     pad1.SetBottomMargin(0.05)
@@ -1160,12 +1180,24 @@ def createPicture3(self, histo1, histo2, scaled, err, filename, id, s0):
     
     histo1.SetStats(1)
     histo1.Draw(newDrawOptions) # 
+    histo1.SetLineStyle(0)
+    histo1.SetLineWidth(2)
+
     RenderHisto(histo1, self)
     if ("ELE_LOGY" in histo1.GetOption() and histo1.GetMaximum() > 0):
         pad1.SetLogy(1)
     gPad.Update()
+
     statBox1 = histo1.GetListOfFunctions().FindObject("stats")
     statBox1.SetTextColor(kRed)    
+    statBox1.SetBorderSize(2)
+    #statBox1.SetFillColor(kGray)
+    statBox1.SetFillColorAlpha(18, 0.35) # https://root.cern.ch/doc/master/classTAttFill.html
+    statBox1.SetY2NDC(0.995)
+    statBox1.SetY1NDC(0.755)
+    statBox1.SetX2NDC(0.995)
+    statBox1.SetX1NDC(0.795)
+
     gPad.Update()
     histo2c.Draw("sames hist") # ""  same
     histo2c.SetStats(1)
@@ -1179,6 +1211,11 @@ def createPicture3(self, histo1, histo2, scaled, err, filename, id, s0):
     y2 = statBox1.GetY2NDC()
     statBox2.SetY1NDC(2*y1-y2)
     statBox2.SetY2NDC(y1)
+    statBox2.SetBorderSize(2)
+    statBox2.SetFillColorAlpha(18, 0.35)
+    statBox2.SetX2NDC(0.995)
+    statBox2.SetX1NDC(0.795)
+
     newDrawOptions = "sames "
     if err == "1":
         newDrawOptions += "E1 P"
@@ -1218,12 +1255,16 @@ def createPicture3(self, histo1, histo2, scaled, err, filename, id, s0):
     #y4 = statBox2.GetY2NDC()
     statBox3.SetY1NDC(3*y1-2*y2)
     statBox3.SetY2NDC(y3)
+    statBox3.SetBorderSize(2)
+    statBox3.SetFillColorAlpha(18, 0.35)
+    statBox3.SetX2NDC(0.995)
+    statBox3.SetX1NDC(0.795)
     yC.Draw("sames hist") # 
 
     self.cnv.cd()
-    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.0, 0.25) # ,0,0,0
+    pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.0, 0.26) # ,0,0,0
     pad2.SetTopMargin(0.025)
-    pad2.SetBottomMargin(0.2)
+    pad2.SetBottomMargin(0.3)
     pad2.SetGridy()
     pad2.Draw()
     pad2.cd()
@@ -1233,7 +1274,8 @@ def createPicture3(self, histo1, histo2, scaled, err, filename, id, s0):
     histo3.SetMaximum(2.)
     histo3.SetStats(0)
     histo3.Sumw2() ########
-    histo3.Divide(histo2)
+    #histo3.Divide(histo2) # divide by the original nb of events
+    histo3.Divide(histo2c) # divide by the scaled nb of events
     histo3.SetMarkerStyle(21)
     histo3.Draw("ep")
     
@@ -1243,6 +1285,9 @@ def createPicture3(self, histo1, histo2, scaled, err, filename, id, s0):
     histo1.GetYaxis().SetTitleSize(25)
     histo1.GetYaxis().SetTitleFont(43)
     histo1.GetYaxis().SetTitleOffset(2.00)
+    histo1.GetZaxis().SetTitleSize(0.05)
+    histo1.SetMarkerStyle(21)
+    histo1.SetMarkerSize(0.8)
     
     histo2c.SetLineColor(kBlue)
     histo2c.SetMarkerColor(kBlue)
@@ -1260,7 +1305,6 @@ def createPicture3(self, histo1, histo2, scaled, err, filename, id, s0):
     # X axis ratio plot settings
     histo3.GetXaxis().SetTitleSize(20)
     histo3.GetXaxis().SetTitleFont(43)
-    histo3.GetXaxis().SetTitleOffset(4.)
     histo3.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
     histo3.GetXaxis().SetLabelSize(15)
    
@@ -1339,6 +1383,10 @@ def createCumulPicture(self, histo1, histo2, filename, id, s0):
     #else:
     #    print("statBox1 KO")
     statBox1.SetTextColor(kRed)
+    statBox1.SetBorderSize(2)
+    statBox1.SetFillColorAlpha(18, 0.35)
+    statBox1.SetX2NDC(0.995)
+    statBox1.SetX1NDC(0.795)
     gPad.Update()
     refC.Draw(newDrawOptions) # sames hist
     refC.SetStats(1)
@@ -1353,6 +1401,10 @@ def createCumulPicture(self, histo1, histo2, filename, id, s0):
     y2 = statBox1.GetY2NDC()
     statBox2.SetY1NDC(2*y1-y2)
     statBox2.SetY2NDC(y1)
+    statBox2.SetBorderSize(2)
+    statBox2.SetFillColorAlpha(18, 0.35)
+    statBox2.SetX2NDC(0.995)
+    statBox2.SetX1NDC(0.795)
     newC.Draw(newDrawOptions) # sames hist
     refC.Draw(newDrawOptions) # sames hist
 
@@ -1372,6 +1424,10 @@ def createCumulPicture(self, histo1, histo2, filename, id, s0):
     #y4 = statBox2.GetY2NDC()
     statBox3.SetY1NDC(3*y1-2*y2)
     statBox3.SetY2NDC(y3)
+    statBox3.SetBorderSize(2)
+    statBox3.SetFillColorAlpha(18, 0.35)
+    statBox3.SetX2NDC(0.995)
+    statBox3.SetX1NDC(0.795)
     yC.Draw("sames hist") # 
 
     self.cnv.Draw()
@@ -1456,6 +1512,9 @@ def createCumulPicture2(self, histo1, histo2, filename, id, s0):
     #else:
     #    print("statBox1 KO")
     statBox1.SetTextColor(kRed)
+    statBox1.SetFillColorAlpha(18, 0.35) # https://root.cern.ch/doc/master/classTAttFill.html
+    statBox1.SetX2NDC(0.995)
+    statBox1.SetX1NDC(0.795)
     gPad.Update()
     refC.Draw(newDrawOptions) # sames hist
     refC.SetStats(1)
@@ -1470,6 +1529,10 @@ def createCumulPicture2(self, histo1, histo2, filename, id, s0):
     y2 = statBox1.GetY2NDC()
     statBox2.SetY1NDC(2*y1-y2)
     statBox2.SetY2NDC(y1)
+    statBox2.SetBorderSize(2)
+    statBox2.SetFillColorAlpha(18, 0.35)
+    statBox2.SetX2NDC(0.995)
+    statBox2.SetX1NDC(0.795)
     newC.Draw(newDrawOptions) # sames hist
     refC.Draw(newDrawOptions) # sames hist
 
@@ -1489,6 +1552,10 @@ def createCumulPicture2(self, histo1, histo2, filename, id, s0):
     y4 = statBox2.GetY2NDC()
     statBox3.SetY1NDC(3*y1-2*y2)
     statBox3.SetY2NDC(y3)
+    statBox3.SetBorderSize(2)
+    statBox3.SetFillColorAlpha(18, 0.35)
+    statBox3.SetX2NDC(0.995)
+    statBox3.SetX1NDC(0.795)
     yC.Draw("sames hist") # 
 
     self.cnv.cd()
@@ -1615,6 +1682,11 @@ def createCumulPicture3(self, histo1, histo2, filename, id, s0):
     gPad.Update()
     statBox1 = newC.GetListOfFunctions().FindObject("stats")
     statBox1.SetTextColor(kRed)
+    statBox1.SetFillColorAlpha(18, 0.35) # https://root.cern.ch/doc/master/classTAttFill.html
+    statBox1.SetY2NDC(0.995)
+    statBox1.SetY1NDC(0.755)
+    statBox1.SetX2NDC(0.995)
+    statBox1.SetX1NDC(0.795)
     gPad.Update()
     refC.Draw(newDrawOptions)  # sames hist
     refC.SetStats(1)
@@ -1625,6 +1697,10 @@ def createCumulPicture3(self, histo1, histo2, filename, id, s0):
     y2 = statBox1.GetY2NDC()
     statBox2.SetY1NDC(2 * y1 - y2)
     statBox2.SetY2NDC(y1)
+    statBox2.SetBorderSize(2)
+    statBox2.SetFillColorAlpha(18, 0.35)
+    statBox2.SetX2NDC(0.995)
+    statBox2.SetX1NDC(0.795)
     newC.Draw(newDrawOptions)  # sames hist
     refC.Draw(newDrawOptions)  # sames hist
 
@@ -1640,6 +1716,10 @@ def createCumulPicture3(self, histo1, histo2, filename, id, s0):
     y4 = statBox2.GetY2NDC()
     statBox3.SetY1NDC(3 * y1 - 2 * y2)
     statBox3.SetY2NDC(y3)
+    statBox3.SetBorderSize(2)
+    statBox3.SetFillColorAlpha(18, 0.35)
+    statBox3.SetX2NDC(0.995)
+    statBox3.SetX1NDC(0.795)
     yC.Draw("sames hist")  #
 
     self.cnv.cd()
@@ -1727,9 +1807,6 @@ def createHistoPicture(histo1, filename):
     # draw a filled histogram & save it into a file.
     cnv = TCanvas(str(id), "canvas")
     print('createPicture')
-    color1 = ROOT.kRed #
-    color0 = ROOT.kBlack
-    color2 = ROOT.kBlue
 
     cnv.SetCanvasSize(960, 600)
 
@@ -1740,11 +1817,16 @@ def createHistoPicture(histo1, filename):
     #enderHisto(histo1)
     gPad.Update()
     statBox1 = histo1.GetListOfFunctions().FindObject("stats")
-    histo1.SetLineColor(color0)
-    histo1.SetMarkerColor(color1)
-    statBox1.SetTextColor(color2)
+    histo1.SetLineColor(kBlack)
+    histo1.SetMarkerColor(kRed)
+    statBox1.SetTextColor(kBlue)
     statBox1.SetFillStyle(0);
     statBox1.SetY1NDC(0.800)
+    statBox1.SetFillColorAlpha(18, 0.35) # https://root.cern.ch/doc/master/classTAttFill.html
+    statBox1.SetY2NDC(0.995)
+    statBox1.SetY1NDC(0.755)
+    statBox1.SetX2NDC(0.995)
+    statBox1.SetX1NDC(0.795)
     gPad.Update()
 
     cnv.Draw()
