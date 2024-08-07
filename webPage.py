@@ -39,8 +39,8 @@ except ImportError:
     from urllib.request import build_opener
     from urllib.request import Request
 
-from graphicFunctions import *
-from functions import *
+from graphicFunctions import Graphic
+from functions import Tools
 
 # create the index.html web page for the validation comparison.
 # Do not confuse with DBwebPage into the DecisionBox class.
@@ -53,6 +53,8 @@ def createWebPage(arg):
     from valEnv_default import env_default
     valEnv_d = env_default()
     DB = DecisionBox()
+    gr = Graphic()
+    tl = Tools()
 
     print('arg : ', arg)
     '''print('webFolder ', arg[1])
@@ -71,7 +73,7 @@ def createWebPage(arg):
     print('dataset : %s' % dts)
     DB_flag = arg[11]
     dataSetFolder = str(arg[4] + '-' + arg[5] + '_' + dts + '_par')
-    createDatasetFolder(arg[1] + dataSetFolder) # need absolute path for concurrent folder creation
+    tl.createDatasetFolder(arg[1] + dataSetFolder) # need absolute path for concurrent folder creation
     os.chdir(arg[1] + dataSetFolder) # going to dataSetFolder
     # get config files
     it1 = env_default().tmpPath() + 'ElectronMcSignalHistos.txt'
@@ -101,7 +103,7 @@ def createWebPage(arg):
     else:
         print(input_rel_file)
     f_rel = ROOT.TFile(input_rel_file)
-    h1 = getHisto(f_rel, tp_1)
+    h1 = gr.getHisto(f_rel, tp_1)
 
     input_ref_file = env_default().workDir() + '/DATA/' + str(arg[10][1])
     #input_ref_file = workDir + '/DATA/' + str(arg[10][1])
@@ -111,7 +113,7 @@ def createWebPage(arg):
     else:
         print(input_ref_file)
     f_ref = ROOT.TFile(input_ref_file)
-    h2 = getHisto(f_ref, tp_2)
+    h2 = gr.getHisto(f_ref, tp_2)
     #print("CMP_CONFIG[%d] = %s\n" % (arg[8], CMP_CONFIG))
     print("input_rel_file[%d] = %s" % (arg[8], input_rel_file))
     print("input_ref_file[%d] = %s" % (arg[8], input_ref_file))
@@ -122,10 +124,10 @@ def createWebPage(arg):
     wp_index = open(arg[1] + dataSetFolder + '/index.html', 'w') # web page
     wp_Files.append(wp_index)
     if (DB_flag == True):
-        createDatasetFolder3() # create DBox folder
+        tl.createDatasetFolder3() # create DBox folder
         print('DB_flag = True')
     else:
-        deleteDatasetFolder3()  # delete DBox folder
+        tl.deleteDatasetFolder3()  # delete DBox folder
     #stop
 
     extWrite("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n", wp_Files)
@@ -207,9 +209,9 @@ def createWebPage(arg):
             if ( elem == "endLine" ):
                 otherTextToWrite += "<br>"
             else: # no endLine
-                short_histo_name, short_histo_names, histo_positions = shortHistoName(elem)
+                short_histo_name, short_histo_names, histo_positions = tl.shortHistoName(elem)
 
-                [after, before, common] = testExtension(short_histo_name, histoPrevious)
+                [after, before, common] = tl.testExtension(short_histo_name, histoPrevious)
 
                 if ( histo_positions[3] == "0" ):
                     if ( numLine == 0 ):
@@ -282,7 +284,7 @@ def createWebPage(arg):
                 if ( lineFlag ):
                     extWrite( "\n<tr valign=\"top1\">" , wp_Files)
 
-                short_histo_name, short_histo_names, histo_positions = shortHistoName(elem)
+                short_histo_name, short_histo_names, histo_positions = tl.shortHistoName(elem)
                 gif_name = "gifs/" + short_histo_names[0] + ".gif"
                 png_name = "pngs/" + short_histo_names[0] + ".png" # for DB yellow curves
                 png_cumul_name = "pngs/" + short_histo_names[0] + "_cum.png" # for DB yellow curves
@@ -293,7 +295,7 @@ def createWebPage(arg):
                     fHisto = open('DBox/' + short_histo_name + '.txt', 'w') # web page
                     fHisto.write('<table border="1" bordercolor=green cellpadding="2" style="margin-left:auto;margin-right:auto">' + '\n')
 
-                if checkRecompInName(short_histo_names[0]): #
+                if tl.checkRecompInName(short_histo_names[0]): #
                     histo_name_recomp = short_histo_names[0].replace("_recomp", "")
                     #short_histo_names[0] = histo_name_recomp
                     gif_name = "gifs/" + histo_name_recomp + "_recomp.gif"
@@ -323,11 +325,11 @@ def createWebPage(arg):
                         ycFlag = True
 
                 print('ycFlag : %s : %s' % (short_histo_names[0], ycFlag))
-                PictureChoice(histo_1, histo_2, histo_positions[1], histo_positions[2], gif_name, arg[0], arg[8], c_recomp)
+                gr.PictureChoice(histo_1, histo_2, histo_positions[1], histo_positions[2], gif_name, arg[0], arg[8], c_recomp)
                 if ycFlag:
-                    createDatasetFolder2()
-                    PictureChoice_DB(histo_1, histo_2, histo_positions[1], histo_positions[2], png_name, arg[0], 0, yellowCurves)
-                    PictureChoice_DB3(histo_1, histo_2, histo_positions[1], histo_positions[2], png_cumul_name, arg[0], 0, yellowCurvesCum)
+                    tl.createDatasetFolder2()
+                    gr.PictureChoice_DB(histo_1, histo_2, histo_positions[1], histo_positions[2], png_name, arg[0], 0, yellowCurves)
+                    gr.PictureChoice_DB3(histo_1, histo_2, histo_positions[1], histo_positions[2], png_cumul_name, arg[0], 0, yellowCurvesCum)
 
                     percentage = 0.05
                     if ( KS_values_1[4] >= percentage ):

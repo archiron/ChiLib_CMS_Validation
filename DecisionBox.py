@@ -267,13 +267,17 @@ class DecisionBox:
     def integralpValue(self, abscisses, ordonnees, x):
         v = 0.0
         N = len(abscisses)
+        #print('DB: N = {}'.format(N))
         if (x <= abscisses[0]) :
+            #print('DB: x <= abscisses[0]')
             x = 0. # ttl integral
             for i in range(0, N-1):
                 v += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
         elif (x >= abscisses[N-1]):
+            #print('DB: x >= abscisses[N-1]')
             v = 0. # null integral
         else: # general case
+            #print('DB: general case')
             ind = 0
             for i in range(0, N):
                 if ((abscisses[i] != 0) and (np.floor(x/abscisses[i]) == 0)):
@@ -282,6 +286,7 @@ class DecisionBox:
             v = (abscisses[ind] - x) * ordonnees[ind-1]
             for i in range(ind, N-1):
                 v += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
+        #print('DB: v = {}'.format(v))
         return v
 
     # major function to be called (ref is GevSeq.py)
@@ -468,7 +473,7 @@ class DecisionBox:
                     print('DBox 3 - diffKS : %f' % diffKS)
                     #diffKS = diff1
                 wdiff.close()'''
-            print('diffKS : %f' % diffKS)
+            #print('diffKS : %f' % diffKS)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
             #print('%s :: u p-Value 3 : %f' % (histoName, pValue))
@@ -845,9 +850,11 @@ class DecisionBox:
                 pv3 = KS_val_3[1]
             else:
                 pv3 = -1.0
-            '''print('pv1 : %f' % pv1)
-            print('pv2 : %f' % pv2)
-            print('pv3 : %f' % pv3)'''
+            '''
+                print('pv1 : %f' % pv1)
+                print('pv2 : %f' % pv2)
+                print('pv3 : %f' % pv3)
+            '''
             fHisto.write(" \n<p><b>KS 1 : </b> pValue : %6.4f</p>" % (pv1))
             fHisto.write("   <p><b>KS 2 : </b> pValue : %6.4f</p>" % (pv2))
             fHisto.write("   <p><b>KS 3 : </b> pValue : %6.4f</p>" % (pv3))
