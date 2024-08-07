@@ -30,7 +30,7 @@ class Graphic:
     def initRoot(self):
         self.initRootStyle()
 
-    def initRootStyle():
+    def initRootStyle(self):
         gStyle.SetCanvasBorderMode(1)
         gStyle.SetCanvasColor(kWhite)
         gStyle.SetCanvasDefH(600)
@@ -573,8 +573,6 @@ class Graphic:
         self.cnv.Update()
 
         self.cnv.SaveAs(filename)
-
-        histo3.Clear("C")
         self.cnv.Close()
         
         return
