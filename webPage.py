@@ -82,7 +82,7 @@ def createWebPage(arg):
     tp_2 = 'ElectronMcSignalValidator'
 
     relrefVT = [arg[4], arg[5]]
-    (it1, it2, tp_1, tp_2) = testForDataSetsFile(env_default().tmpPath(), relrefVT, dts)
+    (it1, it2, tp_1, tp_2) = tl.testForDataSetsFile(env_default().tmpPath(), relrefVT, dts)
     print("config file for target : %s" % it1)
     print("config file for reference : %s" % it2)
     print("tree path for target : %s" % tp_1)

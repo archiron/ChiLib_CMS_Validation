@@ -18,7 +18,7 @@ argv.append( '-b-' )
 import ROOT
 ROOT.gROOT.SetBatch(True)
 #ROOT.gErrorIgnoreLevel = ROOT.kWarning # remove info like : Info in <TCanvas::Print>: gif file gifs/h_ele_vertexPhi.gif has been created
-ROOT.gErrorIgnoreLevel = ROOT.kFatal # ROOT.kBreak # 
+ROOT.gErrorIgnoreLevel = ROOT.kBreak # ROOT.kFatal
 argv.remove( '-b-' )
 
 from ROOT import kWhite, kBlue, kBlack, kRed, gStyle, TCanvas, gPad 
@@ -971,7 +971,7 @@ class Graphic:
         histo1.Draw()
         histo1.SetLineWidth(3)
         histo1.SetStats(1)
-        #enderHisto(histo1)
+        #RenderHisto(histo1)
         gPad.Update()
         statBox1 = histo1.GetListOfFunctions().FindObject("stats")
         histo1.SetLineColor(kBlack)

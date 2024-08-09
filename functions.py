@@ -281,28 +281,28 @@ class Tools:
 
     def createDefinitionsFile(self, datas, fileName):
         '''
-        gedGsfElectrons ZEE_14
-        RECO
-        12_0_0_pre6
-        DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre6-120X_mcRun3_2021_realistic_v4-v1__DQMIO.root
-        RECO
-        12_0_0_pre4
-        DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre4-120X_mcRun3_2021_realistic_v2-v1__DQMIO.root
-        CMSSW_12_0_0_pre6
-        CMSSW_12_0_0_pre4
-        https://hypernews.cern.ch/HyperNews/CMS/get/relval/16218.html
-        config_target.txt
+            gedGsfElectrons ZEE_14
+            RECO
+            12_0_0_pre6
+            DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre6-120X_mcRun3_2021_realistic_v4-v1__DQMIO.root
+            RECO
+            12_0_0_pre4
+            DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre4-120X_mcRun3_2021_realistic_v2-v1__DQMIO.root
+            CMSSW_12_0_0_pre6
+            CMSSW_12_0_0_pre4
+            https://hypernews.cern.ch/HyperNews/CMS/get/relval/16218.html
+            config_target.txt
         '''
         if ( fileName ):
             wp_defs = open(fileName, 'w') # definitions for PHP page
-            print('\n\t ==== ' + fileName + ' ====\n')
+            #print('\n\t ==== opening ' + fileName + ' ====\n')
         else:
             wp_defs = open('definitions.txt', 'w') # definitions for PHP page
-            print('\n\t ==== definitions.txt ====\n')
+            #print('\n\t ==== creating definitions.txt ====\n')
         for elem in datas:
-            print(elem)
+            #print(elem)
             wp_defs.write(elem + "\n")
-        print('\n\t ==== definitions.txt ====\n')
+        #print('\n\t ==== definitions.txt written ====\n')
         wp_defs.close()
         return
 

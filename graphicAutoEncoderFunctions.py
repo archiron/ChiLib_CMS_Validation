@@ -560,7 +560,7 @@ class GraphicKS:
     def __init__(self):
         self.toto = 1.2
 
-    def createKSttlDiffPicture(self, tab, nbins, diffM,title, fileName, pValue, I_max):
+    def createKSttlDiffPicture(self, tab, nbins, diffM, title, fileName, pValue, I_max):
         import pandas as pd
         pValue_norm = pValue / I_max
         pV_text = 'pValue : ' + str(round(pValue, 3)) + '\n'
@@ -569,20 +569,27 @@ class GraphicKS:
         ng = 0
         nr = 0
         seriesTab = pd.DataFrame(tab, columns=['new'])
+        print('seriesTab', seriesTab)
+        #seriesTab.info(verbose = False)
+        print('graphic: ', pV_text)
+        print('graphic: nbins = {}'.format(nbins))
         plt_diff_KS = seriesTab.plot.hist(bins=nbins, title=title, legend=False)
         ymi, yMa = plt_diff_KS.get_ylim()
         xmi, xMa = plt_diff_KS.get_xlim()
         if (diffM >= seriesTab.values.max()):
+            print('diffM >= seriesTab.values.max()')
             color = 'r'
             nr += 1
             xp = seriesTab.values.max()
             plt.text(xp*0.8, yMa/2., '== ' + str(round(diffM,3)) + ' =>', fontsize = 10, bbox = dict(facecolor = 'red', alpha = 0.5))
         elif (diffM <= seriesTab.values.min()):
+            print('diffM <= seriesTab.values.min()')
             color = 'g'
             ng += 1
             xp = seriesTab.values.min()
             plt.text(xp, yMa/2., '<= ' + str(round(diffM,3)) + ' ==', fontsize = 10, bbox = dict(facecolor = 'green', alpha = 0.5))
         else:
+            print('diffM general case')
             color = 'g'
             ng += 1
             xp = diffM
