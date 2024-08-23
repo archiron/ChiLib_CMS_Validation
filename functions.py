@@ -158,32 +158,42 @@ class Tools:
             short_histo_name = short_histo_name.replace("bcl_", "")
         return short_histo_name
 
-    def createDatasetFolder(self, folder):
+    def createDatasetFolder(self, folder, ext):
+        # checking ext
+        if ((ext != "gifs") or (ext != "pngs")) :
+            ext = 'gifs'
         if not os.path.exists(folder): # create folder
             os.makedirs(folder) # create reference folder
             os.chdir(folder)
-            # create gifs folders
-            os.makedirs('gifs') # create gifs folder for pictures
+            # create gifs/pngs folders
+            os.makedirs(ext) # create gifs folder for pictures
             os.chdir('../')
         else: # folder already created
             os.chdir(folder)
-            if not os.path.exists('gifs'): #
-                # create gifs folders
-                os.makedirs('gifs') # create gifs folder for pictures
+            if (ext == 'gifs'):
+                self.createGifDatasetFolder()
+            else: # pngs
+                self.createPngDatasetFolder()
             os.chdir('../')
         return
 
-    def createDatasetFolder2(self): # for pngs
+    def createGifDatasetFolder(self):
+        if not os.path.exists('gifs'): #
+            # create gifs folders
+            os.makedirs('gifs') # create gifs folder for pictures
+        return
+
+    def createPngDatasetFolder(self): # for pngs
         if not os.path.exists('pngs'): # create folder
             os.makedirs('pngs') # create pngs folder
         return
 
-    def createDatasetFolder3(self): # for Decision Box
+    def createDBoxDatasetFolder(self): # for Decision Box
         if not os.path.exists('DBox'): # create folder
             os.makedirs('DBox') # create pngs folder
         return
 
-    def deleteDatasetFolder3(self): # for Decision Box
+    def deleteDBoxDatasetFolder(self): # for Decision Box
         import shutil
         if os.path.exists('DBox'): # create folder
             shutil.rmtree('DBox')
@@ -245,7 +255,7 @@ class Tools:
         # ElectronMcFakeValidator
 
         print('dataset name : {:s}'.format(dataSetsName))
-        print('type : {:s}'.format(type))
+        #print('type : {:s}'.format(type))
         t_rel = tmp_path + 'ElectronMcSignalHistos.txt'
         t_ref = t_rel
         tp_rel = 'ElectronMcSignalValidator'
@@ -281,28 +291,28 @@ class Tools:
 
     def createDefinitionsFile(self, datas, fileName):
         '''
-            gedGsfElectrons ZEE_14
-            RECO
-            12_0_0_pre6
-            DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre6-120X_mcRun3_2021_realistic_v4-v1__DQMIO.root
-            RECO
-            12_0_0_pre4
-            DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre4-120X_mcRun3_2021_realistic_v2-v1__DQMIO.root
-            CMSSW_12_0_0_pre6
-            CMSSW_12_0_0_pre4
-            https://hypernews.cern.ch/HyperNews/CMS/get/relval/16218.html
-            config_target.txt
+        gedGsfElectrons ZEE_14
+        RECO
+        12_0_0_pre6
+        DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre6-120X_mcRun3_2021_realistic_v4-v1__DQMIO.root
+        RECO
+        12_0_0_pre4
+        DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre4-120X_mcRun3_2021_realistic_v2-v1__DQMIO.root
+        CMSSW_12_0_0_pre6
+        CMSSW_12_0_0_pre4
+        https://hypernews.cern.ch/HyperNews/CMS/get/relval/16218.html
+        config_target.txt
         '''
         if ( fileName ):
             wp_defs = open(fileName, 'w') # definitions for PHP page
-            #print('\n\t ==== opening ' + fileName + ' ====\n')
+            print('\n\t ==== ' + fileName + ' ====\n')
         else:
             wp_defs = open('definitions.txt', 'w') # definitions for PHP page
-            #print('\n\t ==== creating definitions.txt ====\n')
+            print('\n\t ==== definitions.txt ====\n')
         for elem in datas:
-            #print(elem)
+            print(elem)
             wp_defs.write(elem + "\n")
-        #print('\n\t ==== definitions.txt written ====\n')
+        print('\n\t ==== definitions.txt ====\n')
         wp_defs.close()
         return
 
