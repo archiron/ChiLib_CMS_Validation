@@ -158,9 +158,30 @@ class Tools:
             short_histo_name = short_histo_name.replace("bcl_", "")
         return short_histo_name
 
+    def checkCreateWebFolder(self, webFolder):
+        if not os.path.exists(webFolder): # only create the first folder for saving gifs, i.e. release folder.
+            self.exist_webFolder = False
+        else:
+            self.exist_webFolder = True
+
+        if self.exist_webFolder: # True
+            print("%s already created\n" % str(webFolder))
+        else: # False
+            os.makedirs(str(webFolder))
+        return
+
+    def createWorkingDir(self, folder):
+        if os.path.exists(folder): # True
+            print("/DATA/ already created\n")
+        else: # False
+            os.makedirs(folder)
+        print('working in %s\n' % folder )
+        return
+
     def createDatasetFolder(self, folder, ext):
         # checking ext
-        if ((ext != "gifs") or (ext != "pngs")) :
+        print('ext : ', ext)
+        if ((ext != "gifs") and (ext != "pngs")) :
             ext = 'gifs'
         if not os.path.exists(folder): # create folder
             os.makedirs(folder) # create reference folder
@@ -171,8 +192,10 @@ class Tools:
         else: # folder already created
             os.chdir(folder)
             if (ext == 'gifs'):
+                print('using GIF format')
                 self.createGifDatasetFolder()
             else: # pngs
+                print('using PNG format')
                 self.createPngDatasetFolder()
             os.chdir('../')
         return
@@ -246,7 +269,7 @@ class Tools:
                 tp_ref = tp_rel
         return [t_rel, t_ref, tp_rel, tp_ref]
 
-    def testForDataSetsFile2(self, tmp_path, type, dataSetsName): # only for dev !!!
+    def testForDataSetsFile2(self, tmp_path, type): # only for dev !!!
         # also get the tree path part (tp_rel, tp_ref) for root files :
         # folder location for those files : HistosConfigFiles/
         # ElectronMcSignalValidator
@@ -254,8 +277,7 @@ class Tools:
         # ElectronMcSignalValidatorPt1000
         # ElectronMcFakeValidator
 
-        print('dataset name : {:s}'.format(dataSetsName))
-        #print('type : {:s}'.format(type))
+        #print('dataset name : {:s}'.format(dataSetsName))
         t_rel = tmp_path + 'ElectronMcSignalHistos.txt'
         t_ref = t_rel
         tp_rel = 'ElectronMcSignalValidator'
@@ -602,3 +624,105 @@ class Tools:
         
         return
     
+    def p_args(self, args):
+        print(args)
+        print("arg. 0 :", args[0]) # name of the script
+        print("arg. 1 :", args[1][:-3]) # name of the file to be used
+        return
+
+    def p_cf2(self, cf2):
+        print('Validation_reference : %s' % cf2.Validation_reference)
+        print('web_repo : %s' % cf2.web_repo)
+        print('picture_ext : %s' % cf2.picture_ext)
+        return
+
+    def p_RelRef(self, validation, release, reference, shortRelease, shortReference, releaseExtent, referenceExtent, choiceT, web_repo, DBflag, relrefVT, KS_Path):
+        print('validation : %s' % validation) # temp
+        print('long rel : %s' % release) # temp
+        print('short rel : %s' % shortRelease) # temp
+        print('long ref : %s' % reference) # temp
+        print('short ref : %s' % shortReference) # temp
+        print('rel extent : %s' % releaseExtent) # temp
+        print('ref extent : %s' % referenceExtent) # temp
+        print('choiceT : %s' % choiceT) # temp
+        print('web repo : %s' % web_repo)
+        print('DB Flag : %s' % DBflag)
+        print('relrefVT %s' % relrefVT)
+        print('KS_Path : %s' % KS_Path)
+        return
+
+    def p_listRelRef(self, list_rel, list_ref, release, reference):
+        print('there is %d release files for %s' % (len(list_rel), release))
+        print(list_rel)
+        print('there is %d reference files for %s' % (len(list_ref), reference))
+        print(list_ref)
+        return
+
+    def p_listRelRefGT(self, relFile, refFile, release, reference):
+        print('there is %d release files for %s' % (len(relFile), release))
+        print(relFile)
+        print('there is %d reference files for %s' % (len(refFile), reference))
+        print(refFile)
+        return
+
+    def p_Items(self, it0, it1):
+        print('appel cmd_load_files')
+        print('tags : [%s, %s]' % (it0, it1))
+        return
+
+    def p_valPaths(self, p1, p2, p3, p4, p5, p6):
+        print("config file for target : %s" % p1)
+        print("config file for reference : %s" % p2)
+        print("tree path for target : %s" % p3)
+        print("tree path for reference : %s" % p4)
+        print('chemin : %s' % p5)
+        print('tmpPath : %s' % p6)
+        return
+
+    def p_inputRelRefFiles(self, f1, f2):
+        print("input_rel_file = %s\n" % f1)
+        print("input_ref_file = %s\n" % f2)
+        return
+
+    def checkN_GT(self, NGT, N):
+        if ( NGT == 2*N):
+            print('OK for globalTags : %d' % NGT)
+            print('globalTags : %s' % globalTag)
+        else:
+            print('PBM with globalTags, N = %d' % NGT)
+        return
+
+    def checkN_Files(self, NFiles, N, relFile, refFile):
+        if ( NFiles == 2*N):
+            print('OK for nb of files : %d' % NFiles)
+            print('rel file : %s' % relFile)
+            print('ref file : %s' % refFile)
+        else:
+            print('PBM with input files, N = %d' % NFiles)
+        print('')
+        return
+
+    def checkN_coherGT(self, NcoherGT, N):
+        if (NcoherGT == N):
+            print('OK for GT')
+        else:
+            print('KO for GT')
+        return
+
+    def checkN_coherFiles(self, NcoherFiles, N):
+        if (NcoherFiles == 2*N):
+            print('OK for files')
+        else:
+            print('KO for files')
+        print('')
+        return
+
+    def checkN_RelRefcoherFiles(self, NcoherFiles, NrelFiles, NrefFiles):
+        if (NrelFiles + NrefFiles) == NcoherFiles:
+            print('OK for files loading')
+        else:
+            print('PBM for files loading')
+            print('%d + %d vs %d' % (NrelFiles, NrefFiles, NcoherFiles))
+            exit()
+        return
+

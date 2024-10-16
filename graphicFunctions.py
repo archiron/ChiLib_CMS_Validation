@@ -18,7 +18,7 @@ argv.append( '-b-' )
 import ROOT
 ROOT.gROOT.SetBatch(True)
 #ROOT.gErrorIgnoreLevel = ROOT.kWarning # remove info like : Info in <TCanvas::Print>: gif file gifs/h_ele_vertexPhi.gif has been created
-ROOT.gErrorIgnoreLevel = ROOT.kBreak # ROOT.kFatal
+ROOT.gErrorIgnoreLevel = ROOT.kFatal # ROOT.kBreak # 
 argv.remove( '-b-' )
 
 from ROOT import kWhite, kBlue, kBlack, kRed, gStyle, TCanvas, gPad 
@@ -159,13 +159,13 @@ class Graphic:
             self.createSinglePicture(histo1, histo2, scaled, err, filename, id, v_h1, v_h2)
         else: # two histos
             if( histo1.InheritsFrom("TH1F") ):
-                 print('PictureChoice : TH1F')
-                 self.createPicture2(histo1, histo2, scaled, err, filename, id)
+                #print('PictureChoice : TH1F')
+                self.createPicture2(histo1, histo2, scaled, err, filename, id)
             elif ( histo1.InheritsFrom("TProfile") ):
-                 print('PictureChoice : TProfile')
-                 self.createPicture2(histo1, histo2, scaled, err, filename, id)
+                #print('PictureChoice : TProfile')
+                self.createPicture2(histo1, histo2, scaled, err, filename, id)
             else:
-                print('PictureChoice : inherit from nothing')
+                #print('PictureChoice : inherit from nothing')
                 self.createPicture(histo1, histo2, scaled, err, filename, id)
             
     def PictureChoice2(self, args):
@@ -572,7 +572,8 @@ class Graphic:
         self.cnv.Draw()
         self.cnv.Update()
 
-        self.cnv.SaveAs(filename)
+        #self.cnv.SaveAs(filename)
+        self.cnv.Print(filename)
         self.cnv.Close()
         
         return
