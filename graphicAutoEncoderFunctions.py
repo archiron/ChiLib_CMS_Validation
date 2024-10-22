@@ -167,13 +167,14 @@ def createCompLossesPicture(labels, val, fileName, title):
     plt.plot(x_pos, val, color='blue', marker='*', linestyle = 'None')
     plt.ylabel('loss value')
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
+    plt.grid(axis = 'x', linestyle = '--')
 
     plt.subplot(1, 2, 2)
     plt.plot(labels, val, color='blue', marker='*', linestyle = 'None')
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
     plt.yscale("log")
  
-    plt.tight_layout()
+    plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
     return
 
@@ -235,6 +236,7 @@ def createCompPValuesPicture(labels, val, fileName, title):
     plt.ylabel('max. diff.')
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
     plt.legend()
+    plt.grid(axis = 'x', linestyle = '--')
 
     plt.subplot(1, 2, 2)
     plt.plot(labels, val1, color='blue', marker='*', linestyle = 'None')
@@ -243,7 +245,7 @@ def createCompPValuesPicture(labels, val, fileName, title):
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
     plt.yscale("log")
  
-    plt.tight_layout()
+    plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
     return
 

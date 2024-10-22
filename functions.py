@@ -10,10 +10,10 @@
 #                                                                              
 ################################################################################
 
-import os,sys # , shutil,subprocess
+import os,sys
 import re
 
-if sys.version_info >= (3, 0):
+if (sys.version_info >= (3, 0)):
     sys.stdout.write("Python 3.x\n")
 else:
     sys.stdout.write("Python 2.x\n")
@@ -338,7 +338,7 @@ class Tools:
         wp_defs.close()
         return
 
-    def createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()
+    def createWebPageLite(self, input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()
         print('Start creating web pages')
         print(input_rel_file)
         print(input_ref_file)
@@ -530,7 +530,7 @@ class Tools:
         
         return
     
-    def createWebPageLite2(input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()/GevSeq()
+    def createWebPageLite2(self, input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()/GevSeq()
         print('Start creating web pages')
         print(input_rel_file)
         print(input_ref_file)
@@ -684,7 +684,7 @@ class Tools:
         print("input_ref_file = %s\n" % f2)
         return
 
-    def checkN_GT(self, NGT, N):
+    def checkN_GT(self, NGT, N, globalTag):
         if ( NGT == 2*N):
             print('OK for globalTags : %d' % NGT)
             print('globalTags : %s' % globalTag)
