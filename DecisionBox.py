@@ -17,7 +17,7 @@ import numpy as np
 
 from os import path
 
-from functions import Tools #.extWrite
+from fonctions import Tools #.extWrite
 
 ################################################################################
 # GevSeqDev: a tool to generate Release Comparison                              
@@ -291,6 +291,7 @@ class DecisionBox:
 
     # major function to be called (ref is GevSeq.py)
     def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel, nbFiles): # , shortRef
+        #print('DecisionBox1')
         s0, e0 = self.getHistoValues(h1) # e0 not use with diffMAXKS3
         s1, e1 = self.getHistoValues(h2) # e1 not use with diffMAXKS3
         new_entries = h1.GetEntries()
@@ -359,6 +360,7 @@ class DecisionBox:
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max # return normalized pValue
 
     def decisionBox2(self, histoName, h1, h2, KS_path_local, shortRel, nbFiles): # , shortRef
+        #print('DecisionBox2')
         s0, _ = self.getHistoValues(h1) # e0 not use with diffMAXKS3
         s1, _ = self.getHistoValues(h2) # e1 not use with diffMAXKS3
         new_entries = h1.GetEntries()
@@ -421,6 +423,7 @@ class DecisionBox:
             return diffKS, pValue/I_Max # return normalized pValue
 
     def decisionBox3(self, histoName, h1, h2, KS_path_local, shortRel, nbFiles): # , shortRef
+        #print('DecisionBox3')
         s0, _ = self.getHistoValues(h1) # e0 not use with diffMAXKS3
         s1, _ = self.getHistoValues(h2) # e1 not use with diffMAXKS3
         new_entries = h1.GetEntries()

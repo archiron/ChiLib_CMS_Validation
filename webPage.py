@@ -40,7 +40,7 @@ except ImportError:
     from urllib.request import Request
 
 from graphicFunctions import Graphic
-from functions import Tools
+from fonctions import Tools
 
 # create the index.html web page for the validation comparison.
 # Do not confuse with DBwebPage into the DecisionBox class.
