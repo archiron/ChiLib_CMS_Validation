@@ -282,12 +282,14 @@ class Tools:
         t_ref = t_rel
         tp_rel = 'ElectronMcSignalValidator'
         tp_ref = tp_rel
-        if ( 'Pt1000' in type[0] ):
+        if ( type[2] == 'Pt1000' ):
+        #if ( 'Pt1000' in type[0] ):
             t_rel = tmp_path + 'ElectronMcSignalHistosPt1000.txt'
             t_ref = t_rel
             tp_rel = 'ElectronMcSignalValidatorPt1000'
             tp_ref = tp_rel
-        elif ( 'Fake' in type[0] ):
+        elif ( type[2] == 'Fake' ):
+        #elif ( 'Fake' in type[0] ):
             t_rel = tmp_path + 'ElectronMcFakeHistos.txt'
             t_ref = t_rel
             tp_rel = 'ElectronMcFakeValidator'
