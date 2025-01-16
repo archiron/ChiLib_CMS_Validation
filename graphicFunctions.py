@@ -248,13 +248,13 @@ class Graphic:
         if (v_h1):
             print('histo1 OK')
             textToAdd = 'no reference (NULL), same as new histo'
-            histo2 = histo1
+            histo2 = histo1.Clone()
         else:
             print('histo1 KO')
         if (v_h2):
             print('histo2 OK')
             textToAdd = 'no new histo (NULL), same as reference'
-            histo1 = histo2
+            histo1 = histo2.Clone()
         else:
             print('histo2 KO')
 
@@ -381,6 +381,7 @@ class Graphic:
         self.cnv.Update()
 
         self.cnv.SaveAs(filename)
+        self.cnv.Close()
         
         return
         
