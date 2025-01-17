@@ -541,7 +541,6 @@ class Graphic:
             histo3r = histo3
             histo2cr = histo2c
         #histo3.Divide(histo2) # divide by the original nb of events
-        #histo3.Divide(histo2c) # divide by the scaled nb of events
         histo3r.Divide(histo2cr) # divide by the scaled nb of events
         histo3r.SetLineColor(kBlack)
         histo3r.SetMaximum(2.)
