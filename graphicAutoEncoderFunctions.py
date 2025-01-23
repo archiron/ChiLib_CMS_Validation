@@ -156,11 +156,35 @@ def createMapPicture(X, Y, tab, Labels, fileName):
     fig.clf()
     return
 
-def createCompLossesPicture(labels, val, fileName, title):
+def createCompLossesPicture(labels, val, fileName, title, labx='Releases', laby='loss value'):
     x_pos = np.arange(len(labels))
     plt.clf()
     plt.figure(figsize=(10, 5))
-    title = title.replace("_", "\_")
+    title = title.replace("_", "\\_")
+    plt.suptitle(title, x=0.35)
+
+    plt.subplot(1, 2, 1)
+    plt.plot(x_pos, val, color='blue', marker='*', linestyle = 'None')
+    plt.ylabel(laby)
+    plt.xlabel(labx)
+    plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
+    plt.grid(axis = 'x', linestyle = '--')
+
+    plt.subplot(1, 2, 2)
+    plt.plot(labels, val, color='blue', marker='*', linestyle = 'None')
+    plt.xlabel(labx)
+    plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
+    plt.yscale("log")
+ 
+    plt.tight_layout(rect=[0., 0.03, 1., 0.95])
+    plt.savefig(fileName)
+    return
+
+def createCompLossesPicture2(labels, val, fileName, title):
+    x_pos = np.arange(len(labels))
+    plt.clf()
+    plt.figure(figsize=(10, 5))
+    title = title.replace("_", "\\_")
     plt.suptitle(title, x=0.35)
 
     plt.subplot(1, 2, 1)
@@ -182,7 +206,7 @@ def createCompLossesPicture2Axis(labs, val1, val2, fileName, title):
     x_pos = np.arange(len(labs))
     plt.clf()
     plt.figure(figsize=(10, 5))
-    title = title.replace("_", "\_")
+    title = title.replace("_", "\\_")
 
     fig, ax1 = plt.subplots()
     #ax1.set_xlabel('Releases') 
@@ -213,7 +237,7 @@ def createCompPValuesPicture(labels, val, fileName, title):
     x_pos = np.arange(len(labels))
     plt.clf()
     plt.figure(figsize=(10, 5))
-    title = title.replace("_", "\_")
+    title = title.replace("_", "\\_")
     plt.suptitle(title, x=0.35)
     #print(val)
     val1 = []
@@ -249,10 +273,58 @@ def createCompPValuesPicture(labels, val, fileName, title):
     plt.savefig(fileName)
     return
 
+def createCompPValuesPicture2(labels, val, fileName, title):
+    x_pos = np.arange(len(labels))
+    plt.clf()
+    plt.figure(figsize=(10, 5))
+    #title = title.replace("_", "\\_")
+    plt.suptitle(title, x=0.35)
+    #print(val)
+    val1 = []
+    val2 = []
+    val3 = []
+    val4 = []
+    val5 = []
+    N = len(val)
+    #print('N={:d}'.format(N))
+    for n in range(0,N-2,5):
+        #print('{:d}/{:d}'.format(n,N-1))
+        #print(val[n],val[n+1],val[n+2])
+        val1.append(val[n])
+        val2.append(val[n+1])
+        val3.append(val[n+2])
+        val4.append(val[n+3])
+        val5.append(val[n+4])
+    #print(val1)
+
+    plt.subplot(1, 2, 1)
+    plt.plot(x_pos, val1, color='blue', marker='*', linestyle = 'None', label='KS 1')
+    plt.plot(x_pos, val2, color='green', marker='+', linestyle = 'None', label='KS 2')
+    plt.plot(x_pos, val3, color='black', marker='+', linestyle = 'None', label='KS 3')
+    plt.plot(x_pos, val4, color='grey', marker='*', linestyle = 'None', label='KS 4')
+    plt.plot(x_pos, val5, color='yellow', marker='*', linestyle = 'None', label='KS 5')
+    plt.ylabel('max. diff.')
+    plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
+    plt.legend()
+    plt.grid(axis = 'x', linestyle = '--')
+
+    plt.subplot(1, 2, 2)
+    plt.plot(labels, val1, color='blue', marker='*', linestyle = 'None')
+    plt.plot(x_pos, val2, color='green', marker='+', linestyle = 'None')
+    plt.plot(x_pos, val3, color='black', marker='+', linestyle = 'None')
+    plt.plot(x_pos, val4, color='green', marker='+', linestyle = 'None')
+    plt.plot(x_pos, val5, color='black', marker='+', linestyle = 'None')
+    plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
+    plt.yscale("log")
+ 
+    plt.tight_layout(rect=[0., 0.03, 1., 0.95])
+    plt.savefig(fileName)
+    return
+
 def createLatentPicture(labels,x,y, pictureName, title):
     # print only the latent positions for each release
     plt.clf()
-    title = title.replace("_", "\_")
+    title = title.replace("_", "\\_")
 
     fig, ax1 = plt.subplots(figsize=(10, 5))
     ax1.scatter(x, y)
@@ -270,7 +342,7 @@ def createLatentPicture(labels,x,y, pictureName, title):
 def createLatentPictureTrainTest(x_tr,y_tr,x_te,y_te, pictureName, title):
     # print the latent positions for each epoch
     plt.clf()
-    title = title.replace("_", "\_")
+    title = title.replace("_", "\\_")
     N = len(x_tr)
 
     fig, ax1 = plt.subplots(figsize=(10, 5))
@@ -289,7 +361,7 @@ def createLatentPictureTrainTest(x_tr,y_tr,x_te,y_te, pictureName, title):
 def createCompLatentPictureTrainTest(labels, x_tr,y_tr,x,y, pictureName, title):
     # print the latent positions for each epoch and the latent positions for each release
     plt.clf()
-    title = title.replace("_", "\_")
+    title = title.replace("_", "\\_")
     N = len(x_tr)
 
     fig, ax1 = plt.subplots(figsize=(10, 5))
@@ -311,7 +383,7 @@ def createCompKSvsAEPicture(labels, val1, val2, fileName, title):
     x_pos = np.arange(len(labels))
     plt.clf()
     plt.figure(figsize=(10, 5))
-    title = title.replace("_", "\_")
+    title = title.replace("_", "\\_")
     plt.suptitle(title, x=0.35, y=1.000)
 
     plt.subplot(1, 2, 1)
@@ -335,7 +407,7 @@ def createCompKSvsAEPicture2Axis(labels, val1, val2, fileName, title):
     x_pos = np.arange(len(labels))
     plt.clf()
     plt.figure(figsize=(10, 5))
-    title = title.replace("_", "\_")
+    title = title.replace("_", "\\_")
     #plt.suptitle(title, x=0.35)
 
     fig, ax1 = plt.subplots()

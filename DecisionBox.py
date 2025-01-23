@@ -231,7 +231,7 @@ class DecisionBox:
         ind = sDKS.index(v)
         return v, ind, sDKS 
 
-    def diffMAXKS3(self, s0,s1):
+    def diffMAXKS3(self, s0,s1): # cum max diff
         s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
         s1 = np.asarray(s1)
         N0 = len(s0)
