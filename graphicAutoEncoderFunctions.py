@@ -160,7 +160,7 @@ def createCompLossesPicture(labels, val, fileName, title, labx='Releases', laby=
     x_pos = np.arange(len(labels))
     plt.clf()
     plt.figure(figsize=(10, 5))
-    title = title.replace("_", "\\_")
+    #title = title.replace("_", "\\_")
     plt.suptitle(title, x=0.35)
 
     plt.subplot(1, 2, 1)
@@ -169,12 +169,16 @@ def createCompLossesPicture(labels, val, fileName, title, labx='Releases', laby=
     plt.xlabel(labx)
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
     plt.grid(axis = 'x', linestyle = '--')
+    if (len(labels) > 12):
+        plt.tick_params(axis='x', which='major', labelsize=6)
 
     plt.subplot(1, 2, 2)
     plt.plot(labels, val, color='blue', marker='*', linestyle = 'None')
     plt.xlabel(labx)
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
     plt.yscale("log")
+    if (len(labels) > 12):
+        plt.tick_params(axis='x', which='major', labelsize=6)
  
     plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
@@ -643,10 +647,6 @@ class GraphicKS:
         ng = 0
         nr = 0
         seriesTab = pd.DataFrame(tab, columns=['new'])
-        print('seriesTab', seriesTab)
-        #seriesTab.info(verbose = False)
-        print('graphic: ', pV_text)
-        print('graphic: nbins = {}'.format(nbins))
         plt_diff_KS = seriesTab.plot.hist(bins=nbins, title=title, legend=False)
         ymi, yMa = plt_diff_KS.get_ylim()
         xmi, xMa = plt_diff_KS.get_xlim()
