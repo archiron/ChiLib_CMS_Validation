@@ -17,7 +17,7 @@ import numpy as np
 
 from os import path
 
-from fonctions import Tools #.extWrite
+from functions import Tools #.extWrite
 
 ################################################################################
 # GevSeqDev: a tool to generate Release Comparison                              
@@ -231,13 +231,15 @@ class DecisionBox:
         ind = sDKS.index(v)
         return v, ind, sDKS 
 
-    def diffMAXKS3(self, s0,s1): # cum max diff
+    def diffMAXKS3(self, s0,s1):
         s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
         s1 = np.asarray(s1)
         N0 = len(s0)
         N1 = len(s1)
         if (N0 != N1):
             print('not the same lengths')
+            print('s0 has {:d} elements'.format(N0))
+            print('s1 has {:d} elements'.format(N1))
             exit()
         #else:
         #    print('val1/val2 len : [{}/{}]'.format(N0, N1))
@@ -267,17 +269,13 @@ class DecisionBox:
     def integralpValue(self, abscisses, ordonnees, x):
         v = 0.0
         N = len(abscisses)
-        #print('DB: N = {}'.format(N))
         if (x <= abscisses[0]) :
-            #print('DB: x <= abscisses[0]')
             x = 0. # ttl integral
             for i in range(0, N-1):
                 v += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
         elif (x >= abscisses[N-1]):
-            #print('DB: x >= abscisses[N-1]')
             v = 0. # null integral
         else: # general case
-            #print('DB: general case')
             ind = 0
             for i in range(0, N):
                 if ((abscisses[i] != 0) and (np.floor(x/abscisses[i]) == 0)):
@@ -286,12 +284,10 @@ class DecisionBox:
             v = (abscisses[ind] - x) * ordonnees[ind-1]
             for i in range(ind, N-1):
                 v += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
-        #print('DB: v = {}'.format(v))
         return v
 
     # major function to be called (ref is GevSeq.py)
     def decisionBox1(self, histoName, h1, h2, KS_path_local, shortRel, nbFiles): # , shortRef
-        #print('DecisionBox1')
         s0, e0 = self.getHistoValues(h1) # e0 not use with diffMAXKS3
         s1, e1 = self.getHistoValues(h2) # e1 not use with diffMAXKS3
         new_entries = h1.GetEntries()
@@ -360,7 +356,6 @@ class DecisionBox:
             return coeff_1, coeff_2, coeff_3, diffKS, pValue/I_Max # return normalized pValue
 
     def decisionBox2(self, histoName, h1, h2, KS_path_local, shortRel, nbFiles): # , shortRef
-        #print('DecisionBox2')
         s0, _ = self.getHistoValues(h1) # e0 not use with diffMAXKS3
         s1, _ = self.getHistoValues(h2) # e1 not use with diffMAXKS3
         new_entries = h1.GetEntries()
@@ -423,7 +418,6 @@ class DecisionBox:
             return diffKS, pValue/I_Max # return normalized pValue
 
     def decisionBox3(self, histoName, h1, h2, KS_path_local, shortRel, nbFiles): # , shortRef
-        #print('DecisionBox3')
         s0, _ = self.getHistoValues(h1) # e0 not use with diffMAXKS3
         s1, _ = self.getHistoValues(h2) # e1 not use with diffMAXKS3
         new_entries = h1.GetEntries()
@@ -476,7 +470,7 @@ class DecisionBox:
                     print('DBox 3 - diffKS : %f' % diffKS)
                     #diffKS = diff1
                 wdiff.close()'''
-            #print('diffKS : %f' % diffKS)
+            print('diffKS : %f' % diffKS)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
             #print('%s :: u p-Value 3 : %f' % (histoName, pValue))
@@ -853,11 +847,9 @@ class DecisionBox:
                 pv3 = KS_val_3[1]
             else:
                 pv3 = -1.0
-            '''
-                print('pv1 : %f' % pv1)
-                print('pv2 : %f' % pv2)
-                print('pv3 : %f' % pv3)
-            '''
+            '''print('pv1 : %f' % pv1)
+            print('pv2 : %f' % pv2)
+            print('pv3 : %f' % pv3)'''
             fHisto.write(" \n<p><b>KS 1 : </b> pValue : %6.4f</p>" % (pv1))
             fHisto.write("   <p><b>KS 2 : </b> pValue : %6.4f</p>" % (pv2))
             fHisto.write("   <p><b>KS 3 : </b> pValue : %6.4f</p>" % (pv3))
