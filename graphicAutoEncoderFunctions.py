@@ -213,6 +213,8 @@ def createCompLossesPicture3(labels, val, fileName, title, labx='Releases', laby
     #title = title.replace("_", "\\_")
     plt.suptitle(title, x=0.35)
     nb1 = len(val)
+    #print('il y a {:d} points dans les valeurs'.format(nb1))
+    #print('il y a {:d} points dans les labels'.format(len(labels)))
     m = 0.
     for i in range(0,nb1):
         if(val[i] != 0.):
@@ -252,6 +254,8 @@ def createCompLossesPicture3(labels, val, fileName, title, labx='Releases', laby
     plt.yscale("log")
     if (len(labels) > 12):
         plt.tick_params(axis='x', which='major', labelsize=6)
+    plt.fill_between(x_pos, val1, val2, alpha=.5, linewidth=0, color='beige', hatch=r"//")
+    plt.plot(x_pos, moy, color="red")
  
     plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
