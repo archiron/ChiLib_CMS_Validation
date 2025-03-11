@@ -459,7 +459,7 @@ class Graphic:
         self.cnv.SetFillColor(10)
         self.cnv.SetBorderMode(1)
         
-        pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0) # ,0,0,0
+        pad1 = ROOT.TPad(str(id), "pad1", 0.00, 0.25, 1.0, 1.0) # ,0,0,0
         pad1.SetBottomMargin(0.05)
         pad1.Draw()
         pad1.cd()
@@ -473,7 +473,37 @@ class Graphic:
         histo1.Draw(newDrawOptions) # 
         histo1.SetLineStyle(0)
         histo1.SetLineWidth(2)
-
+        histo1.SetMarkerColor(kRed)
+        histo1.SetLineWidth(3) 
+        histo1.SetLineColor(kRed)
+        histo1.GetYaxis().SetTitleSize(25)
+        histo1.GetYaxis().SetTitleFont(43)
+        histo1.GetYaxis().SetTitleOffset(2.00)
+        histo1.GetYaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
+        histo1.GetYaxis().SetLabelSize(20)
+        histo1.GetZaxis().SetTitleSize(0.05)
+        histo1.GetXaxis().SetTitle() # remove X axis title
+        histo1.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
+        histo1.GetXaxis().SetLabelSize(20)
+        histo1.SetMarkerStyle(21)
+        histo1.SetMarkerSize(0.8)
+        
+        histo2c.SetLineStyle(0)
+        histo2c.SetMarkerColor(kBlue)
+        histo2c.SetLineWidth(3)
+        histo2c.SetLineColor(kBlue)
+        histo2c.GetYaxis().SetTitleSize(25)
+        histo2c.GetYaxis().SetTitleFont(43)
+        histo2c.GetYaxis().SetTitleOffset(2.00)
+        histo2c.GetYaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
+        histo2c.GetYaxis().SetLabelSize(20)
+        histo2c.GetZaxis().SetTitleSize(0.05)
+        histo2c.GetXaxis().SetTitle() # remove X axis title
+        histo2c.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
+        histo2c.GetXaxis().SetLabelSize(20)
+        histo2c.SetMarkerStyle(21)
+        histo2c.SetMarkerSize(0.8)
+        
         self.RenderHisto(histo1)
         if ("ELE_LOGY" in histo1.GetOption() and histo1.GetMaximum() > 0):
             if (re.search('etaEff_all', filename) or re.search('ptEff_all', filename)):
@@ -524,7 +554,7 @@ class Graphic:
         histo2c.Draw("sames hist")
         
         self.cnv.cd()
-        pad2 = ROOT.TPad(str(id), "pad2", 0, 0.05, 1.00, 0.26) # ,0,0,0
+        pad2 = ROOT.TPad(str(id), "pad2", 0.00, 0.00, 1.00, 0.25) # ,0,0,0
         pad2.SetTopMargin(0.025)
         pad2.SetBottomMargin(0.3)
         pad2.SetBorderMode(0)
@@ -541,6 +571,7 @@ class Graphic:
             histo3r = histo3
             histo2cr = histo2c
         #histo3.Divide(histo2) # divide by the original nb of events
+        #histo3.Divide(histo2c) # divide by the scaled nb of events
         histo3r.Divide(histo2cr) # divide by the scaled nb of events
         histo3r.SetLineColor(kBlack)
         histo3r.SetMaximum(2.)
@@ -549,20 +580,6 @@ class Graphic:
         histo3r.Sumw2()
         histo3r.SetMarkerStyle(21)
         histo3r.Draw("ep")
-        
-        histo1.SetMarkerColor(kRed)
-        histo1.SetLineWidth(3) 
-        histo1.SetLineColor(kRed)
-        histo1.GetYaxis().SetTitleSize(25)
-        histo1.GetYaxis().SetTitleFont(43)
-        histo1.GetYaxis().SetTitleOffset(2.00)
-        histo1.GetZaxis().SetTitleSize(0.05)
-        histo1.SetMarkerStyle(21)
-        histo1.SetMarkerSize(0.8)
-        
-        histo2c.SetLineColor(kBlue)
-        histo2c.SetMarkerColor(kBlue)
-        histo2c.SetLineWidth(3)
         
         histo3r.SetTitle("")
         # Y axis ratio plot settings
