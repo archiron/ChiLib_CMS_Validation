@@ -261,6 +261,64 @@ def createCompLossesPicture3(labels, val, fileName, title, labx='Releases', laby
     plt.savefig(fileName)
     return
 
+def createCompLossesPicture4(labels, val_1, val_2, fileName, title, labx='Releases', laby='loss value'):
+    x_pos = np.arange(len(labels))
+    plt.clf()
+    plt.figure(figsize=(10, 5))
+    #title = title.replace("_", "\\_")
+    plt.suptitle(title, x=0.35)
+    nb1 = len(val_1)
+    #print('il y a {:d} points dans les valeurs'.format(nb1))
+    #print('il y a {:d} points dans les labels'.format(len(labels)))
+    m = 0.
+    for i in range(0,nb1):
+        if(val_1[i] != 0.):
+            m += val_1[i]
+    m /= (nb1 - 1)
+    #print('m : {:e}'.format(m))
+    sig = 0.
+    for i in range(0,nb1):
+        if(val_1[i] != 0.):
+            sig += (val_1[i] - m) * (val_1[i] - m)
+    sig /= (nb1 - 1)
+    sig = np.sqrt(sig)
+    #print('sig : {:e}'.format(sig))
+    val1 = []
+    val2 = []
+    moy = []
+    for i in range(0,nb1):
+        val1.append(m - sig)
+        val2.append(m + sig)
+        moy.append(m)
+
+    plt.subplot(1, 2, 1)
+    plt.plot(x_pos, val_1, color='grey', marker='*', linestyle = 'None')
+    plt.plot(x_pos, val_2, color='blue', marker='*', linestyle = 'None')
+    plt.ylabel(laby)
+    plt.xlabel(labx)
+    #plt.ylim(0.)
+    plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
+    plt.grid(axis = 'x', linestyle = '--')
+    if (len(labels) > 12):
+        plt.tick_params(axis='x', which='major', labelsize=6)
+    plt.fill_between(x_pos, val1, val2, alpha=.5, linewidth=0, color='beige', hatch=r"//")
+    plt.plot(x_pos, moy, color="red")
+
+    plt.subplot(1, 2, 2)
+    plt.plot(labels, val_1, color='grey', marker='*', linestyle = 'None')
+    plt.plot(labels, val_2, color='blue', marker='*', linestyle = 'None')
+    plt.xlabel(labx)
+    plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
+    plt.yscale("log")
+    if (len(labels) > 12):
+        plt.tick_params(axis='x', which='major', labelsize=6)
+    plt.fill_between(x_pos, val1, val2, alpha=.5, linewidth=0, color='beige', hatch=r"//")
+    plt.plot(x_pos, moy, color="red")
+ 
+    plt.tight_layout(rect=[0., 0.03, 1., 0.95])
+    plt.savefig(fileName)
+    return
+
 def createCompLossesPicture2Axis(labs, val1, val2, fileName, title):
     x_pos = np.arange(len(labs))
     plt.clf()
