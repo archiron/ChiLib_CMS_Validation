@@ -75,6 +75,7 @@ def getListFiles(path, ext='root'):
     #print('path : %s' % path)
     onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
     onlyfiles = [f for f in onlyfiles if f.endswith(ext)] # keep only root files
+    onlyfiles = [f for f in onlyfiles if f.startswith('DQM_')] # keep only root files
     #print(onlyfiles)
     return onlyfiles
 
