@@ -571,7 +571,6 @@ class Graphic:
             histo3r = histo3
             histo2cr = histo2c
         #histo3.Divide(histo2) # divide by the original nb of events
-        #histo3.Divide(histo2c) # divide by the scaled nb of events
         histo3r.Divide(histo2cr) # divide by the scaled nb of events
         histo3r.SetLineColor(kBlack)
         histo3r.SetMaximum(2.)
@@ -618,7 +617,7 @@ class Graphic:
         self.cnv.Clear()
         self.cnv.SetFillColor(10)
 
-        pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0) # ,0,0,0
+        pad1 = ROOT.TPad(str(id), "pad1", 0, 0.25, 1.0, 1.0)
         pad1.SetBottomMargin(0.05)
         pad1.Draw()
         pad1.cd()
@@ -626,7 +625,7 @@ class Graphic:
         newDrawOptions = "hist"
         histo2.SetStats(1)
         histo2.Draw(newDrawOptions) # 
-        
+
         self.cnv.Draw()
         self.cnv.Update()
 

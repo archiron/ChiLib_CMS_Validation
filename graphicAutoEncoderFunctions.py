@@ -127,6 +127,7 @@ def creatPredPictLin(branch, Ncols, new, y_pred_new, new_loss, rel, fileName):
 
     plt.tight_layout()
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createCompPicture(branch, Ncols, new, ref, ref1, ref2, fileName):
@@ -136,6 +137,7 @@ def createCompPicture(branch, Ncols, new, ref, ref1, ref2, fileName):
     plt.legend()
     plt.title(branch)
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createMapPicture(X, Y, tab, Labels, fileName):
@@ -154,6 +156,7 @@ def createMapPicture(X, Y, tab, Labels, fileName):
     fig.tight_layout()
     fig.savefig(fileName)
     fig.clf()
+    plt.close()
     return
 
 def createCompLossesPicture(labels, val, fileName, title, labx='Releases', laby='loss value'):
@@ -182,6 +185,7 @@ def createCompLossesPicture(labels, val, fileName, title, labx='Releases', laby=
  
     plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createCompLossesPicture2(labels, val, fileName, title):
@@ -204,6 +208,7 @@ def createCompLossesPicture2(labels, val, fileName, title):
  
     plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createCompLossesPicture3(labels, val, fileName, title, labx='Releases', laby='loss value'):
@@ -259,6 +264,7 @@ def createCompLossesPicture3(labels, val, fileName, title, labx='Releases', laby
  
     plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createCompLossesPicture4(labels, val_1, val_2, fileName, title, labx='Releases', laby='loss value'):
@@ -317,6 +323,7 @@ def createCompLossesPicture4(labels, val_1, val_2, fileName, title, labx='Releas
  
     plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createCompLossesPicture2Axis(labs, val1, val2, fileName, title):
@@ -348,6 +355,7 @@ def createCompLossesPicture2Axis(labs, val1, val2, fileName, title):
     
     fig.tight_layout()
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createCompPValuesPicture(labels, val, fileName, title):
@@ -388,6 +396,7 @@ def createCompPValuesPicture(labels, val, fileName, title):
  
     plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createCompPValuesPicture2(labels, val, fileName, title):
@@ -436,6 +445,7 @@ def createCompPValuesPicture2(labels, val, fileName, title):
  
     plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createLatentPicture(labels,x,y, pictureName, title):
@@ -454,6 +464,7 @@ def createLatentPicture(labels,x,y, pictureName, title):
  
     fig.tight_layout()
     plt.savefig(pictureName)
+    plt.close()
     return
 
 def createLatentPictureTrainTest(x_tr,y_tr,x_te,y_te, pictureName, title):
@@ -473,6 +484,7 @@ def createLatentPictureTrainTest(x_tr,y_tr,x_te,y_te, pictureName, title):
     ax1.legend()
     fig.tight_layout()
     plt.savefig(pictureName)
+    plt.close()
     return
 
 def createCompLatentPictureTrainTest(labels, x_tr,y_tr,x,y, pictureName, title):
@@ -494,6 +506,7 @@ def createCompLatentPictureTrainTest(labels, x_tr,y_tr,x,y, pictureName, title):
     #plt.legend()
     fig.tight_layout()
     plt.savefig(pictureName)
+    plt.close()
     return
 
 def createCompKSvsAEPicture(labels, val1, val2, fileName, title):
@@ -518,6 +531,7 @@ def createCompKSvsAEPicture(labels, val1, val2, fileName, title):
  
     plt.tight_layout()
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createCompKSvsAEPicture2Axis(labels, val1, val2, fileName, title):
@@ -548,6 +562,7 @@ def createCompKSvsAEPicture2Axis(labels, val1, val2, fileName, title):
 
     plt.tight_layout()
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createSimplePicture(title, y, labels, fileName): 
@@ -564,6 +579,7 @@ def createSimplePicture(title, y, labels, fileName):
 
     plt.tight_layout()
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createSimplePicture2(title, y, labels, fileName, ticksLabels): 
@@ -585,6 +601,7 @@ def createSimplePicture2(title, y, labels, fileName, ticksLabels):
 
     plt.tight_layout()
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createComplexPicture(legende, y, labels, fileName):
@@ -612,6 +629,7 @@ def createComplexPicture(legende, y, labels, fileName):
 
     plt.tight_layout()
     plt.savefig(fileName)
+    plt.close()
     return
 
 def createComplexPicture2(legende, y, labels, fileName, histos):
@@ -665,6 +683,7 @@ def createComplexPicture2(legende, y, labels, fileName, histos):
     fig.tight_layout()
     fig.savefig(fileName)
     fig.clf()
+    plt.close(fig)
     return
 
 def createComplexPicture3(legende, y,z, labels, fileName, histos1, histos2):
@@ -745,6 +764,7 @@ def createComplexPicture3(legende, y,z, labels, fileName, histos1, histos2):
     fig.tight_layout()
     fig.savefig(fileName)
     fig.clf()
+    plt.close(fig)
     return
 
 class GraphicKS:
@@ -785,7 +805,49 @@ class GraphicKS:
         fig = plt_diff_KS.get_figure()
         fig.savefig(fileName)
         fig.clf()
+        plt.close(fig)
         return ng, nr
+
+    def createKSttlDiffPicture2(self, tab, nbins, diffM, title, fileName, pValue, I_max):
+        import pandas as pd
+        pValue_norm = pValue / I_max
+        pV_text = 'pValue : ' + str(round(pValue, 3)) + '\n'
+        pV_text += 'I_max : ' + str(round(I_max, 3)) + '\n'
+        pV_text += 'norm. pValue : ' + str(round(pValue_norm, 3)) 
+        ng = 0
+        nr = 0
+        seriesTab = pd.DataFrame(tab, columns=['new'])
+        #print('seriesTab', seriesTab)
+        #seriesTab.info(verbose = False)
+        print('graphic: ', pV_text)
+        print('graphic: nbins = {}'.format(nbins))
+        plt_diff_KS = seriesTab.plot.hist(bins=nbins, title=title, legend=False)
+        ymi, yMa = plt_diff_KS.get_ylim()
+        xmi, xMa = plt_diff_KS.get_xlim()
+        if (diffM >= seriesTab.values.max()):
+            print('diffM >= seriesTab.values.max()')
+            color = 'r'
+            nr += 1
+            xp = seriesTab.values.max()
+            plt.text(xp*0.8, yMa/2., '== ' + str(round(diffM,3)) + ' =>', fontsize = 10, bbox = dict(facecolor = 'red', alpha = 0.5))
+        elif (diffM <= seriesTab.values.min()):
+            print('diffM <= seriesTab.values.min()')
+            color = 'g'
+            ng += 1
+            xp = seriesTab.values.min()
+            plt.text(xp, yMa/2., '<= ' + str(round(diffM,3)) + ' ==', fontsize = 10, bbox = dict(facecolor = 'green', alpha = 0.5))
+        else:
+            print('diffM general case')
+            color = 'g'
+            ng += 1
+            xp = diffM
+            plt_diff_KS.vlines(xp, ymi, 0.9*yMa, color=color, linewidth=4)
+        plt.text(0.65*xMa, 0.85*yMa, pV_text, fontsize = 10, bbox = dict(facecolor = 'green', alpha = 0.5))
+        fig = plt_diff_KS.get_figure()
+        fig.savefig(fileName)
+        fig.clf()
+        plt.close(fig)
+        return
 
     def createSimpleKSttlDiffPicture(self, tab, nbins, title, fileName):
         import pandas as pd
@@ -794,6 +856,7 @@ class GraphicKS:
         fig = plt_diff_KS.get_figure()
         fig.savefig(fileName)
         fig.clf()
+        plt.close(fig)
         return
 
     def createSimpleCompKSttlDiffPicture(self, x, y, x_KS, y_KS, legende, title, fileName):
