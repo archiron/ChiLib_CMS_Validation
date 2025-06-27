@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from matplotlib.ticker import AutoMinorLocator
 import numpy as np
+from pandas.core import series
 
 matplotlib.use('agg')
 print('matplotlib: {}'.format(matplotlib.__version__))
@@ -163,7 +164,7 @@ def createCompLossesPicture(labels, val, fileName, title, labx='Releases', laby=
     x_pos = np.arange(len(labels))
     plt.clf()
     plt.figure(figsize=(10, 5))
-    #title = title.replace("_", "\\_")
+    title = title.replace("_", "\\_")
     plt.suptitle(title, x=0.35)
 
     plt.subplot(1, 2, 1)
@@ -859,6 +860,31 @@ class GraphicKS:
         plt.close(fig)
         return
 
+    def createSimpleKSttlDiffPicture2(self, tab, nbins, title, fileName, s_new, plage_x):
+        import pandas as pd
+        seriesTab = pd.DataFrame(tab, columns=['new'])
+        y_min = seriesTab.values.min()
+        y_max = seriesTab.values.max()
+        print('[y_min, y_max] = [{}, {}]'.format(y_min, y_max))
+        plt_diff_KS = seriesTab.plot.hist(bins=nbins, title=title, legend=False, color='lime')
+        ymi, yMa = plt_diff_KS.get_ylim()
+        #xmi, xMa = plt_diff_KS.get_xlim()
+        ax = plt.gca()
+        ax.set_facecolor("blue")
+        y1 = np.array([yMa / 2., yMa / 2.])
+        plt.fill_between(plage_x, y1, alpha=.35, linewidth=1, color='olive', hatch=r"//")
+        
+        fig = plt_diff_KS.get_figure()
+        x = range(0, len(s_new))
+        print(x)
+        left, bottom, width, height = 0.62, 0.6, 0.25, 0.25
+        ax1 = fig.add_axes([left, bottom, width, height])
+        ax1.plot(x, s_new, 'b', linewidth=0, marker='+')
+        fig.savefig(fileName)
+        fig.clf()
+        plt.close(fig)
+        return
+
     def createSimpleCompKSttlDiffPicture(self, x, y, x_KS, y_KS, legende, title, fileName):
         print(legende)
         plt.plot(x, y,color='blue', marker='+', linestyle = 'none', label=legende[0]) #, legend=True
@@ -869,3 +895,72 @@ class GraphicKS:
         plt.savefig(fileName)
         plt.clf()
         return
+
+    def createSimpleDiffPicture(self, title, y, labels, legende, fileName): 
+        # labels : axis x,y labels
+        plt.clf()
+        plt.figure(figsize=(10, 5))
+        #plt.suptitle(title)
+
+        plt.plot(y,color='red', linestyle = 'none', marker = '+')
+        plt.title(title)
+        plt.legend(legende, loc="upper right")
+        
+        plt.xlabel(labels[0])
+        plt.ylabel(labels[1])
+
+        plt.tight_layout()
+        plt.savefig(fileName)
+        plt.clf()
+        return
+
+    def createSimpleDiffPicture2(self, title, y, z, labels, legende, fileName): 
+        # labels : axis x,y labels
+        plt.clf()
+        plt.figure(figsize=(10, 5))
+        #plt.suptitle(title)
+
+        plt.plot(y,color='red', linestyle = 'none', marker = '+')
+        plt.plot(z,color='blue', linestyle = 'none', marker = 'x')
+        plt.title(title)
+        plt.legend(legende, loc="upper right")
+        
+        plt.xlabel(labels[0])
+        plt.ylabel(labels[1])
+
+        plt.tight_layout()
+        plt.savefig(fileName)
+        plt.clf()
+        return
+
+    def createStatPicture(self, val_1, val_2, moy, fileName, title, labx='nb of items', laby='stats'):
+        plt.clf()
+        plt.figure(figsize=(10, 5))
+        #title = title.replace("_", "\\_")
+        bb = (val_2[-1] - val_1[-1]) / 2.
+        ajoutTexte = ' - [ {:.3e} +/- {:.3e}]'.format(moy[-1], bb)
+        plt.suptitle(title + ajoutTexte, x=0.35)
+
+        plt.subplot(1, 2, 1)
+        plt.plot(val_1, color='grey', marker='.', linestyle = 'None') #
+        plt.plot(val_2, color='blue', marker='.', linestyle = 'None') #
+        plt.ylabel(laby)
+        plt.xlabel(labx)
+        plt.grid(axis = 'x', linestyle = '--')
+        #plt.fill_between(x_pos, val1, val2, alpha=.5, linewidth=0, color='beige', hatch=r"//")
+        plt.plot(moy, color="red")
+
+        plt.subplot(1, 2, 2)
+        plt.plot(val_1, color='grey', marker='.', linestyle = 'None')
+        plt.plot(val_2, color='blue', marker='.', linestyle = 'None')
+        plt.xlabel(labx)
+        plt.yscale("log")
+        #plt.fill_between(x_pos, val1, val2, alpha=.5, linewidth=0, color='beige', hatch=r"//")
+        
+        plt.plot(moy, color="red")
+    
+        plt.tight_layout(rect=[0., 0.03, 1., 0.95])
+        plt.savefig(fileName)
+        plt.close()
+        return
+

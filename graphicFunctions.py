@@ -12,17 +12,15 @@
 
 import re
 import numpy as np
+import ROOT
 
 from sys import argv
-argv.append( '-b-' )
-import ROOT
+from ROOT import kWhite, kBlue, kBlack, kRed, gStyle, TCanvas, gPad 
+
 ROOT.gROOT.SetBatch(True)
 #ROOT.gErrorIgnoreLevel = ROOT.kWarning # remove info like : Info in <TCanvas::Print>: gif file gifs/h_ele_vertexPhi.gif has been created
 # Print, Info, Warning, Error, Break, SysError and Fatal.
 ROOT.gErrorIgnoreLevel = ROOT.kFatal # ROOT.kBreak
-argv.remove( '-b-' )
-
-from ROOT import kWhite, kBlue, kBlack, kRed, gStyle, TCanvas, gPad 
 
 class Graphic:
     def __init__(self):
@@ -757,7 +755,7 @@ class Graphic:
         histo3.SetLineColor(kBlack)
         histo3.SetMaximum(2.)
         histo3.SetStats(0)
-        histo3.Sumw2() ########
+        histo3.Sumw2()
         histo3.Divide(histo2c)
         histo3.SetMarkerStyle(21)
         histo3.Draw("ep")
@@ -791,12 +789,12 @@ class Graphic:
         histo3.GetXaxis().SetTitleOffset(4.)
         histo3.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
         histo3.GetXaxis().SetLabelSize(15)
-    
+
         self.cnv.Draw()
         self.cnv.Update()
 
         self.cnv.SaveAs(filename)
-        
+        self.cnv.Close()
         return
             
     def createCumulPicture3(self, histo1, histo2, filename, id, s0):
@@ -1319,5 +1317,4 @@ class Graphic:
         self.cnv.SaveAs(filename)
         
         return
-
 
