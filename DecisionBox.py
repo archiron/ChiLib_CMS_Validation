@@ -241,43 +241,92 @@ class DecisionBox:
             print('s0 has {:d} elements'.format(N0))
             print('s1 has {:d} elements'.format(N1))
             exit()
-        #else:
-        #    print('val1/val2 len : [{}/{}]'.format(N0, N1))
-        min0 = min(s0)
-        min1 = min(s1)
-        min01 = min(min0, min1)
+        min0 = s0.min() # min(s0)
+        min1 = s1.min() # min(s1)
+        min01 = np.min([min0, min1])
         if (min01 > 0.):
             min01 = 0.
         else:
             min01 = np.abs(min01)
-        #print('min01 : {}'.format(min01))
         SumSeries0 = s0.sum() + N0 * min01
         SumSeries1 = s1.sum() + N1 * min01
         v0 = 0.
         v1 = 0.
         sDKS = []
         for i in range(0, N0):
-            t0 = (min01 + s0[i])/SumSeries0
-            t1 = (min01 + s1[i])/SumSeries1
-            v0 += t0
-            v1 += t1
+            #t0 = (min01 + s0[i])/SumSeries0
+            #t1 = (min01 + s1[i])/SumSeries1
+            v0 += (min01 + s0[i])/SumSeries0 # t0
+            v1 += (min01 + s1[i])/SumSeries1 # t1
             sDKS.append(np.abs(v1 - v0))
-        v = max(sDKS)
-        ind = sDKS.index(v)
+        v = np.max(sDKS)
+        ind = np.where(sDKS==v)[0][0] # sDKS.index(v)
         return v, ind, sDKS 
+
+    def diffMAXKS3b(self, s0,s1): # cum max diff
+        s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
+        s1 = np.asarray(s1)
+        N0 = len(s0)
+        N1 = len(s1)
+        if (N0 != N1):
+            print('not the same lengths')
+            exit()
+        min0 = s0.min() # min(s0)
+        min1 = s1.min() # min(s1)
+        min01 = np.min([min0, min1])
+        if (min01 > 0.):
+            min01 = 0.
+        else:
+            min01 = np.abs(min01)
+        SumSeries0 = s0.sum() + N0 * min01
+        SumSeries1 = s1.sum() + N1 * min01
+        v0, v1 = 0., 0.
+        sDKS = []
+        s0 = (s0 + min01) / SumSeries0
+        s1 = (s1 + min01) / SumSeries1
+        for i in range(0, N0):
+            v0 += s0[i]
+            v1 += s1[i]
+            sDKS.append(v1 - v0)
+        sDKS = np.abs(sDKS)
+        return np.max(sDKS)
+
+    def diffMAXKS4(self, s0,s1): # works with polars (no index function)
+        s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
+        s1 = np.asarray(s1)
+        N0 = s0.shape[1]
+        N1 = s1.shape[1]
+        if (N0 != N1):
+            print('not the same lengths')
+            exit()
+        min0 = s0.min() # min(s0)
+        min1 = s1.min() # min(s1)
+        min01 = np.amin([min0, min1])
+        if (min01 > 0.):
+            min01 = 0.
+        else:
+            min01 = np.abs(min01)
+        SumSeries0 = s0.sum() + N0 * min01
+        SumSeries1 = s1.sum() + N1 * min01
+        v0, v1 = 0., 0.
+        sDKS = []
+        s0 = (s0 + min01) / SumSeries0
+        s1 = (s1 + min01) / SumSeries1
+        sDKS = [abs(v1 := v1 + s1[0, i] - (v0 := v0 + s0[0, i])) for i in range(N0)]
+        return np.max(sDKS)
 
     def integralpValue(self, abscisses, ordonnees, x):
         v = 0.0
         N = len(abscisses)
         if (x <= abscisses[0]) :
-            x = 0. # ttl integral
+            x = 0. # ttl integral (=1)
             for i in range(0, N-1):
                 v += (abscisses[i+1] - abscisses[i]) * ordonnees[i]
         elif (x >= abscisses[N-1]):
             v = 0. # null integral
         else: # general case
             ind = 0
-            for i in range(0, N):
+            for i in range(0, N): # get the position where to begin
                 if ((abscisses[i] != 0) and (np.floor(x/abscisses[i]) == 0)):
                     ind = i
                     break
@@ -470,7 +519,7 @@ class DecisionBox:
                     print('DBox 3 - diffKS : %f' % diffKS)
                     #diffKS = diff1
                 wdiff.close()'''
-            print('diffKS : %f' % diffKS)
+            #print('diffKS : %f' % diffKS)
             # Get the p-Value for ref/test curves
             pValue = self.integralpValue(division, count, diffKS)
             #print('%s :: u p-Value 3 : %f' % (histoName, pValue))
@@ -847,9 +896,11 @@ class DecisionBox:
                 pv3 = KS_val_3[1]
             else:
                 pv3 = -1.0
-            '''print('pv1 : %f' % pv1)
-            print('pv2 : %f' % pv2)
-            print('pv3 : %f' % pv3)'''
+            '''
+                print('pv1 : %f' % pv1)
+                print('pv2 : %f' % pv2)
+                print('pv3 : %f' % pv3)
+            '''
             fHisto.write(" \n<p><b>KS 1 : </b> pValue : %6.4f</p>" % (pv1))
             fHisto.write("   <p><b>KS 2 : </b> pValue : %6.4f</p>" % (pv2))
             fHisto.write("   <p><b>KS 3 : </b> pValue : %6.4f</p>" % (pv3))
