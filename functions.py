@@ -12,6 +12,7 @@
 
 import os,sys
 import re
+import pandas as pd
 
 if (sys.version_info >= (3, 0)):
     sys.stdout.write("Python 3.x\n")
@@ -684,6 +685,21 @@ class Tools:
     def p_inputRelRefFiles(self, f1, f2):
         print("input_rel_file = %s\n" % f1)
         print("input_ref_file = %s\n" % f2)
+        return
+
+    def p_histoValues(self, pd_DF):
+        # Afficher sous forme de tableau
+        print(f"{'Bin':>5} | {'Xmin':>10} | {'Xmax':>10} | {'Content':>10} | {'Error':>10}")
+        print("-" * 55)
+        (Nrow, Ncol) = pd_DF.shape
+        #print('[Nrow, Ncol] = [{:d}, {:d}]'.format(Nrow, Ncol))
+        for i in range(1, Nrow + 1):
+            x_min = pd_DF["Xmin"][i - 1]
+            x_max = pd_DF["Xmax"][i - 1]
+            content = pd_DF["Content"][i - 1]
+            error = pd_DF["Error"][i - 1]
+            print(f"{i:5} | {x_min:10.2f} | {x_max:10.2f} | {content:10.2f} | {error:10.2f}")
+            #print(i, pd_DF["Xmin"][i], pd_DF["Xmax"][i], pd_DF["Content"][i], pd_DF["Error"][i])
         return
 
     def checkN_GT(self, NGT, N, globalTag):

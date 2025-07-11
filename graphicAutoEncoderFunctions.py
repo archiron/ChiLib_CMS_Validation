@@ -314,6 +314,7 @@ def createCompLossesPicture4(labels, val_1, val_2, fileName, title, labx='Releas
     plt.subplot(1, 2, 2)
     plt.plot(labels, val_1, color='grey', marker='*', linestyle = 'None')
     plt.plot(labels, val_2, color='blue', marker='*', linestyle = 'None')
+    #plt.ylabel(laby)
     plt.xlabel(labx)
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
     plt.yscale("log")
@@ -876,7 +877,7 @@ class GraphicKS:
         
         fig = plt_diff_KS.get_figure()
         x = range(0, len(s_new))
-        print(x)
+        #print(x)
         left, bottom, width, height = 0.62, 0.6, 0.25, 0.25
         ax1 = fig.add_axes([left, bottom, width, height])
         ax1.plot(x, s_new, 'b', linewidth=0, marker='+')

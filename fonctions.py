@@ -12,6 +12,7 @@
 
 import os,sys
 import re
+import pandas as pd
 
 if (sys.version_info >= (3, 0)):
     sys.stdout.write("Python 3.x\n")
@@ -158,65 +159,32 @@ class Tools:
             short_histo_name = short_histo_name.replace("bcl_", "")
         return short_histo_name
 
-    def checkCreateWebFolder(self, webFolder):
-        if not os.path.exists(webFolder): # only create the first folder for saving gifs, i.e. release folder.
-            self.exist_webFolder = False
-        else:
-            self.exist_webFolder = True
-
-        if self.exist_webFolder: # True
-            print("%s already created\n" % str(webFolder))
-        else: # False
-            os.makedirs(str(webFolder))
-        return
-
-    def createWorkingDir(self, folder):
-        if os.path.exists(folder): # True
-            print("/DATA/ already created\n")
-        else: # False
-            os.makedirs(folder)
-        print('working in %s\n' % folder )
-        return
-
-    def createDatasetFolder(self, folder, ext):
-        # checking ext
-        print('ext : ', ext)
-        if ((ext != "gifs") and (ext != "pngs")) :
-            ext = 'gifs'
+    def createDatasetFolder(self, folder):
         if not os.path.exists(folder): # create folder
             os.makedirs(folder) # create reference folder
             os.chdir(folder)
-            # create gifs/pngs folders
-            os.makedirs(ext) # create gifs folder for pictures
+            # create gifs folders
+            os.makedirs('gifs') # create gifs folder for pictures
             os.chdir('../')
         else: # folder already created
             os.chdir(folder)
-            if (ext == 'gifs'):
-                print('using GIF format')
-                self.createGifDatasetFolder()
-            else: # pngs
-                print('using PNG format')
-                self.createPngDatasetFolder()
+            if not os.path.exists('gifs'): #
+                # create gifs folders
+                os.makedirs('gifs') # create gifs folder for pictures
             os.chdir('../')
         return
 
-    def createGifDatasetFolder(self):
-        if not os.path.exists('gifs'): #
-            # create gifs folders
-            os.makedirs('gifs') # create gifs folder for pictures
-        return
-
-    def createPngDatasetFolder(self): # for pngs
+    def createDatasetFolder2(self): # for pngs
         if not os.path.exists('pngs'): # create folder
             os.makedirs('pngs') # create pngs folder
         return
 
-    def createDBoxDatasetFolder(self): # for Decision Box
+    def createDatasetFolder3(self): # for Decision Box
         if not os.path.exists('DBox'): # create folder
             os.makedirs('DBox') # create pngs folder
         return
 
-    def deleteDBoxDatasetFolder(self): # for Decision Box
+    def deleteDatasetFolder3(self): # for Decision Box
         import shutil
         if os.path.exists('DBox'): # create folder
             shutil.rmtree('DBox')
@@ -269,7 +237,7 @@ class Tools:
                 tp_ref = tp_rel
         return [t_rel, t_ref, tp_rel, tp_ref]
 
-    def testForDataSetsFile2(self, tmp_path, type): # only for dev !!!
+    def testForDataSetsFile2(self, tmp_path, type, dataSetsName): # only for dev !!!
         # also get the tree path part (tp_rel, tp_ref) for root files :
         # folder location for those files : HistosConfigFiles/
         # ElectronMcSignalValidator
@@ -277,7 +245,8 @@ class Tools:
         # ElectronMcSignalValidatorPt1000
         # ElectronMcFakeValidator
 
-        #print('dataset name : {:s}'.format(dataSetsName))
+        print('dataset name : {:s}'.format(dataSetsName))
+        print('type : {:s}'.format(type))
         t_rel = tmp_path + 'ElectronMcSignalHistos.txt'
         t_ref = t_rel
         tp_rel = 'ElectronMcSignalValidator'
@@ -313,32 +282,32 @@ class Tools:
 
     def createDefinitionsFile(self, datas, fileName):
         '''
-        gedGsfElectrons ZEE_14
-        RECO
-        12_0_0_pre6
-        DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre6-120X_mcRun3_2021_realistic_v4-v1__DQMIO.root
-        RECO
-        12_0_0_pre4
-        DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre4-120X_mcRun3_2021_realistic_v2-v1__DQMIO.root
-        CMSSW_12_0_0_pre6
-        CMSSW_12_0_0_pre4
-        https://hypernews.cern.ch/HyperNews/CMS/get/relval/16218.html
-        config_target.txt
+            gedGsfElectrons ZEE_14
+            RECO
+            12_0_0_pre6
+            DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre6-120X_mcRun3_2021_realistic_v4-v1__DQMIO.root
+            RECO
+            12_0_0_pre4
+            DQM_V0001_R000000001__RelValZEE_14__CMSSW_12_0_0_pre4-120X_mcRun3_2021_realistic_v2-v1__DQMIO.root
+            CMSSW_12_0_0_pre6
+            CMSSW_12_0_0_pre4
+            https://hypernews.cern.ch/HyperNews/CMS/get/relval/16218.html
+            config_target.txt
         '''
         if ( fileName ):
             wp_defs = open(fileName, 'w') # definitions for PHP page
-            print('\n\t ==== ' + fileName + ' ====\n')
+            #print('\n\t ==== opening ' + fileName + ' ====\n')
         else:
             wp_defs = open('definitions.txt', 'w') # definitions for PHP page
-            print('\n\t ==== definitions.txt ====\n')
+            #print('\n\t ==== creating definitions.txt ====\n')
         for elem in datas:
-            print(elem)
+            #print(elem)
             wp_defs.write(elem + "\n")
-        print('\n\t ==== definitions.txt ====\n')
+        #print('\n\t ==== definitions.txt written ====\n')
         wp_defs.close()
         return
 
-    def createWebPageLite(self, input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()
+    def createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()
         print('Start creating web pages')
         print(input_rel_file)
         print(input_ref_file)
@@ -530,7 +499,7 @@ class Tools:
         
         return
     
-    def createWebPageLite2(self, input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()/GevSeq()
+    def createWebPageLite2(input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()/GevSeq()
         print('Start creating web pages')
         print(input_rel_file)
         print(input_ref_file)
@@ -682,6 +651,21 @@ class Tools:
     def p_inputRelRefFiles(self, f1, f2):
         print("input_rel_file = %s\n" % f1)
         print("input_ref_file = %s\n" % f2)
+        return
+
+    def p_histoValues(self, pd_DF):
+        # Afficher sous forme de tableau
+        print(f"{'Bin':>5} | {'Xmin':>10} | {'Xmax':>10} | {'Content':>10} | {'Error':>10}")
+        print("-" * 55)
+        (Nrow, Ncol) = pd_DF.shape
+        #print('[Nrow, Ncol] = [{:d}, {:d}]'.format(Nrow, Ncol))
+        for i in range(1, Nrow + 1):
+            x_min = pd_DF["Xmin"][i - 1]
+            x_max = pd_DF["Xmax"][i - 1]
+            content = pd_DF["Content"][i - 1]
+            error = pd_DF["Error"][i - 1]
+            print(f"{i:5} | {x_min:10.2f} | {x_max:10.2f} | {content:10.2f} | {error:10.2f}")
+            #print(i, pd_DF["Xmin"][i], pd_DF["Xmax"][i], pd_DF["Content"][i], pd_DF["Error"][i])
         return
 
     def checkN_GT(self, NGT, N, globalTag):

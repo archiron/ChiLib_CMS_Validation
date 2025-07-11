@@ -12,6 +12,8 @@
 
 import re
 import numpy as np
+import uproot
+import pandas as pd
 import ROOT
 
 from sys import argv
@@ -21,6 +23,8 @@ ROOT.gROOT.SetBatch(True)
 #ROOT.gErrorIgnoreLevel = ROOT.kWarning # remove info like : Info in <TCanvas::Print>: gif file gifs/h_ele_vertexPhi.gif has been created
 # Print, Info, Warning, Error, Break, SysError and Fatal.
 ROOT.gErrorIgnoreLevel = ROOT.kFatal # ROOT.kBreak
+ROOT.PyConfig.DisableRootLogon = True
+ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 class Graphic:
     def __init__(self):
@@ -84,6 +88,187 @@ class Graphic:
         t_path = file.Get(path)
         return t_path # t5
 
+    def histogram_to_dataframe(self, root_file: str, hist_path: str):
+        """
+        Lit un histogramme ROOT (1D) et retourne un DataFrame Pandas.
+        
+        :param root_file: Chemin vers le fichier .root
+        :param hist_path: Chemin complet de l'histogramme dans le fichier ROOT
+        :return: DataFrame Pandas avec colonnes Xmin, Xmax, Content, Error
+        """
+        with uproot.open(root_file) as file:
+            hist = file[hist_path]
+            counts, edges = hist.to_numpy()
+            errors = hist.errors()  # erreur stat. par bin
+
+            df = pd.DataFrame({
+                "Xmin": edges[:-1],
+                "Xmax": edges[1:],
+                "Content": counts,
+                "Error": errors
+            })
+
+        return df
+
+    def histogram_to_dataframe2(self, hist):
+        """
+        Lit un histogramme ROOT (1D) et retourne un DataFrame Pandas.
+        
+        :param histo: histogram préalablement chargé
+        :return: DataFrame Pandas avec colonnes Xmin, Xmax, Content, Error
+        """
+        counts, edges = hist.to_numpy()
+        errors = hist.errors()  # erreur stat. par bin
+
+        df = pd.DataFrame({
+            "Xmin": edges[:-1],
+            "Xmax": edges[1:],
+            "Content": counts,
+            "Error": errors
+        })
+
+        return df
+
+    def tprofile_to_dataframe(self, profile):
+        """
+        Converts a ROOT TProfile histogram to a Pandas DataFrame.
+        
+        :param profile: ROOT.TProfile object
+        :return: DataFrame with columns Xmin, Xmax, Mean, Error
+        """
+        nbins = profile.GetNbinsX()
+
+        data = {
+            "Xmin": [],
+            "Xmax": [],
+            "Mean": [],
+            "Error": []
+        }
+
+        for i in range(1, nbins + 1):  # bin 0 and bin N+1 are under/overflow
+            bin_low_edge = profile.GetXaxis().GetBinLowEdge(i)
+            bin_width = profile.GetXaxis().GetBinWidth(i)
+            bin_high_edge = bin_low_edge + bin_width
+            mean = profile.GetBinContent(i)  # mean value
+            error = profile.GetBinError(i)   # error on the mean
+
+            data["Xmin"].append(bin_low_edge)
+            data["Xmax"].append(bin_high_edge)
+            data["Mean"].append(mean)
+            data["Error"].append(error)
+
+        df = pd.DataFrame(data)
+        return df
+
+    def histogram_to_dataframe3(self, hist):
+        """
+        Convert a ROOT TH1 or TProfile histogram to a Pandas DataFrame.
+        
+        - For TH1: returns Xmin, Xmax, Content, Error
+        - For TProfile: returns Xmin, Xmax, Mean, Error (on mean)
+        
+        :param hist: ROOT.TH1 or ROOT.TProfile
+        :return: pd.DataFrame
+        """
+        nbins = hist.GetNbinsX()
+        xaxis = hist.GetXaxis()
+
+        # Determine type
+        is_profile = isinstance(hist, ROOT.TProfile)
+
+        # Column labels based on type
+        content_label = "Mean" if is_profile else "Content"
+
+        data = {
+            "Xmin": [],
+            "Xmax": [],
+            content_label: [],
+            "Error": []
+        }
+
+        for i in range(1, nbins + 1):  # skip under/overflow bins
+            xmin = xaxis.GetBinLowEdge(i)
+            xmax = xmin + xaxis.GetBinWidth(i)
+
+            content = hist.GetBinContent(i)
+            error = hist.GetBinError(i)
+
+            data["Xmin"].append(xmin)
+            data["Xmax"].append(xmax)
+            data[content_label].append(content)
+            data["Error"].append(error)
+
+        return pd.DataFrame(data)
+
+    def histogram_to_dataframe4(self, hist):
+        """
+        Convert an Uproot histogram (TH1 or TProfile) to a Pandas DataFrame.
+
+        - TH1: returns Xmin, Xmax, Content, Error
+        - TProfile: returns Xmin, Xmax, Mean, Error (on the mean)
+
+        :param hist: uproot histogram (Hist or TProfile)
+        :return: pd.DataFrame
+        """
+        edges = hist.axis().edges()
+        is_profile = isinstance(hist, uproot.models.TProfile.Model_TProfile_v1)
+
+        df = pd.DataFrame({
+            "Xmin": edges[:-1],
+            "Xmax": edges[1:]
+        })
+
+        if is_profile:
+            # Uproot returns sum of weights (W), sum of values (Y), and sum of Y²
+            sumW = hist.member("fBinEntries")[1:-1]  # bin entries
+            sumY = hist.values(flow=False)          # sum of Y (per bin)
+            sumY2 = hist.member("fSumw2")[1:-1]      # sum of Y² (used for error)
+
+            # Avoid division by zero
+            with np.errstate(divide='ignore', invalid='ignore'):
+                mean = np.true_divide(sumY, sumW)
+                mean[~np.isfinite(mean)] = 0.0
+
+                error = np.sqrt(sumY2) / sumW
+                error[~np.isfinite(error)] = 0.0
+
+            df["Mean"] = mean
+            df["Error"] = error
+        else:
+            # Standard histogram (TH1)
+            counts = hist.values(flow=False)
+            errors = np.sqrt(hist.variances(flow=False)) if hist.variances() is not None else np.zeros_like(counts)
+
+            df["Content"] = counts
+            df["Error"] = errors
+
+        return df
+
+    def histogram_to_dataframe5(self, hist):
+        """
+        Convert an Uproot histogram (TH1 or TProfile) to a Pandas DataFrame.
+
+        TH1 → Xmin, Xmax, Content, Error  
+        TProfile → Xmin, Xmax, Mean, Error (on mean)
+        """
+        axis = hist.axis()
+        edges = axis.edges(flow=False)
+        df = pd.DataFrame({"Xmin": edges[:-1], "Xmax": edges[1:]})
+
+        kind = hist.kind  # "COUNT" for TH1, "MEAN" for profile-type
+        if kind == "MEAN":
+            mean = hist.values(flow=False)
+            err = hist.errors(flow=False)  # default: error on mean :contentReference[oaicite:1]{index=1}
+            df["Content"] = mean
+            df["Error"] = err
+        else:
+            counts = hist.values(flow=False)
+            errors = hist.errors(flow=False)
+            df["Content"] = counts
+            df["Error"] = errors
+
+        return df
+
     def getHistoConfEntry(self, h1):
         d = 1
 
@@ -146,15 +331,17 @@ class Graphic:
             v_h1 = 1
         else:
             v_h1 = 0
+            print('PictureChoice : no histo 1 for {:s}'.format(filename))
         if (histo2):
             v_h2 = 1
         else:
             v_h2 = 0
+            print('PictureChoice : no histo 2 for {:s}'.format(filename))
 
         if ( (v_h1 + v_h2) == 0): # no histos at all
             return
         if ( (v_h1 * v_h2) == 0 ): # only one histo
-            print('PictureChoice : One histo')
+            print('PictureChoice : One histo for {:s}'.format(filename))
             self.createSinglePicture(histo1, histo2, scaled, err, filename, id, v_h1, v_h2)
         else: # two histos
             if( histo1.InheritsFrom("TH1F") ):
