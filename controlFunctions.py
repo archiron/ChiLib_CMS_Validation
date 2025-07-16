@@ -160,11 +160,9 @@ def optimizeBranches(tmp_branches):
             if (t1[i] == 'KOKO'):
                 print('{:s} must be removed'.format(t0[i]))
                 t0[i] = 'KOKO'
-    print('before : {:d}'.format(len(t0)))
 
     t0 = list(set(t0))
     t0 = list(filter(lambda x: x != 'KOKO', t0))
-    print('after : {:d}'.format(len(t0)))
     return t0
 
 def change_nbFiles(nbFiles_computed, nbFiles):
