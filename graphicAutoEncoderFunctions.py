@@ -886,6 +886,36 @@ class GraphicKS:
         plt.close(fig)
         return
 
+    def createSimpleKSttlDiffPicture3(self, tab, nbins, title, fileName, s_new, plage_x, diffMax0):
+        import pandas as pd
+        seriesTab = pd.DataFrame(tab, columns=['new'])
+        y_min = seriesTab.values.min()
+        y_max = seriesTab.values.max()
+        print('[y_min, y_max] = [{}, {}]'.format(y_min, y_max))
+        plt_diff_KS = seriesTab.plot.hist(bins=nbins, title=title, legend=False, color='lime')
+        ymi, yMa = plt_diff_KS.get_ylim()
+        #xmi, xMa = plt_diff_KS.get_xlim()
+        ax = plt.gca()
+        ax.set_facecolor("blue")
+        y1 = np.array([yMa / 2., yMa / 2.])
+        plt.fill_between(plage_x, y1, alpha=.35, linewidth=1, color='olive', hatch=r"//") # draw region
+
+        xpoints = np.array([diffMax0, diffMax0])
+        ypoints = np.array([0, yMa / 2.])
+        plt.plot(xpoints, ypoints, color='black')
+
+        
+        fig = plt_diff_KS.get_figure()
+        x = range(0, len(s_new))
+        #print(x)
+        left, bottom, width, height = 0.62, 0.6, 0.25, 0.25
+        ax1 = fig.add_axes([left, bottom, width, height])
+        ax1.plot(x, s_new, 'b', linewidth=0, marker='+')
+        fig.savefig(fileName)
+        fig.clf()
+        plt.close(fig)
+        return
+
     def createSimpleCompKSttlDiffPicture(self, x, y, x_KS, y_KS, legende, title, fileName):
         print(legende)
         plt.plot(x, y,color='blue', marker='+', linestyle = 'none', label=legende[0]) #, legend=True
