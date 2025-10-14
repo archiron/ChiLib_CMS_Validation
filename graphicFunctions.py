@@ -88,6 +88,12 @@ class Graphic:
         t_path = file.Get(path)
         return t_path # t5
 
+    def getFileLink(self, filename: str, tp_1, text: str): # dont work
+        f_rel = ROOT.TFile(filename)
+        h_rel = self.getHisto(f_rel, tp_1)
+        print('we use the {:s} file {:s}'.format(filename, text))
+        return h_rel
+
     def histogram_to_dataframe(self, root_file: str, hist_path: str):
         """
         Lit un histogramme ROOT (1D) et retourne un DataFrame Pandas.
@@ -269,6 +275,45 @@ class Graphic:
 
         return df
 
+    def histogram_to_dataframe6(self, hist):
+        """
+        Convert an Uproot histogram (TH1 or TProfile) to a Pandas DataFrame.
+
+        TH1 → Xmin, Xmax, Content, Error  
+        TProfile → Xmin, Xmax, Mean, Error (on mean)
+        """
+        axis = hist.axis()
+        edges = axis.edges(flow=False)
+        print(edges)
+        df = pd.DataFrame({"Xmin": edges[:-1], "Xmax": edges[1:]})
+        s_new = []
+
+        kind = hist.kind  # "COUNT" for TH1, "MEAN" for profile-type
+        #Nbins = hist.GetXaxis().GetNbins() # nb of bins
+        Nbins = len(edges)
+        print(Nbins)
+        if kind == "MEAN":
+            err = hist.errors(flow=False)  # default: error on mean :contentReference[oaicite:1]{index=1}
+            df["Error"] = err
+            ii = 0
+            for entry in range(1,Nbins+1):
+                if ((hist.GetBinEntries(ii) == 0.) and (entry == 0.)):
+                    s_new.append(0.)
+                elif ((hist.GetBinEntries(ii) == 0.) and (entry != 0.)):
+                    s_new.append(1.e38)
+                    print('========================================',ii,entry,hist.GetBinEntries(ii))
+                else:
+                    s_new.append(entry/hist.GetBinEntries(ii))
+                ii+=1
+            df['Content'] = s_new
+        else:
+            counts = hist.values(flow=False)
+            errors = hist.errors(flow=False)
+            df["Content"] = counts
+            df["Error"] = errors
+
+        return df
+
     def getHistoConfEntry(self, h1):
         d = 1
 
@@ -324,6 +369,27 @@ class Graphic:
                 ii+=1
         s_new = np.asarray(s_new)
         s_new = s_new[1:-1]
+        return s_new
+
+    def fill_Snew3(self, d, histo):
+        s_new = []
+        ii = 1
+        Nbins = histo.GetXaxis().GetNbins()
+        if (d==1):
+            for entry in range(1,Nbins+1):
+                s_new.append(histo.GetBinContent(ii))
+                ii += 1
+        else:
+            for entry in range(1,Nbins+1):
+                if ((histo.GetBinEntries(ii) == 0.) and (entry == 0.)):
+                    s_new.append(0.)
+                elif ((histo.GetBinEntries(ii) == 0.) and (entry != 0.)):
+                    s_new.append(np.nan)
+                    print('========================================',ii,entry,histo.GetBinEntries(ii))
+                else:
+                    s_new.append(entry/histo.GetBinEntries(ii))
+                ii+=1
+        s_new = np.asarray(s_new)
         return s_new
 
     def PictureChoice(self, histo1, histo2, scaled, err, filename, id):
@@ -1504,4 +1570,5 @@ class Graphic:
         self.cnv.SaveAs(filename)
         
         return
+
 

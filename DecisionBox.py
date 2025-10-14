@@ -17,7 +17,7 @@ import numpy as np
 
 from os import path
 
-from fonctions import Tools #.extWrite
+from functions import Tools #.extWrite
 
 ################################################################################
 # GevSeqDev: a tool to generate Release Comparison                              
@@ -292,20 +292,45 @@ class DecisionBox:
         sDKS = np.abs(sDKS)
         return np.max(sDKS)
 
-    def diffMAXKS3c(self, s0,s1) -> float: # cum max diff
+    def diffMAXKS3c(self, s0,s1): # cum max diff
         s0 = np.asarray(s0)
         s1 = np.asarray(s1)
         if len(s0) != len(s1):
             raise ValueError("s0 and s1 must have the same length")
 
-        min01 = max(0., -min(s0.min(), s1.min()))
+        #min01 = max(0., -min(s0.min(), s1.min()))
+        min01 = max(0., -min(np.nanmin(s0), np.nanmin(s1)))
         s0 = (s0 + min01)
         s1 = (s1 + min01)
 
-        s0 /= s0.sum()
-        s1 /= s1.sum()
+        s0 /= np.nansum(s0)
+        s1 /= np.nansum(s1)
 
-        sDKS = np.abs(np.cumsum(s1 - s0))
+        sDKS = np.abs(np.nancumsum(s1 - s0))
+        return np.max(sDKS)
+
+    def diffMAXKS4(self, s0,s1): # works with polars (no index function)
+        s0 = np.asarray(s0) # if not this, ind is returned as b_00x instead of int value
+        s1 = np.asarray(s1)
+        N0 = s0.shape[1]
+        N1 = s1.shape[1]
+        if (N0 != N1):
+            print('not the same lengths')
+            exit()
+        min0 = s0.min() # min(s0)
+        min1 = s1.min() # min(s1)
+        min01 = np.amin([min0, min1])
+        if (min01 > 0.):
+            min01 = 0.
+        else:
+            min01 = np.abs(min01)
+        SumSeries0 = s0.sum() + N0 * min01
+        SumSeries1 = s1.sum() + N1 * min01
+        v0, v1 = 0., 0.
+        sDKS = []
+        s0 = (s0 + min01) / SumSeries0
+        s1 = (s1 + min01) / SumSeries1
+        sDKS = [abs(v1 := v1 + s1[0, i] - (v0 := v0 + s0[0, i])) for i in range(N0)]
         return np.max(sDKS)
 
     def integralpValue(self, abscisses, ordonnees, x):

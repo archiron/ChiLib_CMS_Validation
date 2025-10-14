@@ -10,7 +10,9 @@ ElectronMcSignalValidator/h_recSeedNum                      1 1 1 1
 Basic electron quantities
 
 ElectronMcSignalValidator/h_ele_charge                      1 1 1 0
-ElectronMcSignalValidator/h_ele_vertexPt                    1 1 1 0
+ElectronMcSignalValidator/h_ele_vertexPt                    1 1 0 0
+ElectronMcSignalValidator/h_ele_vertexPt_EB                 1 1 0 0
+ElectronMcSignalValidator/h_ele_vertexPt_EE                 1 1 1 0
 ElectronMcSignalValidator/h_ele_vertexEta                   1 1 1 0
 ElectronMcSignalValidator/h_ele_vertexPhi                   1 1 1 0
 ElectronMcSignalValidator/h_ele_vertexP                     1 1 1 0
@@ -232,15 +234,15 @@ Distributions for all reconstructed electrons (i.e. not requiring a match with m
 ElectronMcSignalValidator/h_ele_EoverP_all          1 1 1 0
 ElectronMcSignalValidator/h_ele_EseedOP_all         1 1 1 0
 ElectronMcSignalValidator/h_ele_EoPout_all          1 1 1 0
-ElectronMcSignalValidator/h_ele_EeleOPout_all         1 1 1 0
+ElectronMcSignalValidator/h_ele_EeleOPout_all       1 1 1 0
 ElectronMcSignalValidator/h_ele_TIP_all             1 1 1 0
-ElectronMcSignalValidator/h_ele_dEtaSc_propVtx_all  1 1 0 0
+ElectronMcSignalValidator/h_ele_dEtaSc_propVtx_all  1 1 1 0
+ElectronMcSignalValidator/h_ele_dPhiSc_propVtx_all  1 1 1 0
 ElectronMcSignalValidator/h_ele_dEtaCl_propOut_all  1 1 1 0
-ElectronMcSignalValidator/h_ele_dPhiSc_propVtx_all  1 1 0 0
 ElectronMcSignalValidator/h_ele_dPhiCl_propOut_all  1 1 1 0
-ElectronMcSignalValidator/h_ele_HoE_all             1 1 0 0
+ElectronMcSignalValidator/h_ele_HoE_all             1 1 1 0
 ElectronMcSignalValidator/h_ele_HoE_bc_all          1 1 1 0
-ElectronMcSignalValidator/h_ele_mee_all             1 1 0 0
+ElectronMcSignalValidator/h_ele_mee_all             1 1 1 0
 ElectronMcSignalValidator/h_ele_mee_os              1 1 1 1
 
 Charge mis-ID
@@ -286,7 +288,16 @@ ElectronMcSignalValidator/h_ele_neutralHadronRelativeIso_Extended  1 1 1 0
 ElectronMcSignalValidator/h_ele_photonRelativeIso           1 1 0 0
 ElectronMcSignalValidator/h_ele_photonRelativeIso_barrel    1 1 0 0
 ElectronMcSignalValidator/h_ele_photonRelativeIso_endcaps   1 1 1 0
-ElectronMcSignalValidator/h_ele_photonRelativeIso_Extended  1 1 1 1
+ElectronMcSignalValidator/h_ele_photonRelativeIso_Extended  1 1 1 0
+ElectronMcSignalValidator/h_ele_dRElectronsPFcand_ChHad_unCleaned    1 1 0 0
+ElectronMcSignalValidator/h_ele_dRElectronsPFcand_ChHad_unCleaned_barrel   1 1 0 0
+ElectronMcSignalValidator/h_ele_dRElectronsPFcand_ChHad_unCleaned_endcaps  1 1 1 0
+ElectronMcSignalValidator/h_ele_dRElectronsPFcand_NeuHad_unCleaned    1 1 0 0
+ElectronMcSignalValidator/h_ele_dRElectronsPFcand_NeuHad_unCleaned_barrel   1 1 0 0
+ElectronMcSignalValidator/h_ele_dRElectronsPFcand_NeuHad_unCleaned_endcaps  1 1 1 0
+ElectronMcSignalValidator/h_ele_dRElectronsPFcand_Pho_unCleaned    1 1 0 0
+ElectronMcSignalValidator/h_ele_dRElectronsPFcand_Pho_unCleaned_barrel   1 1 0 0
+ElectronMcSignalValidator/h_ele_dRElectronsPFcand_Pho_unCleaned_endcaps  1 1 1 1
 
 Conversion rejection information
 

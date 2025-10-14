@@ -1,18 +1,20 @@
 
 Collections sizes
 
-ElectronMcSignalValidatorMiniAOD/h_recEleNum                       1 1 1 0
 ElectronMcSignalValidatorMiniAOD/h_recEleNum                       1 1 1 1
 
 Basic electron quantities
 
-ElectronMcSignalValidatorMiniAOD/h_ele_vertexPt                    1 1 1 0
+ElectronMcSignalValidatorMiniAOD/h_ele_vertexPt                    1 1 0 0
+ElectronMcSignalValidatorMiniAOD/h_ele_vertexPt_EB                 1 1 0 0
+ElectronMcSignalValidatorMiniAOD/h_ele_vertexPt_EE                 1 1 1 0
 ElectronMcSignalValidatorMiniAOD/h_ele_vertexEta                   1 1 1 0
 ElectronMcSignalValidatorMiniAOD/h_ele_vertexPt_nocut              1 1 1 1
 
 Comparison with MC truth (residuals)
 
-ElectronMcSignalValidatorMiniAOD/h_ele_PoPtrueVsEta_pfx            0 1 1 1
+ElectronMcSignalValidatorMiniAOD/h_ele_PoPtrueVsEta_pfx            0 1 0 1
+ElectronMcSignalValidatorMiniAOD/h_ele_PoPtrueVsEta_Extended_pfx   0 1 1 1
 
 Track-cluster matching observables
 
@@ -35,7 +37,8 @@ ElectronMcSignalValidatorMiniAOD/h_scl_SigIEtaIEta_mAOD_endcaps         1 1 1 1
 
 Electron track variables
 
-ElectronMcSignalValidatorMiniAOD/h_ele_foundHitsVsEta_pfx          0 1 1 0
+ElectronMcSignalValidatorMiniAOD/h_ele_foundHitsVsEta_pfx          0 1 0 0
+ElectronMcSignalValidatorMiniAOD/h_ele_foundHitsVsEta_Extended_pfx 0 1 1 0
 ElectronMcSignalValidatorMiniAOD/h_ele_foundHitsVsEta_mAOD_pfx     0 1 1 1
 
 Brem fraction and related distributions
