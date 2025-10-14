@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from matplotlib.ticker import AutoMinorLocator
 import numpy as np
-from pandas.core import series
 
 matplotlib.use('agg')
 print('matplotlib: {}'.format(matplotlib.__version__))
@@ -164,7 +163,7 @@ def createCompLossesPicture(labels, val, fileName, title, labx='Releases', laby=
     x_pos = np.arange(len(labels))
     plt.clf()
     plt.figure(figsize=(10, 5))
-    title = title.replace("_", "\\_")
+    #title = title.replace("_", "\\_")
     plt.suptitle(title, x=0.35)
 
     plt.subplot(1, 2, 1)
@@ -257,11 +256,11 @@ def createCompLossesPicture3(labels, val, fileName, title, labx='Releases', laby
     plt.plot(labels, val, color='blue', marker='*', linestyle = 'None')
     plt.xlabel(labx)
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
-    plt.yscale("log")
     if (len(labels) > 12):
         plt.tick_params(axis='x', which='major', labelsize=6)
     plt.fill_between(x_pos, val1, val2, alpha=.5, linewidth=0, color='beige', hatch=r"//")
     plt.plot(x_pos, moy, color="red")
+    plt.yscale("log")
  
     plt.tight_layout(rect=[0., 0.03, 1., 0.95])
     plt.savefig(fileName)
@@ -303,7 +302,6 @@ def createCompLossesPicture4(labels, val_1, val_2, fileName, title, labx='Releas
     plt.plot(x_pos, val_2, color='blue', marker='*', linestyle = 'None')
     plt.ylabel(laby)
     plt.xlabel(labx)
-    #plt.ylim(0.)
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
     plt.grid(axis = 'x', linestyle = '--')
     if (len(labels) > 12):
@@ -312,8 +310,8 @@ def createCompLossesPicture4(labels, val_1, val_2, fileName, title, labx='Releas
     plt.plot(x_pos, moy, color="red")
 
     plt.subplot(1, 2, 2)
-    plt.plot(labels, val_1, color='grey', marker='*', linestyle = 'None')
-    plt.plot(labels, val_2, color='blue', marker='*', linestyle = 'None')
+    plt.plot(x_pos, val_1, color='grey', marker='*', linestyle = 'None')
+    plt.plot(x_pos, val_2, color='blue', marker='*', linestyle = 'None')
     #plt.ylabel(laby)
     plt.xlabel(labx)
     plt.xticks(x_pos, labels, rotation=45, ha="right", rotation_mode="anchor")
