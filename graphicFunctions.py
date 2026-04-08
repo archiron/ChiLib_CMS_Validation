@@ -59,7 +59,6 @@ class Graphic:
         gStyle.SetTitleFont(32, "XYZ")
         gStyle.SetTitleX(0) # ne fonctionne pas avec les gds titres
         gStyle.SetTextAlign(13)
-        gStyle.SetTitleX(0)
         gStyle.SetTitleAlign(13)
         gStyle.SetTitleStyle(3002)
         gStyle.SetTitleFillColor(18)
